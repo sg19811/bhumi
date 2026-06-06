@@ -5,6 +5,7 @@ import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
 import InquiryButton from "./InquiryButton";
+import SaveButton from "@/app/components/SaveButton";
 
 export default async function ListingDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -73,7 +74,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div className="border-t pt-6">
           <h2 className="text-lg font-semibold mb-4">Interested in this land?</h2>
-          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /></div>
+          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><SaveButton listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /></div>
           {listing.contact_phone && (
             <p className="mt-4 text-sm text-gray-500">Call: <a href={`tel:${listing.contact_phone}`} className="text-green-700 font-medium">{listing.contact_phone}</a>
               {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}`} target="_blank" className="text-green-700 font-medium">WhatsApp</a></>}</p>

@@ -1,5 +1,5 @@
 "use client";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, LayersControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import Link from "next/link";
@@ -17,7 +17,14 @@ export default function Map({ markers, center, zoom = 11, height = "400px" }: { 
   const c: [number, number] = center ?? (markers.length > 0 ? [markers[0].latitude, markers[0].longitude] : [12.97, 77.59]);
   return (
     <MapContainer center={c} zoom={zoom} style={{ height, width: "100%" }}>
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' />
+      <LayersControl position="topright">
+        <LayersControl.BaseLayer checked name="Street">
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
+        </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="Satellite">
+          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution='&copy; Esri' />
+        </LayersControl.BaseLayer>
+      </LayersControl>
       {markers.map((m) => (
         <Marker key={m.id} position={[m.latitude, m.longitude]} icon={markerIcon}>
           <Popup>

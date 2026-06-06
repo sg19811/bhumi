@@ -6,7 +6,6 @@ import { useAuth } from "@/app/lib/auth";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { user, signOut } = useAuth();
-
   const links = [
     { href: "/explore", label: "Explore" },
     { href: "/listing/new", label: "List your land" },
@@ -14,7 +13,6 @@ export default function Header() {
     { href: "/requirements", label: "Requirements" },
     { href: "/eligibility", label: "Eligibility" },
   ];
-
   return (
     <header className="border-b px-6 py-4">
       <div className="flex items-center justify-between">
@@ -24,6 +22,7 @@ export default function Header() {
           {links.map((l) => <Link key={l.href} href={l.href} className="text-gray-600 hover:text-green-700">{l.label}</Link>)}
           {user ? (
             <>
+              <Link href="/saved" className="text-gray-600 hover:text-green-700">Saved</Link>
               <Link href="/admin" className="text-gray-600 hover:text-green-700">Dashboard</Link>
               <button onClick={signOut} className="text-gray-400 hover:text-red-600 text-xs">Sign out</button>
             </>
@@ -37,6 +36,7 @@ export default function Header() {
           {links.map((l) => <Link key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</Link>)}
           {user ? (
             <>
+              <Link href="/saved" onClick={() => setOpen(false)}>Saved</Link>
               <Link href="/admin" onClick={() => setOpen(false)}>Dashboard</Link>
               <button onClick={() => { signOut(); setOpen(false); }} className="text-left text-red-600">Sign out</button>
             </>
