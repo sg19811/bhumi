@@ -1,6 +1,7 @@
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
 import InquiryButton from "./InquiryButton";
+
 import MapLoader from "@/app/components/MapLoader";
 
 export default async function ListingDetail({
@@ -64,7 +65,7 @@ export default async function ListingDetail({
         </div>
 
         <div className="rounded-lg overflow-hidden border mb-6 h-[350px]">
-          <Map
+          <MapLoader
             markers={[
               {
                 id: listing.id,
