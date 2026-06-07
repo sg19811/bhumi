@@ -87,6 +87,8 @@ export default function AdminDashboard() {
   const [vBusy, setVBusy] = useState<string | null>(null);
   const [reports, setReports] = useState<any[]>([]);
   const [demand, setDemand] = useState<any[]>([]);
+  const [listingQuery, setListingQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
   useEffect(() => {
@@ -159,6 +161,12 @@ export default function AdminDashboard() {
   const pending = listings.filter((l) => l.status === "pending").length;
   // Pending first, so they're easy to review.
   const sortedListings = [...listings].sort((a, b) => (a.status === "pending" ? 0 : 1) - (b.status === "pending" ? 0 : 1));
+  const q = listingQuery.trim().toLowerCase();
+  const filteredListings = sortedListings.filter((l) => {
+    if (statusFilter && (l.status ?? "active") !== statusFilter) return false;
+    if (q && !`${l.title ?? ""} ${l.district ?? ""}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -223,10 +231,30 @@ export default function AdminDashboard() {
 
         <div className="grid gap-8 md:grid-cols-2">
           <section>
-            <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold">Manage listings</h2><span className="flex gap-3 text-sm"><Link href="/admin/import" className="text-green-700 hover:underline">Import CSV</Link><Link href="/listing/new" className="text-green-700 hover:underline">+ New</Link></span></div>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">Manage listings</h2>
+              <span className="flex gap-3 text-sm">
+                {listings.length > 0 && (
+                  <button
+                    onClick={() => downloadCSV("listings.csv", listings.map((l) => ({ title: l.title, status: l.status, price: l.price, area_value: l.area_value, area_unit: l.area_unit, district: l.district, taluka: l.taluka, village: l.village, land_type: l.land_type, is_verified: l.is_verified, views: l.views, created_at: l.created_at })))}
+                    className="text-green-700 hover:underline"
+                  >
+                    Export CSV
+                  </button>
+                )}
+                <Link href="/admin/import" className="text-green-700 hover:underline">Import CSV</Link>
+                <Link href="/listing/new" className="text-green-700 hover:underline">+ New</Link>
+              </span>
+            </div>
+            <div className="mb-3 flex gap-2">
+              <input value={listingQuery} onChange={(e) => setListingQuery(e.target.value)} placeholder="Search title or district…" className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm outline-none focus:border-green-600" />
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-green-600">
+                <option value="">All</option><option value="pending">Pending</option><option value="active">Active</option><option value="sold">Sold</option><option value="withdrawn">Withdrawn</option>
+              </select>
+            </div>
             <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
-              {sortedListings.map((l) => <AdminListingRow key={l.id} listing={l} />)}
-              {listings.length === 0 && <p className="p-4 text-sm text-gray-400">No listings yet.</p>}
+              {filteredListings.map((l) => <AdminListingRow key={l.id} listing={l} />)}
+              {filteredListings.length === 0 && <p className="p-4 text-sm text-gray-400">{listings.length === 0 ? "No listings yet." : "No listings match."}</p>}
             </div>
           </section>
 
