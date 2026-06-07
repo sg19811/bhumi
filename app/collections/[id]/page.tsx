@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import ListingCard from "@/app/components/ListingCard";
+import { ListingCardSkeletonGrid } from "@/app/components/ListingCardSkeleton";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 
@@ -48,6 +49,7 @@ export default function CollectionDetail() {
         {user && (
           <>
             <h1 className="mb-6 mt-2 text-3xl font-bold">{name ?? "Collection"}</h1>
+            {!fetched && <ListingCardSkeletonGrid count={3} />}
             {fetched && listings.length === 0 && (
               <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
                 <p className="mb-4 text-gray-500">Nothing here yet. Add listings with “✦ Save to collection”.</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Photo grid (matching the previous detail-page layout) where any photo opens a
@@ -10,6 +10,17 @@ import { useCallback, useEffect, useState } from "react";
 export default function PhotoGallery({ photos, title }: { photos: string[]; title: string }) {
   const [index, setIndex] = useState<number | null>(null);
   const shown = photos.slice(0, 5);
+  const open = index !== null;
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastFocused = useRef<HTMLElement | null>(null);
+
+  // Move focus into the lightbox on open; restore it to the trigger on close.
+  useEffect(() => {
+    if (!open) return;
+    lastFocused.current = document.activeElement as HTMLElement;
+    closeBtnRef.current?.focus();
+    return () => lastFocused.current?.focus?.();
+  }, [open]);
 
   const close = useCallback(() => setIndex(null), []);
   const prev = useCallback(() => setIndex((i) => (i === null ? i : (i - 1 + photos.length) % photos.length)), [photos.length]);
@@ -70,6 +81,7 @@ export default function PhotoGallery({ photos, title }: { photos: string[]; titl
           aria-label={`${title} photos`}
         >
           <button
+            ref={closeBtnRef}
             onClick={close}
             className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20"
             aria-label="Close"

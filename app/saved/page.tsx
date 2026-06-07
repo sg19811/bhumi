@@ -5,6 +5,7 @@ import { useAuth } from "@/app/lib/auth";
 import Header from "@/app/components/Header";
 import Link from "next/link";
 import ListingCard from "@/app/components/ListingCard";
+import { ListingCardSkeletonGrid } from "@/app/components/ListingCardSkeleton";
 
 export default function Saved() {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ export default function Saved() {
             <Link href="/explore" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">Browse listings</Link>
           </div>
         )}
+        {user && !fetched && <ListingCardSkeletonGrid />}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {listings.map((l) => (
             <ListingCard key={l.id} listing={l} />

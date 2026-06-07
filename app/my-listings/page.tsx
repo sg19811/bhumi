@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import ListingCard from "@/app/components/ListingCard";
+import { ListingCardSkeletonGrid } from "@/app/components/ListingCardSkeleton";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 
@@ -81,6 +82,7 @@ export default function MyListings() {
           </div>
         )}
 
+        {user && !fetched && <ListingCardSkeletonGrid />}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {listings.map((l) => (
             <div key={l.id}>

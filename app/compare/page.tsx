@@ -8,6 +8,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useCompare } from "@/app/lib/compare";
 import { computeTrust, trustTierBadgeStyle } from "@/app/lib/trust";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
+import { ListingCardSkeletonGrid } from "@/app/components/ListingCardSkeleton";
 
 function priceBasisLabel(basis?: string) {
   return basis === "per_acre"
@@ -97,7 +98,7 @@ export default function ComparePage() {
           )}
         </div>
 
-        {loading && ids.length > 0 && <p className="text-gray-400">Loading…</p>}
+        {loading && ids.length > 0 && <ListingCardSkeletonGrid count={Math.min(ids.length, 4)} />}
 
         {!loading && ids.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
