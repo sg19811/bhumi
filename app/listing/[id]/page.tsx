@@ -125,6 +125,16 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <OwnerEditLink listingId={listing.id} ownerUserId={listing.owner_user_id} />
         </div>
 
+        {listing.status && listing.status !== "active" && (
+          <div className={`mb-5 rounded-xl border p-4 text-sm font-medium ${listing.status === "pending" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-gray-200 bg-gray-100 text-gray-600"}`}>
+            {listing.status === "pending"
+              ? "⏳ This listing is awaiting review and isn't public yet."
+              : listing.status === "sold"
+                ? "This land has been marked sold."
+                : "This listing has been withdrawn."}
+          </div>
+        )}
+
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold leading-tight sm:text-4xl">{listing.title}</h1>

@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
+import { formatINRShort } from "@/app/lib/format";
 
 // Keeps Leaflet's canvas in sync when its container is resized (responsive
 // layout, sticky column, or first paint), preventing gray/clipped tiles.
@@ -22,12 +23,16 @@ function ResizeHandler() {
   return null;
 }
 
-const markerIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
-});
+// Zillow-style price pill marker, centered on the coordinate.
+function priceIcon(price: number) {
+  return L.divIcon({
+    className: "",
+    html: `<div style="transform:translate(-50%,-50%);display:inline-block;background:#445626;color:#fdfcf9;padding:3px 9px;border-radius:9999px;font-size:12px;font-weight:600;white-space:nowrap;box-shadow:0 1px 4px rgba(40,33,15,.35);border:1.5px solid #fdfcf9;">${formatINRShort(price)}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, -12],
+  });
+}
 
 export type MarkerData = { id: string; latitude: number; longitude: number; title: string; price: number; area_value: number; area_unit: string };
 
@@ -65,7 +70,7 @@ export default function Map({ markers, center, zoom = 11, height = "400px", focu
         </LayersControl.BaseLayer>
       </LayersControl>
       {markers.map((m) => (
-        <Marker key={m.id} position={[m.latitude, m.longitude]} icon={markerIcon} ref={(inst) => { if (inst) markerRefs.current[m.id] = inst; }}>
+        <Marker key={m.id} position={[m.latitude, m.longitude]} icon={priceIcon(m.price)} ref={(inst) => { if (inst) markerRefs.current[m.id] = inst; }}>
           <Popup>
             <Link href={`/listing/${m.id}`} className="font-semibold text-green-800 hover:underline">{m.title}</Link><br />
             ₹{Number(m.price).toLocaleString("en-IN")} · {m.area_value} {m.area_unit}

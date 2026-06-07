@@ -78,7 +78,7 @@ export default function EditListing() {
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">Price (₹)</label><input name="price" type="number" defaultValue={listing.price} className={inp} /></div>
             <div><label className="block text-sm font-medium mb-1">Status</label>
-              <select name="status" defaultValue={listing.status} className={inp}><option value="active">Active</option><option value="sold">Sold</option><option value="withdrawn">Withdrawn</option></select></div>
+              <select name="status" defaultValue={listing.status} className={inp}>{listing.status === "pending" && <option value="pending">Pending review</option>}<option value="active">Active</option><option value="sold">Sold</option><option value="withdrawn">Withdrawn</option></select></div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">Area</label><input name="area_value" type="number" step="0.01" defaultValue={listing.area_value} className={inp} /></div>
