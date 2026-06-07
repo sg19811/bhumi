@@ -62,10 +62,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     publisher: { "@type": "Organization", name: "AcreHub" },
   };
 
+  // Question-style titles become an FAQPage for richer search results.
+  const faqLd = a.title.trim().endsWith("?")
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: a.title,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: a.summary || a.body_md.replace(/[#*_>-]/g, " ").replace(/\s+/g, " ").trim().slice(0, 320),
+            },
+          },
+        ],
+      }
+    : null;
+
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:px-6 sm:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
       {a.schema_data && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(a.schema_data) }} />}
       <LegalTrack event="legal_article_viewed" props={{ slug: a.slug, state: a.state, topic: a.topic, reading_minutes: a.reading_minutes }} />
 
