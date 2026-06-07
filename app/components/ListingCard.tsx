@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import TrustScore from "@/app/components/TrustScore";
 import CompareToggle from "@/app/components/CompareToggle";
+import CardSaveButton from "@/app/components/CardSaveButton";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 
 function priceBasisLabel(basis?: string) {
@@ -58,6 +59,9 @@ export default function ListingCard({ listing }: { listing: any }) {
             New
           </span>
         )}
+        <div className="absolute bottom-3 right-3">
+          <CardSaveButton listingId={listing.id} />
+        </div>
       </div>
 
       <div className="p-4">

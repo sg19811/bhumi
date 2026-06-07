@@ -34,8 +34,19 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
   const types = [...new Set((listings ?? []).map((l) => l.land_type).filter(Boolean))];
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://bhumi.vercel.app/" },
+      { "@type": "ListItem", position: 2, name: "Explore", item: "https://bhumi.vercel.app/explore" },
+      { "@type": "ListItem", position: 3, name, item: `https://bhumi.vercel.app/region/${district}` },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Header />
       <main className="flex-1">
         <div className="mx-auto max-w-5xl px-5 pt-8 sm:px-6">
