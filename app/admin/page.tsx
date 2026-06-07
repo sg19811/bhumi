@@ -85,25 +85,33 @@ export default function AdminDashboard() {
   const [searchLogs, setSearchLogs] = useState<any[]>([]);
   const [verifications, setVerifications] = useState<any[]>([]);
   const [vBusy, setVBusy] = useState<string | null>(null);
+  const [reports, setReports] = useState<any[]>([]);
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s, v] = await Promise.all([
+      const [l, i, b, s, v, r] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
         supabase.from("search_logs").select("*").order("created_at", { ascending: false }).limit(1000),
         supabase.from("verification_requests").select("*, listings(title)").eq("status", "pending").order("created_at", { ascending: false }),
+        supabase.from("reports").select("*, listings(title)").eq("resolved", false).order("created_at", { ascending: false }),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
       setBuyers(b.data ?? []);
       setSearchLogs(s.data ?? []);
       setVerifications(v.data ?? []);
+      setReports(r.data ?? []);
     })();
   }, [isAdmin]);
+
+  async function resolveReport(reportId: string) {
+    await supabase.from("reports").update({ resolved: true }).eq("id", reportId);
+    setReports((cur) => cur.filter((x) => x.id !== reportId));
+  }
 
   async function viewDoc(path: string) {
     const { data } = await supabase.storage.from("verification").createSignedUrl(path, 3600);
@@ -166,6 +174,23 @@ export default function AdminDashboard() {
           <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
             <span className="font-semibold">{pending}</span> listing{pending > 1 ? "s" : ""} awaiting review — they stay hidden from buyers until you Approve them below.
           </div>
+        )}
+
+        {reports.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-lg font-semibold">Reports ({reports.length})</h2>
+            <div className="divide-y divide-gray-200 rounded-xl border border-red-200 bg-white shadow-sm">
+              {reports.map((r) => (
+                <div key={r.id} className="flex items-center justify-between gap-3 p-4">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-red-700">⚑ {r.reason || "Reported"}</p>
+                    <p className="text-xs text-gray-500">on <Link href={`/listing/${r.listing_id}`} className="text-green-700 hover:underline">{r.listings?.title ?? "a listing"}</Link> · {new Date(r.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
+                  </div>
+                  <button onClick={() => resolveReport(r.id)} className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">Dismiss</button>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {verifications.length > 0 && (

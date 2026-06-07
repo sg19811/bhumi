@@ -221,7 +221,31 @@ returns void language sql security definer set search_path = public as $$
 $$;
 grant execute on function public.increment_listing_views(uuid) to anon, authenticated;
 
--- 13) Refresh the API schema cache.
+-- 13) Reports — anyone can flag a listing; admins review.
+create table if not exists public.reports (
+  id         uuid primary key default gen_random_uuid(),
+  listing_id uuid references public.listings (id) on delete cascade,
+  reason     text,
+  created_at timestamptz not null default now(),
+  resolved   boolean not null default false
+);
+create index if not exists reports_resolved_idx on public.reports (resolved);
+alter table public.reports enable row level security;
+
+drop policy if exists "anyone can report" on public.reports;
+create policy "anyone can report" on public.reports for insert to public with check (true);
+
+drop policy if exists "admins read reports" on public.reports;
+create policy "admins read reports" on public.reports for select to authenticated using (public.is_admin());
+
+drop policy if exists "admins update reports" on public.reports;
+create policy "admins update reports" on public.reports for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- 14) Price-drop tracking (set on edit when the price decreases).
+alter table public.listings add column if not exists previous_price numeric;
+alter table public.listings add column if not exists price_changed_at timestamptz;
+
+-- 15) Refresh the API schema cache.
 notify pgrst, 'reload schema';
 
 -- ============================================================

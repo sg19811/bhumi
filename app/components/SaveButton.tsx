@@ -2,22 +2,28 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
-import { useRouter } from "next/navigation";
+import { hasGuestSave, toggleGuestSave } from "@/app/lib/guest-saves";
 
 export default function SaveButton({ listingId }: { listingId: string }) {
   const { user } = useAuth();
-  const router = useRouter();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    supabase.from("saved_listings").select("id").eq("user_id", user.id).eq("listing_id", listingId).maybeSingle()
-      .then(({ data }) => setSaved(!!data));
+    if (user) {
+      supabase.from("saved_listings").select("id").eq("user_id", user.id).eq("listing_id", listingId).maybeSingle()
+        .then(({ data }) => setSaved(!!data));
+    } else {
+      setSaved(hasGuestSave(listingId));
+    }
   }, [user, listingId]);
 
   async function toggle() {
-    if (!user) { router.push("/auth/signin"); return; }
+    if (!user) {
+      // Guests save to localStorage — no sign-in required.
+      setSaved(toggleGuestSave(listingId));
+      return;
+    }
     setBusy(true);
     if (saved) {
       await supabase.from("saved_listings").delete().eq("user_id", user.id).eq("listing_id", listingId);

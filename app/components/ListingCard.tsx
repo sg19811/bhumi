@@ -71,6 +71,9 @@ export default function ListingCard({ listing }: { listing: any }) {
         {ppa && listing.price_basis !== "per_acre" && (
           <p className="text-xs text-gray-400">≈ {formatINRShort(ppa)} / acre</p>
         )}
+        {listing.previous_price && Number(listing.previous_price) > Number(listing.price) && (
+          <p className="text-xs"><span className="font-medium text-red-600">↓ Reduced</span> <span className="ml-1 text-gray-400 line-through">{formatINRShort(listing.previous_price)}</span></p>
+        )}
         <p className="mt-1 text-sm text-gray-500">
           {listing.area_value} {listing.area_unit}
           {listing.land_type ? ` · ${listing.land_type.replace(/_/g, " ")}` : ""}

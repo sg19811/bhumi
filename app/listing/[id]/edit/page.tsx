@@ -50,9 +50,13 @@ export default function EditListing() {
     const f = new FormData(e.currentTarget);
     const latRaw = f.get("latitude");
     const lngRaw = f.get("longitude");
+    const newPrice = Number(f.get("price"));
+    const dropped = Number.isFinite(newPrice) && newPrice < Number(listing.price);
     await supabase.from("listings").update({
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
-      price: Number(f.get("price")), area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
+      price: newPrice, area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
+      previous_price: dropped ? listing.price : null,
+      price_changed_at: dropped ? new Date().toISOString() : null,
       latitude: latRaw ? Number(latRaw) : listing.latitude,
       longitude: lngRaw ? Number(lngRaw) : listing.longitude,
       district: f.get("district"), taluka: f.get("taluka"), village: f.get("village"),

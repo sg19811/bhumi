@@ -18,6 +18,7 @@ import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
 import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
 import ShareButton from "@/app/components/ShareButton";
+import ReportButton from "@/app/components/ReportButton";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 import type { Metadata } from "next";
 
@@ -79,6 +80,10 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         .limit(3)
     : { data: [] };
   const similar = similarRaw ?? [];
+
+  const { count: sellerCount } = listing.owner_user_id
+    ? await supabase.from("listings").select("id", { count: "exact", head: true }).eq("owner_user_id", listing.owner_user_id).eq("status", "active")
+    : { count: 0 };
 
   const url = `https://bhumi.vercel.app/listing/${listing.id}`;
   const photos: string[] = listing.photos ?? [];
@@ -185,7 +190,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         )}
 
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : listing.price_basis === "per_sqft" ? "per sq ft" : "total"}</p>{ppa && listing.price_basis !== "per_acre" && <p className="mt-1 text-xs text-gray-400">≈ {formatINRShort(ppa)}/acre</p>}</div>
+          <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : listing.price_basis === "per_sqft" ? "per sq ft" : "total"}</p>{ppa && listing.price_basis !== "per_acre" && <p className="mt-1 text-xs text-gray-400">≈ {formatINRShort(ppa)}/acre</p>}{listing.previous_price && Number(listing.previous_price) > Number(listing.price) && <p className="mt-1 text-xs"><span className="font-medium text-red-600">↓ Reduced</span> <span className="text-gray-400 line-through">{formatINRShort(listing.previous_price)}</span></p>}</div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">{listing.area_value}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.area_unit}</p></div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800 sm:text-lg">{listing.land_type?.replace(/_/g, " ")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">land type</p></div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800 sm:text-lg">{listing.water_source || "—"}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">water</p></div>
@@ -235,6 +240,13 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
               )}
             </p>
           )}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          {(sellerCount ?? 0) > 1 ? (
+            <Link href={`/seller/${listing.owner_user_id}`} className="text-sm font-medium text-green-800 hover:underline">More from this seller →</Link>
+          ) : <span />}
+          <ReportButton listingId={listing.id} />
         </div>
 
         {similar.length > 0 && (
