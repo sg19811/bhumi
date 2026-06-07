@@ -113,3 +113,47 @@ build won't throw; the typecheck/lint jobs don't build.
 - **Verified:** tsc clean; `next build` clean.
 
 ---
+
+## Phase 7 — ROI + appreciation calculators ✅
+
+- `app/components/RoiCalculator.tsx` — purchase price, holding period, expected annual growth %,
+  optional yearly income → projected value, total return (₹ and %), and **annualised IRR**
+  (bisection over the cashflow series; income=0 reduces to CAGR).
+- `app/components/AppreciationCalculator.tsx` — price, annual growth %, years → projected value,
+  total appreciation (₹ and %), and a year-by-year schedule (capped at 30 rows).
+- Pages `app/tools/roi-calculator` + `app/tools/appreciation-calculator` (accept `?amount=` to
+  pre-fill, matching the EMI page), added to the `/tools` index and the sitemap. Same earthy design.
+- **Note:** no verified per-district historical growth time-series exists (price-insight is
+  point-in-time medians), so growth is a user input — labelled as a planning estimate, not a forecast.
+- **Verified:** tsc clean; `next build` clean; both routes present.
+
+---
+
+## Final summary
+
+All 7 phases completed on `overnight/foundation-hardening` (from `main`), one commit each, **not pushed**.
+
+| Phase | Result | Commit |
+|---|---|---|
+| 1 Smoke tests + CI | ✅ | Playwright (request-based) + checks.yml + scripts |
+| 2 Analytics scripts | ✅ | GA4 + PostHog, env-gated |
+| 3 Server-side validation | ✅ (with caveat) | zod gate; write still client-side under RLS (follow-up logged) |
+| 4 Env validation | ✅ | `lib/env.ts`, throws in prod |
+| 5 ConfirmModal | ✅ | replaced all 3 `confirm()` |
+| 6 Error boundaries | ✅ | 6 segments |
+| 7 ROI + appreciation calculators | ✅ | 2 new `/tools` |
+
+**Final `npm run build`: clean.** Guardrails honored: no `.env.local`, no RLS/schema changes, no push to main.
+
+**Needs your attention (not blockers):**
+1. **Phase 3 caveat** — server validation is a *gate* the client calls; to *enforce* at the write
+   boundary, route the listing write through an authenticated server action (architecture decision — left to you).
+2. **`/agent`** gates client-side, not via an HTTP redirect — the smoke test asserts the route
+   resolves; decide whether to add a real redirect (then tighten the test) or keep the gate.
+3. **CI secrets** — add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY` as repo secrets for the `smoke` job to go green (typecheck + lint need none).
+4. **Analytics keys** — set `NEXT_PUBLIC_GA_MEASUREMENT_ID` / `NEXT_PUBLIC_POSTHOG_KEY` in Vercel when ready.
+5. New dev deps added (per the brief): `@playwright/test`, `zod`.
+
+No phases were blocked; `docs/overnight-blocked.md` was not needed.
+
