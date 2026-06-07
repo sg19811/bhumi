@@ -65,6 +65,34 @@ drop policy if exists "owners read own listings" on public.listings;
 create policy "owners read own listings" on public.listings
   for select to authenticated using (auth.uid() = owner_user_id);
 
+-- 2d) Owners can manage their own listings (edit / sold / withdraw / re-list).
+-- A trigger keeps the moderation gate: a PENDING listing can only be moved to
+-- 'active' by an admin (the approval step).
+drop policy if exists "owners update own listings" on public.listings;
+create policy "owners update own listings" on public.listings
+  for update to authenticated
+  using (auth.uid() = owner_user_id)
+  with check (auth.uid() = owner_user_id);
+
+create or replace function public.enforce_listing_moderation()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if NEW.status = 'active' and OLD.status = 'pending' and not public.is_admin() then
+    raise exception 'New listings must be approved by an admin before they go live.';
+  end if;
+  return NEW;
+end;
+$$;
+
+drop trigger if exists trg_enforce_listing_moderation on public.listings;
+create trigger trg_enforce_listing_moderation
+  before update on public.listings
+  for each row execute function public.enforce_listing_moderation();
+
 -- 3) Storage: allow uploads + reads on the "Listings" bucket (photos + videos).
 drop policy if exists "public upload to Listings" on storage.objects;
 create policy "public upload to Listings" on storage.objects
