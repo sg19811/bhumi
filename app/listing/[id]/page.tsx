@@ -15,6 +15,7 @@ import SuitabilityPanel from "@/app/components/SuitabilityPanel";
 import VerificationPanel from "@/app/components/VerificationPanel";
 import ListingCard from "@/app/components/ListingCard";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
+import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
 import ShareButton from "@/app/components/ShareButton";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
@@ -114,6 +115,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <TrackRecentlyViewed id={listing.id} />
+      <TrackView id={listing.id} />
       <Header />
       <main className="mx-auto max-w-4xl px-5 py-6 sm:px-6 sm:py-8">
         <div className="mb-5 flex items-center justify-between gap-3">
@@ -152,6 +154,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
                 Listed {new Date(listing.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                 {listing.updated_at && listing.updated_at !== listing.created_at &&
                   ` · Updated ${new Date(listing.updated_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`}
+                {typeof listing.views === "number" && listing.views > 0 && ` · 👁 ${listing.views.toLocaleString("en-IN")} views`}
               </p>
             )}
           </div>

@@ -91,6 +91,7 @@ export default function MyListings() {
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${statusStyle[l.status] ?? "bg-gray-100 text-gray-600"}`}>
                   {l.status ?? "active"}
                 </span>
+                <span className="text-xs text-gray-500">👁 {(l.views ?? 0).toLocaleString("en-IN")}</span>
                 <Link href={`/listing/${l.id}/edit`} className="text-xs font-medium text-green-800 hover:underline">
                   Edit
                 </Link>

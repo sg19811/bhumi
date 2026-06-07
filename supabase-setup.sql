@@ -211,7 +211,17 @@ drop policy if exists "admins read verification docs" on storage.objects;
 create policy "admins read verification docs" on storage.objects
   for select to authenticated using (bucket_id = 'verification' and public.is_admin());
 
--- 12) Refresh the API schema cache.
+-- 12) Listing view counter — anon can increment via a SECURITY DEFINER function
+--     (so it never needs broad UPDATE rights on listings).
+alter table public.listings add column if not exists views integer not null default 0;
+
+create or replace function public.increment_listing_views(lid uuid)
+returns void language sql security definer set search_path = public as $$
+  update public.listings set views = views + 1 where id = lid;
+$$;
+grant execute on function public.increment_listing_views(uuid) to anon, authenticated;
+
+-- 13) Refresh the API schema cache.
 notify pgrst, 'reload schema';
 
 -- ============================================================

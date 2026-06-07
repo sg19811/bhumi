@@ -105,6 +105,7 @@ export default function AgentDashboard() {
   const pending = listings.filter((l) => l.status === "pending").length;
   const sold = listings.filter((l) => l.status === "sold").length;
   const newLeads = leads.filter((l) => (l.lead_status ?? "new") === "new").length;
+  const totalViews = listings.reduce((s, l) => s + (l.views || 0), 0);
   const districts = [...new Set(listings.map((l) => l.district).filter(Boolean))];
   const soldListings = listings.filter((l) => l.status === "sold");
   const commissionTotal = Object.values(deals).reduce((sum, d) => sum + (Number(d.commission_amount) || 0), 0);
@@ -123,12 +124,13 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-5">
+        <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           <Stat value={listings.length} label="Listings" />
           <Stat value={active} label="Active" />
           <Stat value={pending} label="Pending" color="text-amber-700" />
           <Stat value={sold} label="Sold" color="text-gray-600" />
           <Stat value={newLeads} label="New leads" color="text-blue-700" />
+          <Stat value={totalViews} label="Views" color="text-blue-700" />
         </div>
 
         {districts.length > 0 && (
