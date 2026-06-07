@@ -51,6 +51,7 @@ export default function AgentDashboard() {
   const [deals, setDeals] = useState<Record<string, { sale_price: number | null; commission_amount: number | null }>>({});
   const [market, setMarket] = useState<any[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [leadFilter, setLeadFilter] = useState<string>("all");
 
   useEffect(() => {
     if (!allowed || !user) return;
@@ -111,6 +112,12 @@ export default function AgentDashboard() {
   const commissionTotal = Object.values(deals).reduce((sum, d) => sum + (Number(d.commission_amount) || 0), 0);
   const ppaByType = avgPpaBy(market, "land_type");
   const ppaByDistrict = avgPpaBy(market, "district");
+
+  // Lead pipeline + conversion.
+  const pipeline = { new: 0, contacted: 0, closed: 0 };
+  for (const l of leads) { const s = (l.lead_status ?? "new") as keyof typeof pipeline; if (s in pipeline) pipeline[s]++; }
+  const conversion = leads.length ? Math.round((pipeline.closed / leads.length) * 100) : 0;
+  const filteredLeads = leadFilter === "all" ? leads : leads.filter((l) => (l.lead_status ?? "new") === leadFilter);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
@@ -181,14 +188,51 @@ export default function AgentDashboard() {
           </section>
         )}
 
-        <h2 className="mb-4 text-lg font-semibold">Leads ({leads.length})</h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">Leads ({leads.length})</h2>
+          {leads.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {[{ k: "all", l: `All ${leads.length}` }, { k: "new", l: `New ${pipeline.new}` }, { k: "contacted", l: `Contacted ${pipeline.contacted}` }, { k: "closed", l: `Closed ${pipeline.closed}` }].map((o) => (
+                <button
+                  key={o.k}
+                  onClick={() => setLeadFilter(o.k)}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${leadFilter === o.k ? "border-green-600 bg-green-50 text-green-800" : "border-gray-300 text-gray-600 hover:border-green-400"}`}
+                >
+                  {o.l}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {leads.length > 0 && (
+          <div className="mb-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="mb-2 flex items-center justify-between text-sm">
+              <span className="font-medium text-gray-700">Pipeline</span>
+              <span className="text-gray-500">Conversion <span className="font-semibold text-green-800">{conversion}%</span></span>
+            </div>
+            <div className="flex h-2.5 overflow-hidden rounded-full bg-gray-100">
+              {pipeline.new > 0 && <div className="bg-amber-400" style={{ width: `${(pipeline.new / leads.length) * 100}%` }} title={`New ${pipeline.new}`} />}
+              {pipeline.contacted > 0 && <div className="bg-blue-500" style={{ width: `${(pipeline.contacted / leads.length) * 100}%` }} title={`Contacted ${pipeline.contacted}`} />}
+              {pipeline.closed > 0 && <div className="bg-green-600" style={{ width: `${(pipeline.closed / leads.length) * 100}%` }} title={`Closed ${pipeline.closed}`} />}
+            </div>
+            <div className="mt-2 flex gap-4 text-xs text-gray-500">
+              <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-amber-400 align-middle" />New {pipeline.new}</span>
+              <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-blue-500 align-middle" />Contacted {pipeline.contacted}</span>
+              <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-green-600 align-middle" />Closed {pipeline.closed}</span>
+            </div>
+          </div>
+        )}
+
         {leads.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-gray-300 bg-white py-12 text-center text-gray-400">
             No leads yet. They appear here when buyers send an inquiry on your listings.
           </p>
+        ) : filteredLeads.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-gray-300 bg-white py-10 text-center text-gray-400">No {leadFilter} leads.</p>
         ) : (
           <div className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            {leads.map((lead) => {
+            {filteredLeads.map((lead) => {
               const status = lead.lead_status ?? "new";
               return (
                 <div key={lead.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
