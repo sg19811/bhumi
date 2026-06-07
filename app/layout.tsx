@@ -16,12 +16,19 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bhumi.vercel.app"),
   title: "Bhūmi — Trusted agricultural land marketplace",
   description: "Find verified agricultural land, farmhouse plots, and orchards with legal clarity and real boundaries.",
   openGraph: {
     title: "Bhūmi — Trusted agricultural land marketplace",
     description: "Verified listings with legal clarity and real boundaries.",
     type: "website",
+    siteName: "Bhūmi",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bhūmi — Trusted agricultural land marketplace",
+    description: "Verified listings with legal clarity and real boundaries.",
   },
 };
 

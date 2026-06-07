@@ -10,7 +10,9 @@ export default function Footer() {
           <Link href="/explore" className="hover:text-green-800">Explore</Link>
           <Link href="/buy" className="hover:text-green-800">Buy land</Link>
           <Link href="/how-it-works" className="hover:text-green-800">How it works</Link>
+          <Link href="/tools/area-converter" className="hover:text-green-800">Area converter</Link>
           <Link href="/eligibility" className="hover:text-green-800">Eligibility</Link>
+          <Link href="/faq" className="hover:text-green-800">FAQ</Link>
           <Link href="/about" className="hover:text-green-800">About</Link>
         </nav>
         <p className="text-xs text-gray-400">© 2026 Bhūmi · Trusted land marketplace</p>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import SearchBar from "@/app/components/SearchBar";
 import RecentlyViewed from "@/app/components/RecentlyViewed";
+import ListingCard from "@/app/components/ListingCard";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 
@@ -53,6 +54,7 @@ const trust = [
 export default async function Home() {
   const { count } = await supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active");
   const { count: buyerCount } = await supabase.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
+  const { data: latest } = await supabase.from("listings").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(4);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -142,6 +144,24 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* Just listed */}
+      {latest && latest.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-20">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold sm:text-3xl">Just listed</h2>
+              <p className="mt-0.5 text-gray-500">The newest land on Bhūmi.</p>
+            </div>
+            <Link href="/explore" className="shrink-0 text-sm font-medium text-green-800 hover:underline">View all →</Link>
+          </div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {latest.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Trust pillars */}
       <section className="mx-auto max-w-5xl px-6 py-16 sm:py-20">

@@ -48,6 +48,12 @@ export default function Header() {
           {user ? (
             <>
               <Link
+                href="/my-listings"
+                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+              >
+                My listings
+              </Link>
+              <Link
                 href="/saved"
                 className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
               >
@@ -101,6 +107,9 @@ export default function Header() {
           <span className="my-1 h-px w-full bg-gray-200" />
           {user ? (
             <>
+              <Link href="/my-listings" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                My listings
+              </Link>
               <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                 Saved
               </Link>

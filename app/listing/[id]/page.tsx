@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import PhotoGallery from "@/app/components/PhotoGallery";
 import VerifyChecklist from "@/app/components/VerifyChecklist";
+import MapActions from "@/app/components/MapActions";
 import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
@@ -96,16 +97,31 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
       url,
     },
   };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://bhumi.vercel.app/" },
+      { "@type": "ListItem", position: 2, name: "Explore", item: "https://bhumi.vercel.app/explore" },
+      { "@type": "ListItem", position: 3, name: listing.title, item: url },
+    ],
+  };
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <TrackRecentlyViewed id={listing.id} />
       <Header />
       <main className="mx-auto max-w-4xl px-5 py-6 sm:px-6 sm:py-8">
-        <div className="mb-5 flex items-center justify-between">
-          <Link href="/explore" className="inline-flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-green-800">
-            <span aria-hidden="true">←</span> All listings
-          </Link>
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <nav className="flex min-w-0 items-center gap-1.5 text-sm text-gray-500" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-green-800">Home</Link>
+            <span aria-hidden="true" className="text-gray-300">/</span>
+            <Link href="/explore" className="hover:text-green-800">Explore</Link>
+            <span aria-hidden="true" className="text-gray-300">/</span>
+            <span className="truncate text-gray-400">{listing.title}</span>
+          </nav>
           <OwnerEditLink listingId={listing.id} ownerUserId={listing.owner_user_id} />
         </div>
 
@@ -119,6 +135,13 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
               </svg>
               {[listing.village, listing.taluka, listing.district].filter(Boolean).join(", ")}
             </p>
+            {listing.created_at && (
+              <p className="mt-1 text-xs text-gray-400">
+                Listed {new Date(listing.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                {listing.updated_at && listing.updated_at !== listing.created_at &&
+                  ` · Updated ${new Date(listing.updated_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`}
+              </p>
+            )}
           </div>
           <div className="shrink-0">
             <TrustScore listing={listing} variant="badge" />
@@ -135,9 +158,14 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           </div>
         )}
 
-        <div className="mb-6 h-[320px] overflow-hidden rounded-2xl border border-gray-200 sm:h-[380px]">
+        <div className="mb-3 h-[320px] overflow-hidden rounded-2xl border border-gray-200 sm:h-[380px]">
           <MapLoader markers={[{ id: listing.id, latitude: listing.latitude, longitude: listing.longitude, title: listing.title, price: listing.price, area_value: listing.area_value, area_unit: listing.area_unit }]} center={[listing.latitude, listing.longitude]} zoom={14} height="100%" />
         </div>
+        {listing.latitude && listing.longitude && (
+          <div className="mb-8">
+            <MapActions lat={listing.latitude} lng={listing.longitude} />
+          </div>
+        )}
 
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : listing.price_basis === "per_sqft" ? "per sq ft" : "total"}</p>{ppa && listing.price_basis !== "per_acre" && <p className="mt-1 text-xs text-gray-400">≈ {formatINRShort(ppa)}/acre</p>}</div>

@@ -1,0 +1,81 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
+import ListingCard from "@/app/components/ListingCard";
+import { supabase } from "@/app/lib/supabase";
+import { useAuth } from "@/app/lib/auth";
+
+const statusStyle: Record<string, string> = {
+  active: "bg-green-100 text-green-800",
+  sold: "bg-gray-200 text-gray-700",
+  withdrawn: "bg-amber-100 text-amber-800",
+};
+
+export default function MyListings() {
+  const { user, loading } = useAuth();
+  const [listings, setListings] = useState<any[]>([]);
+  const [fetched, setFetched] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("listings")
+      .select("*")
+      .eq("owner_user_id", user.id)
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setListings(data ?? []);
+        setFetched(true);
+      });
+  }, [user]);
+
+  if (loading) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;
+
+  return (
+    <div className="flex min-h-screen flex-col bg-white text-gray-900">
+      <Header />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-10 sm:px-6">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h1 className="text-3xl font-bold">My listings</h1>
+          <Link href="/listing/new" className="shrink-0 rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-800">
+            + New listing
+          </Link>
+        </div>
+
+        {!user && (
+          <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
+            <p className="mb-4 text-gray-500">Sign in to manage the listings you&apos;ve posted with an account.</p>
+            <Link href="/auth/signin" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">Sign in</Link>
+          </div>
+        )}
+
+        {user && fetched && listings.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
+            <p className="mb-4 text-gray-500">You haven&apos;t posted any listings from this account yet.</p>
+            <Link href="/listing/new" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">List your land</Link>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {listings.map((l) => (
+            <div key={l.id}>
+              <ListingCard listing={l} />
+              <div className="mt-1.5 flex items-center justify-between px-1">
+                <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${statusStyle[l.status] ?? "bg-gray-100 text-gray-600"}`}>
+                  {l.status ?? "active"}
+                </span>
+                <Link href={`/listing/${l.id}/edit`} className="text-xs font-medium text-green-800 hover:underline">
+                  Edit
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
