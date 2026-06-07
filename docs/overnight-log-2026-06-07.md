@@ -88,3 +88,24 @@ app-level only (no DB enum), matching the migration.
 **Open questions:** validation runs client-side in the submit handlers (this branch's create/edit are
 client components, as on `main`); enforcing at a server boundary is the same architecture question
 flagged for listings generally — not changed here.
+
+---
+
+## Phase 4 — Listing detail conditional sections
+
+**New:** `app/components/farm-plots/{FarmProjectSections,ProjectOverviewCard,PlotInventoryTable,
+AmenitiesGrid,DeveloperProfileCard,CorridorBadge}.tsx`. **Changed:** `app/listing/[id]/page.tsx`
+mounts `<FarmProjectSections listing={listing} />` between the stat tiles/legal-links and the
+PriceInsight/Trust block.
+- `FarmProjectSections` self-gates via `isProjectType` (renders null for non-projects → safe to mount
+  unconditionally). Composes overview → plot table → amenities → developer card.
+- `ProjectOverviewCard` — null-safe stat grid (acres, plots, plot-size range, stage, possession,
+  distance/time, maintenance, layout/conversion) + `CorridorBadge`.
+- `PlotInventoryTable` (client) — fetches `farm_project_plots` via the anon client (RLS-scoped),
+  sortable columns, `overflow-x-auto` for mobile, and **graceful empty/missing-table state**
+  ("Plot inventory will appear here…") — pre-migration the query errors and we just show that.
+- `AmenitiesGrid` (empty-safe), `DeveloperProfileCard` (placeholder name + contact), `CorridorBadge`
+  (links to `/farm-plots/[corridor]`, hidden for unknown slug).
+**Untouched:** Trust Score, Suitability, photos, map, save/share/compare, inquiry — all still render.
+**Verified:** tsc + `next build` clean.
+**Open questions:** none.

@@ -21,6 +21,7 @@ import ShareButton from "@/app/components/ShareButton";
 import ReportButton from "@/app/components/ReportButton";
 import StickyContactBar from "@/app/components/StickyContactBar";
 import PriceInsightPanel from "@/app/components/PriceInsight";
+import FarmProjectSections from "@/app/components/farm-plots/FarmProjectSections";
 import { buildPriceInsight } from "@/app/lib/price-insight";
 import { districtToState } from "@/app/lib/legal/districts";
 import { stateLabel } from "@/app/lib/legal/options";
@@ -228,6 +229,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             <Link href={`/legal/state/${districtToState(listing.district)}`} className="font-medium text-green-800 hover:underline">📖 Land rules in {stateLabel(districtToState(listing.district)!)} →</Link>
           )}
         </div>
+
+        {/* Farm-project sections (renders only for project-type listings; null-safe). */}
+        <FarmProjectSections listing={listing} />
 
         {priceInsight && <PriceInsightPanel insight={priceInsight} />}
 
