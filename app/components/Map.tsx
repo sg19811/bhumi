@@ -52,12 +52,14 @@ function Focuser({ focusId, focusTick, markers, markerRefs }: { focusId?: string
 }
 
 export default function Map({ markers, center, zoom = 11, height = "400px", focusId, focusTick }: { markers: MarkerData[]; center?: [number, number]; zoom?: number; height?: string; focusId?: string; focusTick?: number }) {
-  const c: [number, number] = center ?? (markers.length > 0 ? [markers[0].latitude, markers[0].longitude] : [12.97, 77.59]);
+  // Guard against listings with missing/invalid coordinates (legacy/bad data).
+  const validMarkers = markers.filter((m) => Number.isFinite(m.latitude) && Number.isFinite(m.longitude));
+  const c: [number, number] = center ?? (validMarkers.length > 0 ? [validMarkers[0].latitude, validMarkers[0].longitude] : [12.97, 77.59]);
   const markerRefs = useRef<Record<string, L.Marker>>({});
   return (
     <MapContainer center={c} zoom={zoom} style={{ height, width: "100%" }}>
       <ResizeHandler />
-      <Focuser focusId={focusId} focusTick={focusTick} markers={markers} markerRefs={markerRefs} />
+      <Focuser focusId={focusId} focusTick={focusTick} markers={validMarkers} markerRefs={markerRefs} />
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Street">
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
@@ -69,7 +71,7 @@ export default function Map({ markers, center, zoom = 11, height = "400px", focu
           <TileLayer url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png" attribution='&copy; OpenTopoMap (CC-BY-SA)' maxZoom={17} />
         </LayersControl.BaseLayer>
       </LayersControl>
-      {markers.map((m) => (
+      {validMarkers.map((m) => (
         <Marker key={m.id} position={[m.latitude, m.longitude]} icon={priceIcon(m.price)} ref={(inst) => { if (inst) markerRefs.current[m.id] = inst; }}>
           <Popup>
             <Link href={`/listing/${m.id}`} className="font-semibold text-green-800 hover:underline">{m.title}</Link><br />

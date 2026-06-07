@@ -62,10 +62,20 @@ drop policy if exists "public read Listings" on storage.objects;
 create policy "public read Listings" on storage.objects
   for select to public using (bucket_id = 'Listings');
 
--- 4) Profiles: a user can read their own row (for the role check).
+-- 4) Profiles: one row per user; a user can read and update their own row.
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'profiles_user_id_unique') then
+    alter table public.profiles add constraint profiles_user_id_unique unique (user_id);
+  end if;
+end $$;
+
 drop policy if exists "read own profile" on public.profiles;
 create policy "read own profile" on public.profiles
   for select to authenticated using (auth.uid() = user_id);
+
+drop policy if exists "update own profile" on public.profiles;
+create policy "update own profile" on public.profiles
+  for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- 5) Inquiries: lead status + read/update policies.
 alter table public.inquiries add column if not exists lead_status text not null default 'new';

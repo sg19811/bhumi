@@ -168,13 +168,15 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           </div>
         )}
 
-        <div className="mb-3 h-[320px] overflow-hidden rounded-2xl border border-gray-200 sm:h-[380px]">
-          <MapLoader markers={[{ id: listing.id, latitude: listing.latitude, longitude: listing.longitude, title: listing.title, price: listing.price, area_value: listing.area_value, area_unit: listing.area_unit }]} center={[listing.latitude, listing.longitude]} zoom={14} height="100%" />
-        </div>
-        {listing.latitude && listing.longitude && (
-          <div className="mb-8">
-            <MapActions lat={listing.latitude} lng={listing.longitude} />
-          </div>
+        {Number.isFinite(listing.latitude) && Number.isFinite(listing.longitude) && (
+          <>
+            <div className="mb-3 h-[320px] overflow-hidden rounded-2xl border border-gray-200 sm:h-[380px]">
+              <MapLoader markers={[{ id: listing.id, latitude: listing.latitude, longitude: listing.longitude, title: listing.title, price: listing.price, area_value: listing.area_value, area_unit: listing.area_unit }]} center={[listing.latitude, listing.longitude]} zoom={14} height="100%" />
+            </div>
+            <div className="mb-8">
+              <MapActions lat={listing.latitude} lng={listing.longitude} />
+            </div>
+          </>
         )}
 
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">

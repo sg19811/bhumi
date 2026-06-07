@@ -71,7 +71,7 @@ export default function NewListing() {
           <h1 className="mb-2 text-2xl font-bold">Listing submitted!</h1>
           <p className="mb-8 text-gray-500">Thanks! Our team reviews new listings before they go live — yours will appear publicly once approved.</p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
-            <button onClick={() => setSuccess(false)} className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Create another</button>
+            <button onClick={() => { setSuccess(false); setStep(0); }} className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Create another</button>
             <Link href="/explore" className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">View listings</Link>
           </div>
         </main>
