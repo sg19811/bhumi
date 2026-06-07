@@ -83,23 +83,47 @@ export default function AdminDashboard() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [buyers, setBuyers] = useState<any[]>([]);
   const [searchLogs, setSearchLogs] = useState<any[]>([]);
+  const [verifications, setVerifications] = useState<any[]>([]);
+  const [vBusy, setVBusy] = useState<string | null>(null);
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s] = await Promise.all([
+      const [l, i, b, s, v] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
         supabase.from("search_logs").select("*").order("created_at", { ascending: false }).limit(1000),
+        supabase.from("verification_requests").select("*, listings(title)").eq("status", "pending").order("created_at", { ascending: false }),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
       setBuyers(b.data ?? []);
       setSearchLogs(s.data ?? []);
+      setVerifications(v.data ?? []);
     })();
   }, [isAdmin]);
+
+  async function viewDoc(path: string) {
+    const { data } = await supabase.storage.from("verification").createSignedUrl(path, 3600);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
+  }
+  async function approveVerification(reqId: string, listingId: string) {
+    setVBusy(reqId);
+    await supabase.from("verification_requests").update({ status: "approved", reviewed_at: new Date().toISOString() }).eq("id", reqId);
+    await supabase.from("listings").update({ is_verified: true }).eq("id", listingId);
+    setVerifications((cur) => cur.filter((r) => r.id !== reqId));
+    setListings((cur) => cur.map((l) => (l.id === listingId ? { ...l, is_verified: true } : l)));
+    setVBusy(null);
+  }
+  async function rejectVerification(reqId: string) {
+    const note = prompt("Reason for rejection (shown to the seller):") ?? "";
+    setVBusy(reqId);
+    await supabase.from("verification_requests").update({ status: "rejected", note, reviewed_at: new Date().toISOString() }).eq("id", reqId);
+    setVerifications((cur) => cur.filter((r) => r.id !== reqId));
+    setVBusy(null);
+  }
 
   if (loading) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;
 
@@ -142,6 +166,31 @@ export default function AdminDashboard() {
           <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
             <span className="font-semibold">{pending}</span> listing{pending > 1 ? "s" : ""} awaiting review — they stay hidden from buyers until you Approve them below.
           </div>
+        )}
+
+        {verifications.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-lg font-semibold">Verification requests ({verifications.length})</h2>
+            <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
+              {verifications.map((v) => (
+                <div key={v.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <Link href={`/listing/${v.listing_id}`} className="text-sm font-medium hover:text-green-700">{v.listings?.title ?? "a listing"}</Link>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {(v.documents ?? []).map((d: string, i: number) => (
+                        <button key={i} onClick={() => viewDoc(d)} className="rounded-full border border-gray-300 px-2.5 py-1 text-xs text-gray-600 hover:border-green-600 hover:text-green-800">📄 Doc {i + 1}</button>
+                      ))}
+                      {(v.documents ?? []).length === 0 && <span className="text-xs text-gray-400">No documents attached</span>}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 gap-2">
+                    <button onClick={() => approveVerification(v.id, v.listing_id)} disabled={vBusy === v.id} className="rounded-full bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-800 disabled:opacity-50">Approve</button>
+                    <button onClick={() => rejectVerification(v.id)} disabled={vBusy === v.id} className="rounded-full border border-gray-300 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50">Reject</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         <div className="grid gap-8 md:grid-cols-2">

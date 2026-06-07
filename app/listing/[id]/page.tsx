@@ -12,6 +12,7 @@ import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
 import TrustScore from "@/app/components/TrustScore";
 import SuitabilityPanel from "@/app/components/SuitabilityPanel";
+import VerificationPanel from "@/app/components/VerificationPanel";
 import ListingCard from "@/app/components/ListingCard";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
 import AddToCollection from "@/app/components/AddToCollection";
@@ -194,6 +195,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         <div className="mb-8">
           <TrustScore listing={listing} variant="full" />
         </div>
+
+        <VerificationPanel listingId={listing.id} ownerUserId={listing.owner_user_id} isVerified={!!listing.is_verified} />
 
         <div className="mb-8">
           <SuitabilityPanel listing={listing} />

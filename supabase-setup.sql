@@ -173,7 +173,45 @@ drop policy if exists "admins read deals" on public.deals;
 create policy "admins read deals" on public.deals
   for select to authenticated using (public.is_admin());
 
--- 10) Refresh the API schema cache.
+-- 11) Verification requests — sellers submit ownership docs; admins review.
+--     Create a PRIVATE storage bucket named "verification" (Public OFF) in the
+--     dashboard; the policies below allow uploads + admin-only reads.
+create table if not exists public.verification_requests (
+  id            uuid primary key default gen_random_uuid(),
+  listing_id    uuid not null references public.listings (id) on delete cascade,
+  owner_user_id uuid not null references auth.users (id) on delete cascade,
+  documents     text[] not null default '{}',   -- storage paths in the "verification" bucket
+  status        text not null default 'pending', -- pending | approved | rejected
+  note          text,
+  created_at    timestamptz not null default now(),
+  reviewed_at   timestamptz
+);
+create index if not exists verification_status_idx on public.verification_requests (status);
+create index if not exists verification_owner_idx on public.verification_requests (owner_user_id);
+alter table public.verification_requests enable row level security;
+
+drop policy if exists "owners manage own verification" on public.verification_requests;
+create policy "owners manage own verification" on public.verification_requests
+  for all to authenticated using (auth.uid() = owner_user_id) with check (auth.uid() = owner_user_id);
+
+drop policy if exists "admins read verification" on public.verification_requests;
+create policy "admins read verification" on public.verification_requests
+  for select to authenticated using (public.is_admin());
+
+drop policy if exists "admins update verification" on public.verification_requests;
+create policy "admins update verification" on public.verification_requests
+  for update to authenticated using (public.is_admin()) with check (public.is_admin());
+
+-- Private "verification" bucket: authenticated users upload; only admins read.
+drop policy if exists "auth upload verification docs" on storage.objects;
+create policy "auth upload verification docs" on storage.objects
+  for insert to authenticated with check (bucket_id = 'verification');
+
+drop policy if exists "admins read verification docs" on storage.objects;
+create policy "admins read verification docs" on storage.objects
+  for select to authenticated using (bucket_id = 'verification' and public.is_admin());
+
+-- 12) Refresh the API schema cache.
 notify pgrst, 'reload schema';
 
 -- ============================================================
