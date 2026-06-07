@@ -1,9 +1,107 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: #171717;
+/* ============================================================
+   Bhūmi design system
+   Earthy, trustworthy land marketplace — forest greens + warm sand neutrals.
+   Tokens below retint Tailwind's default `green`/`gray` scales, so the
+   existing utility classes across the app inherit the new palette with
+   no markup changes.
+   ============================================================ */
+@theme {
+  /* Brand — warm forest / olive green */
+  --color-green-50: #f4f7ee;
+  --color-green-100: #e6edd6;
+  --color-green-200: #cedbb2;
+  --color-green-300: #aec283;
+  --color-green-400: #8ea758;
+  --color-green-500: #6f8a3c;
+  --color-green-600: #566d2d;
+  --color-green-700: #445626;
+  --color-green-800: #38461f;
+  --color-green-900: #2f3a1d;
+  --color-green-950: #181f0d;
+
+  /* Neutrals — warm sand / stone (replaces cool grays) */
+  --color-gray-50: #f6f4ec;
+  --color-gray-100: #ece8dd;
+  --color-gray-200: #e2ddcf;
+  --color-gray-300: #cfc8b6;
+  --color-gray-400: #a59d8a;
+  --color-gray-500: #756e5d;
+  --color-gray-600: #564f40;
+  --color-gray-700: #423c30;
+  --color-gray-800: #2b2820;
+  --color-gray-900: #1d1b14;
+  --color-gray-950: #121009;
+
+  /* Warm paper white for surfaces */
+  --color-white: #fdfcf9;
+
+  /* Type */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Softer, warmer radii */
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.25rem;
+
+  /* Warm-tinted, soft shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(60 50 25 / 0.06);
+  --shadow-md: 0 6px 20px -6px rgb(55 45 20 / 0.14);
+  --shadow-lg: 0 14px 36px -10px rgb(50 40 18 / 0.18);
+  --shadow-xl: 0 24px 56px -14px rgb(45 36 16 / 0.22);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-white);
+    color: var(--color-gray-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Display serif for headings gives an editorial, premium, "land" warmth */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+  h3 {
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: var(--color-green-200);
+    color: var(--color-green-950);
+  }
+
+  /* Accessible, on-brand keyboard focus */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--color-green-600);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* Map popups inherit the app font instead of Leaflet's default */
+.leaflet-popup-content,
+.leaflet-container {
+  font-family: var(--font-sans);
+}
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-lg);
 }

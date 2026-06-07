@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
+import Logo from "@/app/components/Logo";
 
 export default function BuyLand() {
   const [submitting, setSubmitting] = useState(false);
@@ -44,25 +45,25 @@ export default function BuyLand() {
   if (success) {
     return (
       <div className="min-h-screen bg-white text-gray-900">
-        <header className="border-b px-6 py-4">
-          <Link href="/" className="text-2xl font-bold text-green-800">Bhūmi</Link>
+        <header className="border-b border-gray-200 px-5 py-3.5 sm:px-6">
+          <Logo />
         </header>
-        <main className="max-w-lg mx-auto px-6 py-20 text-center">
-          <div className="text-5xl mb-4">✓</div>
-          <h1 className="text-2xl font-bold mb-2">Requirement posted!</h1>
-          <p className="text-gray-500 mb-8">
+        <main className="mx-auto max-w-lg px-6 py-20 text-center">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">✓</div>
+          <h1 className="mb-2 text-2xl font-bold">Requirement posted!</h1>
+          <p className="mb-8 text-gray-500">
             We&apos;ll match you with suitable land listings and notify you.
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/explore"
-              className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800"
+              className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800"
             >
               Browse listings
             </Link>
             <Link
               href="/"
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50"
             >
               Go home
             </Link>
@@ -99,7 +100,7 @@ export default function BuyLand() {
               <select
                 name="intent"
                 required
-                className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
               >
                 <option value="">Select</option>
                 <option value="farming">Farming</option>
@@ -143,7 +144,7 @@ export default function BuyLand() {
                 <input
                   name="preferred_district"
                   placeholder="e.g. Mysuru"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
               <div>
@@ -151,7 +152,7 @@ export default function BuyLand() {
                 <input
                   name="preferred_taluka"
                   placeholder="e.g. Hunsur"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
             </div>
@@ -166,7 +167,7 @@ export default function BuyLand() {
                   name="budget_min"
                   type="number"
                   placeholder="e.g. 2000000"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
               <div>
@@ -175,7 +176,7 @@ export default function BuyLand() {
                   name="budget_max"
                   type="number"
                   placeholder="e.g. 10000000"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
             </div>
@@ -187,7 +188,7 @@ export default function BuyLand() {
                   type="number"
                   step="0.1"
                   placeholder="e.g. 1"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
               <div>
@@ -197,7 +198,7 @@ export default function BuyLand() {
                   type="number"
                   step="0.1"
                   placeholder="e.g. 5"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
             </div>
@@ -205,7 +206,7 @@ export default function BuyLand() {
               <label className="block text-sm font-medium mb-1">Irrigation preference</label>
               <select
                 name="irrigation_pref"
-                className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
               >
                 <option value="">No preference</option>
                 <option value="borewell">Borewell</option>
@@ -225,7 +226,7 @@ export default function BuyLand() {
                   name="contact_phone"
                   required
                   placeholder="e.g. 9876543210"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
               <div>
@@ -233,7 +234,7 @@ export default function BuyLand() {
                 <input
                   name="contact_whatsapp"
                   placeholder="Same as phone if blank"
-                  className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
               </div>
             </div>
@@ -243,7 +244,7 @@ export default function BuyLand() {
                 name="notes"
                 rows={3}
                 placeholder="Any specific requirements — soil type, nearby town, timeline..."
-                className="w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
               />
             </div>
           </section>
@@ -251,9 +252,9 @@ export default function BuyLand() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-green-700 text-white py-3 rounded-lg text-lg font-medium hover:bg-green-800 disabled:opacity-50"
+            className="w-full rounded-full bg-green-700 py-3.5 text-lg font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50"
           >
-            {submitting ? "Submitting..." : "Post my requirement"}
+            {submitting ? "Submitting…" : "Post my requirement"}
           </button>
         </form>
       </main>

@@ -1,11 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/lib/auth";
+import Logo from "@/app/components/Logo";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const pathname = usePathname();
   const links = [
     { href: "/explore", label: "Explore" },
     { href: "/listing/new", label: "List your land" },
@@ -13,34 +16,110 @@ export default function Header() {
     { href: "/requirements", label: "Requirements" },
     { href: "/eligibility", label: "Eligibility" },
   ];
+  const isActive = (href: string) =>
+    pathname === href || (href !== "/" && pathname?.startsWith(href));
+
   return (
-    <header className="border-b px-6 py-4">
-      <div className="flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold text-green-800">Bhūmi</Link>
-        <button className="md:hidden text-2xl" onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button>
-        <nav className="hidden md:flex items-center gap-5 text-sm">
-          {links.map((l) => <Link key={l.href} href={l.href} className="text-gray-600 hover:text-green-700">{l.label}</Link>)}
+    <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/85 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-6">
+        <Logo />
+        <button
+          className="-mr-1 flex h-10 w-10 items-center justify-center rounded-lg text-xl text-gray-700 hover:bg-gray-100 md:hidden"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          {open ? "✕" : "☰"}
+        </button>
+        <nav className="hidden items-center gap-1 text-sm md:flex">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`rounded-lg px-3 py-2 transition-colors ${
+                isActive(l.href)
+                  ? "font-medium text-green-800"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-green-800"
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <span className="mx-1 h-5 w-px bg-gray-200" />
           {user ? (
             <>
-              <Link href="/saved" className="text-gray-600 hover:text-green-700">Saved</Link>
-              <Link href="/admin" className="text-gray-600 hover:text-green-700">Dashboard</Link>
-              <button onClick={signOut} className="text-gray-400 hover:text-red-600 text-xs">Sign out</button>
+              <Link
+                href="/saved"
+                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+              >
+                Saved
+              </Link>
+              <Link
+                href="/admin"
+                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={signOut}
+                className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600"
+              >
+                Sign out
+              </button>
             </>
           ) : (
-            <Link href="/auth/signin" className="px-4 py-1.5 bg-green-700 text-white rounded-lg hover:bg-green-800">Sign in</Link>
+            <Link
+              href="/auth/signin"
+              className="rounded-full bg-green-700 px-5 py-2 font-medium text-white shadow-sm transition-colors hover:bg-green-800"
+            >
+              Sign in
+            </Link>
           )}
         </nav>
       </div>
       {open && (
-        <nav className="md:hidden flex flex-col gap-3 pt-4 text-sm border-t mt-4">
-          {links.map((l) => <Link key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</Link>)}
+        <nav className="flex flex-col gap-1 border-t border-gray-200 px-4 py-3 text-sm md:hidden">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className={`rounded-lg px-3 py-2.5 ${
+                isActive(l.href)
+                  ? "bg-green-50 font-medium text-green-800"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <span className="my-1 h-px w-full bg-gray-200" />
           {user ? (
             <>
-              <Link href="/saved" onClick={() => setOpen(false)}>Saved</Link>
-              <Link href="/admin" onClick={() => setOpen(false)}>Dashboard</Link>
-              <button onClick={() => { signOut(); setOpen(false); }} className="text-left text-red-600">Sign out</button>
+              <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                Saved
+              </Link>
+              <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                Dashboard
+              </Link>
+              <button
+                onClick={() => {
+                  signOut();
+                  setOpen(false);
+                }}
+                className="rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50"
+              >
+                Sign out
+              </button>
             </>
-          ) : <Link href="/auth/signin" onClick={() => setOpen(false)}>Sign in</Link>}
+          ) : (
+            <Link
+              href="/auth/signin"
+              onClick={() => setOpen(false)}
+              className="mt-1 rounded-full bg-green-700 px-3 py-2.5 text-center font-medium text-white"
+            >
+              Sign in
+            </Link>
+          )}
         </nav>
       )}
     </header>

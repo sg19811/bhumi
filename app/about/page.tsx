@@ -14,7 +14,7 @@ export default function About() {
         </p>
 
         <div className="space-y-6">
-          <div className="border rounded-lg p-6">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="font-semibold text-green-800 mb-2">How verification works</h2>
             <p className="text-sm text-gray-600">
               Every listing carries a trust status. A <span className="font-medium">Verified</span> badge
@@ -23,14 +23,14 @@ export default function About() {
               what you&apos;re looking at.
             </p>
           </div>
-          <div className="border rounded-lg p-6">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="font-semibold text-green-800 mb-2">Legal clarity first</h2>
             <p className="text-sm text-gray-600">
               We tell you up front whether you can buy a given type of land in a given state — with sources,
               not guesses. See our <Link href="/eligibility" className="text-green-700 hover:underline">eligibility guide</Link>.
             </p>
           </div>
-          <div className="border rounded-lg p-6">
+          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="font-semibold text-green-800 mb-2">Real maps, real boundaries</h2>
             <p className="text-sm text-gray-600">
               Land is about location. Every listing sits on an interactive map, so you can see exactly where
@@ -40,7 +40,7 @@ export default function About() {
         </div>
 
         <div className="mt-10 text-center">
-          <Link href="/explore" className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800">Browse listings</Link>
+          <Link href="/explore" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Browse listings</Link>
         </div>
       </main>
     </div>

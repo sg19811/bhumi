@@ -1,10 +1,11 @@
 import Link from "next/link";
+import Logo from "@/app/components/Logo";
 
 export default function Eligibility() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <header className="border-b px-6 py-4">
-        <Link href="/" className="text-2xl font-bold text-green-800">Bhūmi</Link>
+      <header className="border-b border-gray-200 px-5 py-3.5 sm:px-6">
+        <Logo />
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-10">
@@ -17,7 +18,7 @@ export default function Eligibility() {
         </p>
 
         <div className="space-y-8">
-          <section className="border rounded-lg p-6">
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-green-800 mb-4">
               Karnataka
             </h2>
@@ -76,7 +77,7 @@ export default function Eligibility() {
             </div>
           </section>
 
-          <section className="border rounded-lg p-6">
+          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-green-800 mb-4">
               Maharashtra
             </h2>
@@ -135,8 +136,8 @@ export default function Eligibility() {
             </div>
           </section>
 
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-            <p className="font-medium mb-1">Important disclaimer</p>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">
+            <p className="mb-1 font-semibold">Important disclaimer</p>
             <p>
               This is simplified guidance, not legal advice. Land law is
               state-specific and changes frequently. Always confirm critical
@@ -145,10 +146,10 @@ export default function Eligibility() {
             </p>
           </div>
 
-          <div className="text-center pt-4">
+          <div className="pt-4 text-center">
             <Link
               href="/explore"
-              className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800"
+              className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800"
             >
               Browse verified listings
             </Link>

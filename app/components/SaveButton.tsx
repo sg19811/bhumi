@@ -31,7 +31,7 @@ export default function SaveButton({ listingId }: { listingId: string }) {
 
   return (
     <button onClick={toggle} disabled={busy}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm border ${saved ? "bg-green-50 border-green-600 text-green-800" : "border-gray-300 hover:bg-gray-50"}`}>
+      className={`inline-flex items-center gap-2 rounded-full border px-5 py-3 text-sm font-medium transition-colors disabled:opacity-50 ${saved ? "border-green-600 bg-green-50 text-green-800" : "border-gray-300 bg-white text-gray-700 hover:border-green-600 hover:text-green-800"}`}>
       {saved ? "♥ Saved" : "♡ Save"}
     </button>
   );

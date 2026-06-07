@@ -19,11 +19,11 @@ export default function NewListing() {
     return (
       <div className="min-h-screen bg-white text-gray-900">
         <Header />
-        <main className="max-w-md mx-auto px-6 py-24 text-center">
-          <h1 className="text-2xl font-bold mb-2">Sign in to list your land</h1>
-          <p className="text-gray-500 mb-8">Create a free account to post and manage your listings.</p>
-          <Link href="/auth/signin" className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800">Sign in</Link>
-          <p className="mt-4 text-sm text-gray-500">No account? <Link href="/auth/signup" className="text-green-700 hover:underline">Create one</Link></p>
+        <main className="mx-auto max-w-md px-6 py-24 text-center">
+          <h1 className="mb-2 text-2xl font-bold">Sign in to list your land</h1>
+          <p className="mb-8 text-gray-500">Create a free account to post and manage your listings.</p>
+          <Link href="/auth/signin" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Sign in</Link>
+          <p className="mt-4 text-sm text-gray-500">No account? <Link href="/auth/signup" className="font-medium text-green-800 hover:underline">Create one</Link></p>
         </main>
       </div>
     );
@@ -54,20 +54,20 @@ export default function NewListing() {
     return (
       <div className="min-h-screen bg-white text-gray-900">
         <Header />
-        <main className="max-w-lg mx-auto px-6 py-20 text-center">
-          <div className="text-5xl mb-4">✓</div>
-          <h1 className="text-2xl font-bold mb-2">Listing created!</h1>
-          <p className="text-gray-500 mb-8">Your land listing is now live on Bhūmi.</p>
-          <div className="flex gap-4 justify-center">
-            <button onClick={() => setSuccess(false)} className="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800">Create another</button>
-            <Link href="/explore" className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View listings</Link>
+        <main className="mx-auto max-w-lg px-6 py-20 text-center">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">✓</div>
+          <h1 className="mb-2 text-2xl font-bold">Listing created!</h1>
+          <p className="mb-8 text-gray-500">Your land listing is now live on Bhūmi.</p>
+          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <button onClick={() => setSuccess(false)} className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Create another</button>
+            <Link href="/explore" className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">View listings</Link>
           </div>
         </main>
       </div>
     );
   }
 
-  const inp = "w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600";
+  const inp = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <Header />
@@ -138,8 +138,8 @@ export default function NewListing() {
             <h2 className="text-lg font-semibold text-green-800">Description</h2>
             <textarea name="description" rows={4} placeholder="Crops grown, soil type, nearby landmarks, why you're selling..." className={inp} />
           </section>
-          <button type="submit" disabled={submitting} className="w-full bg-green-700 text-white py-3 rounded-lg text-lg font-medium hover:bg-green-800 disabled:opacity-50">
-            {submitting ? "Publishing..." : "Publish listing"}
+          <button type="submit" disabled={submitting} className="w-full rounded-full bg-green-700 py-3.5 text-lg font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">
+            {submitting ? "Publishing…" : "Publish listing"}
           </button>
         </form>
       </main>

@@ -3,7 +3,7 @@ export default function WhatsAppShare({ title, price, url }: { title: string; pr
   const text = `Check out this land on Bhūmi:\n\n*${title}*\n₹${Number(price).toLocaleString("en-IN")}\n\n${url}`;
   return (
     <a href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+      className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-5 py-3 text-sm font-medium text-gray-700 transition-colors hover:border-green-600 hover:text-green-800">
       📱 Share on WhatsApp
     </a>
   );
