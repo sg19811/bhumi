@@ -122,7 +122,7 @@ export default async function Home() {
           </div>
 
           <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/listing/new" className="rounded-full bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">
+            <Link href="/sell" className="rounded-full bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">
               {t("home.listFree")}
             </Link>
             <Link href="/buy" className="rounded-full border border-green-700 px-6 py-3 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">
