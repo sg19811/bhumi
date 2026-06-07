@@ -6,6 +6,7 @@ import SearchLogger from "@/app/components/SearchLogger";
 import SavedSearches from "@/app/components/SavedSearches";
 import ActiveFilters from "@/app/components/ActiveFilters";
 import ExploreSplit from "@/app/components/ExploreSplit";
+import { cleanSearchTerm } from "@/app/lib/search";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,7 +24,8 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
   const sort = sp.sort && sortMap[sp.sort] ? sortMap[sp.sort] : { col: "created_at", asc: false };
 
   let query = supabase.from("listings").select("*").eq("status", "active");
-  if (sp.q) query = query.or(`title.ilike.%${sp.q}%,district.ilike.%${sp.q}%,taluka.ilike.%${sp.q}%,village.ilike.%${sp.q}%`);
+  const term = cleanSearchTerm(sp.q);
+  if (term) query = query.or(`title.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
   if (sp.land_type) query = query.eq("land_type", sp.land_type);
   if (sp.min_price) query = query.gte("price", Number(sp.min_price));
   if (sp.max_price) query = query.lte("price", Number(sp.max_price));

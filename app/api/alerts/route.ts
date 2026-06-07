@@ -1,4 +1,5 @@
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
+import { cleanSearchTerm } from "@/app/lib/search";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,8 @@ function escapeHtml(s: string) {
 // Apply a saved search's querystring filters to a listings query (mirrors /explore).
 function applyFilters(query: any, params: URLSearchParams) {
   const g = (k: string) => params.get(k);
-  if (g("q")) query = query.or(`title.ilike.%${g("q")}%,district.ilike.%${g("q")}%,taluka.ilike.%${g("q")}%,village.ilike.%${g("q")}%`);
+  const term = cleanSearchTerm(g("q"));
+  if (term) query = query.or(`title.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
   if (g("land_type")) query = query.eq("land_type", g("land_type"));
   if (g("min_price")) query = query.gte("price", Number(g("min_price")));
   if (g("max_price")) query = query.lte("price", Number(g("max_price")));
