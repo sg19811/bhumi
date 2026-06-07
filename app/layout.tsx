@@ -6,6 +6,7 @@ import { SavedSearchesProvider } from "@/app/lib/saved-searches";
 import { LanguageProvider } from "@/app/lib/i18n-client";
 import { getLocale } from "@/app/lib/i18n-server";
 import CompareTray from "@/app/components/CompareTray";
+import Analytics from "@/app/components/Analytics";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
+        <Analytics />
         <LanguageProvider locale={locale}>
         <AuthProvider>
           <SavedSearchesProvider>

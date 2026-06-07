@@ -35,13 +35,28 @@ is learning. Be explicit, never assume Linux/macOS conventions.
   a new dev server in the background — one is already running; tell the user to refresh.
 - `.env.local` and `node_modules` are gitignored (correctly) and per-machine.
 
-## Environment variables (three, exactly)
+## Environment variables (three required)
 
 | Name | Where | Purpose |
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` + Vercel | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` + Vercel | `sb_publishable_…` — safe in browser |
 | `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` + Vercel | `sb_secret_…` — **SERVER ONLY**, bypasses RLS |
+
+These three are required and validated at startup (`lib/env.ts`, imported in `app/layout.tsx`) —
+the app throws a clear error in production if any is missing/malformed.
+
+**Optional (analytics + email — leave unset and the feature stays off):**
+
+| Name | Purpose |
+|---|---|
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 (`G-…`) — Vercel only; `app/components/Analytics.tsx` |
+| `NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` | PostHog auto-pageviews (host defaults to `https://us.i.posthog.com`) |
+| `RESEND_API_KEY` / `ALERT_FROM_EMAIL` / `FOUNDER_EMAIL` | email alerts + weekly intelligence digest crons |
+| `CRON_SECRET` | protects the cron routes |
+
+Set analytics keys in the Vercel project (and `.env.local` if you want them locally). With them
+unset, no analytics scripts render — dev/local stays clean.
 
 Hard rule: **never** import `lib/supabase-server.ts` (the service-role client) into
 any `"use client"` file. Never prefix the service-role key with `NEXT_PUBLIC_`.
