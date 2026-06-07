@@ -18,6 +18,7 @@ export default function MyListings() {
   const { user, loading } = useAuth();
   const [listings, setListings] = useState<any[]>([]);
   const [fetched, setFetched] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -31,6 +32,13 @@ export default function MyListings() {
         setFetched(true);
       });
   }, [user]);
+
+  async function setStatus(id: string, status: string) {
+    setBusyId(id);
+    const { error } = await supabase.from("listings").update({ status }).eq("id", id);
+    if (!error) setListings((cur) => cur.map((l) => (l.id === id ? { ...l, status } : l)));
+    setBusyId(null);
+  }
 
   if (loading) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;
 
@@ -63,13 +71,22 @@ export default function MyListings() {
           {listings.map((l) => (
             <div key={l.id}>
               <ListingCard listing={l} />
-              <div className="mt-1.5 flex items-center justify-between px-1">
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 px-1">
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${statusStyle[l.status] ?? "bg-gray-100 text-gray-600"}`}>
                   {l.status ?? "active"}
                 </span>
                 <Link href={`/listing/${l.id}/edit`} className="text-xs font-medium text-green-800 hover:underline">
                   Edit
                 </Link>
+                {l.status === "active" && (
+                  <>
+                    <button onClick={() => setStatus(l.id, "sold")} disabled={busyId === l.id} className="text-xs text-gray-500 hover:text-green-800 disabled:opacity-50">Mark sold</button>
+                    <button onClick={() => setStatus(l.id, "withdrawn")} disabled={busyId === l.id} className="text-xs text-gray-500 hover:text-red-600 disabled:opacity-50">Withdraw</button>
+                  </>
+                )}
+                {(l.status === "sold" || l.status === "withdrawn") && (
+                  <button onClick={() => setStatus(l.id, "active")} disabled={busyId === l.id} className="text-xs text-gray-500 hover:text-green-800 disabled:opacity-50">Re-list</button>
+                )}
               </div>
             </div>
           ))}

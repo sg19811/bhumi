@@ -56,8 +56,30 @@ export default async function Home() {
   const { count: buyerCount } = await supabase.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
   const { data: latest } = await supabase.from("listings").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(4);
 
+  const siteLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Bhūmi",
+      url: "https://bhumi.vercel.app",
+      description: "Trusted agricultural land marketplace — verified listings, legal clarity, and real maps.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Bhūmi",
+      url: "https://bhumi.vercel.app",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: "https://bhumi.vercel.app/explore?q={search_term_string}" },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteLd) }} />
       <Header />
 
       {/* Hero */}
