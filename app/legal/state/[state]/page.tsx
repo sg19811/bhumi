@@ -72,7 +72,7 @@ export default async function StateGuide({ params }: { params: Promise<{ state: 
           </div>
           <div className="mt-6"><LegalDisclaimer variant="result" page={`state-${state}`} /></div>
           <div className="mt-6">
-            <Link href={`/legal/wizard`} className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Check your eligibility for {label} →</Link>
+            <Link href={`/legal/wizard?state=${state}`} className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Check your eligibility for {label} →</Link>
           </div>
         </>
       ) : (

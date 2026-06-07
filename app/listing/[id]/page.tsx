@@ -219,7 +219,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <Link href={`/tools/emi-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">💰 Estimate EMI for this land →</Link>
-          <Link href="/legal/wizard" className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
+          <Link href={`/legal/wizard?${new URLSearchParams({ ...(districtToState(listing.district) ? { state: districtToState(listing.district)! } : {}), ...(listing.land_type ? { land_type: String(listing.land_type) } : {}) }).toString()}`} className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
           <Link href="/legal/checklist" className="font-medium text-green-800 hover:underline">📋 Document checklist →</Link>
           {districtToState(listing.district) && (
             <Link href={`/legal/state/${districtToState(listing.district)}`} className="font-medium text-green-800 hover:underline">📖 Land rules in {stateLabel(districtToState(listing.district)!)} →</Link>

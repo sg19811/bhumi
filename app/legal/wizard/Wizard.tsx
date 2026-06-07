@@ -23,12 +23,13 @@ const STEPS = [
   { id: "review", label: "Review", Comp: ReviewStep, required: null },
 ] as const;
 
-export default function Wizard() {
+export default function Wizard({ initial }: { initial?: Partial<EligibilityAnswers> }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<EligibilityAnswers>>({
     resident_status: "resident",
     farmer_status: "non_farmer",
     existing_agri_land: false,
+    ...initial,
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
