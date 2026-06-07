@@ -53,6 +53,18 @@ drop policy if exists "admins delete listings" on public.listings;
 create policy "admins delete listings" on public.listings
   for delete to authenticated using (public.is_admin());
 
+-- 2c) Read access for non-public listings: admins see ALL (so they can review
+-- and approve pending ones), owners see their own. These are OR-ed with the
+-- existing public "active listings" read policy, so the public still sees only
+-- active listings.
+drop policy if exists "admins read all listings" on public.listings;
+create policy "admins read all listings" on public.listings
+  for select to authenticated using (public.is_admin());
+
+drop policy if exists "owners read own listings" on public.listings;
+create policy "owners read own listings" on public.listings
+  for select to authenticated using (auth.uid() = owner_user_id);
+
 -- 3) Storage: allow uploads + reads on the "Listings" bucket (photos + videos).
 drop policy if exists "public upload to Listings" on storage.objects;
 create policy "public upload to Listings" on storage.objects
