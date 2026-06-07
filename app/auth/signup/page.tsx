@@ -32,7 +32,7 @@ export default function SignUp() {
       // A DB trigger creates the profile row on signup; just fill in name/phone
       // here (best-effort — needs a session, which exists when email confirmation
       // is off). Using update avoids creating a duplicate profile row.
-      await supabase.from("profiles").update({ full_name: fullName, phone }).eq("user_id", data.user.id);
+      await supabase.from("profiles").update({ name: fullName, phone }).eq("user_id", data.user.id);
     }
 
     router.push("/");
