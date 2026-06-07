@@ -9,7 +9,7 @@ export const STATES: Array<Option & { covered: boolean }> = [
   { value: "maharashtra", label: "Maharashtra", covered: true },
   { value: "tamil_nadu", label: "Tamil Nadu", covered: true },
   { value: "andhra_pradesh", label: "Andhra Pradesh", covered: true },
-  { value: "kerala", label: "Kerala", covered: false },
+  { value: "kerala", label: "Kerala", covered: true },
 ];
 
 export const stateLabel = (state: string) =>
