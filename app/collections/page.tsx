@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import { useConfirm } from "@/app/components/ConfirmModal";
 
 type Collection = { id: string; name: string; collection_listings: { count: number }[] };
 
@@ -14,6 +15,7 @@ export default function CollectionsPage() {
   const [fetched, setFetched] = useState(false);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
+  const confirm = useConfirm();
 
   async function load() {
     if (!user) return;
@@ -42,7 +44,7 @@ export default function CollectionsPage() {
   }
 
   async function remove(id: string) {
-    if (!confirm("Delete this collection? The listings themselves are not deleted.")) return;
+    if (!(await confirm({ title: "Delete collection", message: "Delete this collection? The listings themselves are not deleted.", confirmLabel: "Delete", tone: "danger" }))) return;
     setBusy(true);
     await supabase.from("collections").delete().eq("id", id);
     await load();

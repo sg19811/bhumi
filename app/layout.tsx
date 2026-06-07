@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/app/lib/i18n-client";
 import { getLocale } from "@/app/lib/i18n-server";
 import CompareTray from "@/app/components/CompareTray";
 import Analytics from "@/app/components/Analytics";
+import { ConfirmProvider } from "@/app/components/ConfirmModal";
 import "@/app/lib/env"; // boot-time env validation (throws in prod if misconfigured)
 import "./globals.css";
 
@@ -74,14 +75,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AuthProvider>
           <SavedSearchesProvider>
             <CompareProvider>
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-green-700 focus:px-4 focus:py-2 focus:text-white"
-              >
-                Skip to content
-              </a>
-              <div id="main-content">{children}</div>
-              <CompareTray />
+              <ConfirmProvider>
+                <a
+                  href="#main-content"
+                  className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-green-700 focus:px-4 focus:py-2 focus:text-white"
+                >
+                  Skip to content
+                </a>
+                <div id="main-content">{children}</div>
+                <CompareTray />
+              </ConfirmProvider>
             </CompareProvider>
           </SavedSearchesProvider>
         </AuthProvider>

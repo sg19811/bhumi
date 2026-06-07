@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
+import { useConfirm } from "@/app/components/ConfirmModal";
 
 const statusStyle: Record<string, string> = {
   active: "bg-green-100 text-green-800",
@@ -15,6 +16,7 @@ export default function AdminListingRow({ listing, onStatusChange }: { listing: 
   const [status, setStatus] = useState<string>(listing.status ?? "active");
   const [deleted, setDeleted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const confirm = useConfirm();
 
   async function toggleVerify() {
     setBusy(true);
@@ -29,7 +31,7 @@ export default function AdminListingRow({ listing, onStatusChange }: { listing: 
     setBusy(false);
   }
   async function remove() {
-    if (!confirm("Delete this listing permanently?")) return;
+    if (!(await confirm({ title: "Delete listing", message: "Delete this listing permanently? This can't be undone.", confirmLabel: "Delete", tone: "danger" }))) return;
     setBusy(true);
     const { error } = await supabase.from("listings").delete().eq("id", listing.id);
     if (!error) setDeleted(true);

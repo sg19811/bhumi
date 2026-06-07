@@ -91,3 +91,15 @@ project won't trip the guard. The CI `smoke` job (which builds) has the Supabase
 build won't throw; the typecheck/lint jobs don't build.
 
 ---
+
+## Phase 5 — Replace `window.confirm()` with a modal ✅
+
+- `app/components/ConfirmModal.tsx` — `ConfirmProvider` + `useConfirm()` promise-based hook
+  (`if (!(await confirm({title, message, confirmLabel, tone}))) return;`). Earthy tokens; **Esc and
+  backdrop-click both cancel**; confirm button autofocused; `role="dialog"` + `aria-modal`.
+- Provider mounted in `app/layout.tsx` (inside the existing providers).
+- Replaced all 3 `window.confirm()` call sites: `AdminListingRow` (delete listing — danger),
+  `my-requirements` (delete requirement — danger), `collections` (delete collection — danger).
+- **Verified:** `grep` shows no `confirm(` left; tsc clean; `next build` clean.
+
+---
