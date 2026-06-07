@@ -25,7 +25,7 @@
 ---
 
 ## Current focus 🎯
-- [ ] Fix requirements page query (`supabase` → `db`)
+- [x] Fix requirements page query (`supabase` → `db`)
 - [ ] Verify admin + service-role key working on new machine
 - [ ] Redeploy complete MVP to Vercel with service-role env var
 
@@ -36,12 +36,12 @@
 The goal: a portal materially better than MagicBricks, 99acres, Housing.com, LandWatch, Land.com, Farmflip, Zillow Land, Realtor.com Land. Each requirement is captured and phased.
 
 ### A. Zero-friction discovery — *find land in ≤3 clicks*
-- [ ] Search-first entry **[v1.x]**
+- [x] Search-first entry **[v1.x]** — home hero SearchBar
 - [x] Map-first entry **[MVP]** (basic)
 - [ ] Explore by region (village/taluka/district landing pages) **[v2]**
-- [ ] Explore by budget ("under ₹25 lakh") **[v1.x]**
-- [ ] Explore by purpose ("mango farm", "coffee estate in Coorg", "farmhouse near Bangalore", "land with water", "resort-suitable") **[v2]**
-- [ ] Curated entry tiles on home for the above **[v1.x]**
+- [x] Explore by budget ("under ₹25 lakh") **[v1.x]** — home budget chips → `/explore?max_price=`
+- [~] Explore by purpose **[v1.x partial]** — home "Browse by need" tiles (water / highway / orchards / verified / budget / largest). Richer semantic purposes ("coffee estate in Coorg", "resort-suitable") still **[v2]**
+- [x] Curated entry tiles on home for the above **[v1.x]** — budget + purpose chips
 
 ### B. Google-Maps-style interface — *map-centric primary experience*
 - [x] Interactive map with listing pins **[MVP]**
@@ -50,12 +50,12 @@ The goal: a portal materially better than MagicBricks, 99acres, Housing.com, Lan
   - Roads, water bodies, rivers, lakes, forests **[v2]**
   - Elevation / topography **[v3]**
   - Soil, rainfall, groundwater, crop-suitability **[v3 / BP]** (external data)
-- [ ] Satellite + terrain basemaps **[v1.x]**
+- [x] Satellite + terrain basemaps **[v1.x]** — street / satellite / terrain toggle in `Map.tsx`
 - [ ] Draw-to-search polygon **[v2]**
 
 ### C. Property visualization
 - [x] Photos **[MVP]**
-- [ ] Videos **[v1.x]**
+- [x] Videos **[v1.x]** — upload on create/edit (`listings.videos`), player on detail
 - [ ] Drone videos **[v2]**
 - [ ] 360 tours / panoramas **[v3]**
 - [ ] Boundary overlay on satellite **[v2]** (needs parcel polygons)
@@ -70,8 +70,8 @@ The goal: a portal materially better than MagicBricks, 99acres, Housing.com, Lan
 
 ### E. Property Trust Score — *core feature* **[v1.x → v2]**
 - [x] Basic verified/unverified badge **[MVP]**
-- [ ] Composite from: documents, ownership, encumbrance, agent, GPS, survey, seller identity verified
-- [ ] Tiers: Excellent / Good / Moderate / Needs Verification
+- [~] Composite score **[v1.x done]** — `lib/trust.ts` from available signals (team-verified, photos, GPS, contact, description, registered owner). Document/ownership/encumbrance/agent/survey/identity verification still **[v2]**
+- [x] Tiers: Excellent / Good / Moderate / Needs Verification — badge on cards + full breakdown on detail
 - Maps to blueprint Section I
 
 ### F. Buyer Decision Dashboard **[v2]**
@@ -80,9 +80,9 @@ The goal: a portal materially better than MagicBricks, 99acres, Housing.com, Lan
 
 ### G. Mobile-first **[MVP → ongoing]**
 - [x] Responsive layout + mobile menu **[MVP]** (basic)
-- [ ] Thumb-friendly polish, large tap targets **[v1.x]**
+- [x] Thumb-friendly polish, large tap targets **[v1.x]** — redesign: pill buttons, larger targets
 - [ ] WhatsApp-style communication UI **[v2]**
-- [ ] Low-bandwidth optimization **[v1.x]**
+- [x] Low-bandwidth optimization **[v1.x]** — next/image (WebP, responsive, lazy) on all listing photos
 - [ ] Offline viewing of saved properties (PWA) **[v3]**
 
 ### H. Agent experience — *best-in-class* **[v2]**
@@ -109,7 +109,7 @@ The goal: a portal materially better than MagicBricks, 99acres, Housing.com, Lan
 - [ ] WhatsApp chatbot **[v3]**
 
 ### L. Gamification **[v1.x → v3]**
-- [ ] Users: saved searches, watchlists, alerts, collections **[v1.x]**
+- [~] Users: saved searches, watchlists, alerts, collections **[v1.x]** — watchlists, saved searches (now DB-backed), and collections done; **alerts** still need a scheduled job **[v2]**
 - [ ] Agents: rankings, badges (Verified Expert, Top Performer, Fast Responder, Trusted Agent) **[v2]**
 
 ### M. Accessibility & languages **[v2 → v3]**
@@ -118,7 +118,7 @@ The goal: a portal materially better than MagicBricks, 99acres, Housing.com, Lan
 
 ### N. Viral / sharing **[v1.x → v2]**
 - [x] Share property card (WhatsApp) **[MVP]**
-- [ ] Compare properties **[v1.x]**
+- [x] Compare properties **[v1.x]** — select up to 4 (persisted), floating tray, `/compare` table with trust scores
 - [ ] Share farm portfolio **[v2]**
 - [ ] Calculators: investment, appreciation, ROI, farm-suitability, resort-feasibility **[v2]**
 - [ ] AI Property Report PDF **[v3]**
@@ -155,4 +155,4 @@ The acquisition/sales-machine engine. Consent-aware, audit-logged, firewalled (b
 
 ---
 
-*Last updated: June 6, 2026. Full vision: land-portal-blueprint.md · build scope: mvp-scope.md · architecture: project-architecture.md.*
+*Last updated: June 7, 2026. Full vision: land-portal-blueprint.md · build scope: mvp-scope.md · architecture: project-architecture.md.*
