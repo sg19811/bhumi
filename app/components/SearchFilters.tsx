@@ -21,6 +21,13 @@ export default function SearchFilters() {
         <option value="agri_land">{t("f.t.agri")}</option><option value="irrigated_farmland">{t("f.t.irrigated")}</option>
         <option value="orchard">{t("f.t.orchard")}</option><option value="farmhouse_land">{t("f.t.farmhouse")}</option>
         <option value="na_converted">{t("f.t.na")}</option><option value="plantation">{t("f.t.plantation")}</option><option value="dryland">{t("f.t.dryland")}</option>
+        <optgroup label="Farm plot projects">
+          <option value="farm_plot_project">Farm plot project</option>
+          <option value="managed_farmland">Managed farmland</option>
+          <option value="farmhouse_plot">Farmhouse plot</option>
+          <option value="gated_farm_plot">Gated farm plot</option>
+          <option value="plantation_project">Plantation project</option>
+        </optgroup>
       </select>
       <select defaultValue={params.get("min_price") ?? ""} onChange={(e) => set("min_price", e.target.value)} className={sel} aria-label="Minimum price">
         <option value="">{t("f.anyMin")}</option><option value="1000000">₹10L+</option><option value="2500000">₹25L+</option>

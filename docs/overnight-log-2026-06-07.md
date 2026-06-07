@@ -36,3 +36,23 @@ and `search_logs.corridor`. **No DB changes made — file only.**
 
 **Open questions:** none blocking. (SearchFilters labels use i18n; new project types will use plain
 English options there to avoid adding keys across en/hi/kn tonight — flagged for later i18n.)
+
+---
+
+## Phase 2 — Lib files + land-type extension
+
+**Changed:** created `app/lib/farm-plots/{types,corridors,amenities,copy}.ts`; extended
+`app/lib/land.ts` `LAND_TYPE_LABELS` with the 5 project types; added a "Farm plot projects" optgroup
+to `app/components/SearchFilters.tsx`.
+- `types.ts` — `ProjectLandType` + `PROJECT_LAND_TYPES` + null-safe `isProjectType()`, all field enums,
+  `ProjectFields` (optional), `FarmProjectPlot`, `Corridor`, `Amenity`.
+- `corridors.ts` — the 6 corridors (slug/label/parent_city/state); `getCorridor`, `corridorExists`,
+  `corridorLabel`. Hosur is `state: "tamil_nadu"`; the rest `"karnataka"`.
+- `amenities.ts` — 12-amenity catalog with Lucide icon **names** (data) + an `emoji` fallback used now
+  (no icon lib installed — flagged; AmenitiesGrid renders emoji + label).
+- `copy.ts` — typed `HubCopy`/`CityCopy`/`CorridorCopy` with **placeholder prose marked TODO** and a
+  prominent TODO + lawyer-review note on the Hosur (TN) legal paragraph. Structure final.
+**Assumed:** new SearchFilters options use plain English (i18n keys deferred). Land-type extension is
+app-level only (no DB enum), matching the migration.
+**Verified:** tsc clean for the new/changed files.
+**Open questions:** none.

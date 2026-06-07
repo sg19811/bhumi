@@ -9,6 +9,12 @@ export const LAND_TYPE_LABELS: Record<string, string> = {
   built_farmhouse: "Built farmhouses",
   na_converted: "NA-converted land",
   developed_rural_plot: "Developed rural plots",
+  // Farm plot project types (see app/lib/farm-plots/).
+  farm_plot_project: "Farm plot project",
+  managed_farmland: "Managed farmland",
+  farmhouse_plot: "Farmhouse plot",
+  gated_farm_plot: "Gated farm plot",
+  plantation_project: "Plantation project",
   other: "Land",
 };
 
