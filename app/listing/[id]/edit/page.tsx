@@ -8,6 +8,7 @@ import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
 import Link from "next/link";
+import { validateListingPayload } from "@/app/lib/validation/client";
 
 export default function EditListing() {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ export default function EditListing() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
@@ -46,13 +48,12 @@ export default function EditListing() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     const f = new FormData(e.currentTarget);
     const latRaw = f.get("latitude");
     const lngRaw = f.get("longitude");
     const newPrice = Number(f.get("price"));
     const dropped = Number.isFinite(newPrice) && newPrice < Number(listing.price);
-    await supabase.from("listings").update({
+    const updates = {
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: newPrice, area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
       previous_price: dropped ? listing.price : null,
@@ -64,8 +65,13 @@ export default function EditListing() {
       electricity: f.get("electricity") === "on", status: f.get("status"),
       contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
       photos, videos, updated_at: new Date().toISOString(),
-    }).eq("id", id);
+    };
+    setSaving(true); setError("");
+    const verr = await validateListingPayload(updates);
+    if (verr) { setError(verr); setSaving(false); return; }
+    const { error: dbError } = await supabase.from("listings").update(updates).eq("id", id);
     setSaving(false);
+    if (dbError) { setError(dbError.message); return; }
     router.push(`/listing/${id}`);
   }
 
@@ -116,6 +122,7 @@ export default function EditListing() {
             <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" defaultValue={listing.contact_whatsapp ?? ""} className={inp} /></div>
           </div>
           <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /></div>
+          {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="flex-1 rounded-full bg-green-700 py-3 font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
             <Link href={`/listing/${id}`} className="rounded-full border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50">Cancel</Link>

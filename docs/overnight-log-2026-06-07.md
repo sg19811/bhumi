@@ -52,3 +52,27 @@ small route-change listener (PostHog auto-captures SPA pageviews already). Per t
 an optional follow-up.
 
 ---
+
+## Phase 3 — Server-side listing input validation ✅ (with a documented architecture caveat)
+
+- Added `zod` (v4). `app/lib/validation/listing.ts` — shared schema: title (3–120), description (≤4000),
+  land_type required, price > 0, area_value > 0, area_unit required, latitude ∈ [−90,90],
+  longitude ∈ [−180,180], district/taluka/village length-capped, contact_phone/whatsapp digits-only
+  (7–15), contact_email format, photos/videos must start with the Supabase Storage public prefix.
+- `app/api/listings/validate/route.ts` — POST runs the schema **server-side**, returns per-field
+  messages (422) or `{ ok: true }`.
+- `app/lib/validation/client.ts` — `validateListingPayload()` calls the gate; create + edit forms
+  validate before writing and surface the combined message (added an error banner to the edit form).
+- **Verified:** tsc clean, `next build` clean, `/api/listings/validate` route present.
+
+**Architecture caveat (NOT a guess — flagged for your decision):** the create/edit flows write to
+Supabase **directly from the client** (with RLS + the user's session). I added a server-side
+validation *gate* the forms call before writing, rather than moving the write itself behind an
+authenticated server action/route — that move (token-passing for `auth.uid()`/`owner_user_id`, photos
+already uploaded client-side) is a real architecture change I won't make unilaterally on an unattended
+run. **Consequence:** validation runs server-side and is surfaced to the form, but a crafted client
+could still bypass it at the write boundary. The gate **fails open** if the validation route is
+unreachable, so a gate outage can't block listing creation. **Recommended follow-up:** route the
+write through an authenticated server action/route handler to enforce validation at the boundary.
+
+---

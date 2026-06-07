@@ -8,6 +8,7 @@ import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
 import WantedAreas from "@/app/components/WantedAreas";
+import { validateListingPayload } from "@/app/lib/validation/client";
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -58,7 +59,7 @@ export default function NewListing() {
       return;
     }
     setSubmitting(true); setError("");
-    const { error: dbError } = await supabase.from("listings").insert({
+    const payload = {
       owner_user_id: user?.id ?? null,
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: Number(f.get("price")), price_basis: f.get("price_basis"),
@@ -70,7 +71,11 @@ export default function NewListing() {
       contact_email: f.get("contact_email"), contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
       photos, videos,
       status: "pending",
-    });
+    };
+    // Server-side validation gate.
+    const verr = await validateListingPayload(payload);
+    if (verr) { setError(verr); setSubmitting(false); return; }
+    const { error: dbError } = await supabase.from("listings").insert(payload);
     setSubmitting(false);
     if (dbError) setError(dbError.message);
     else { setSuccess(true); setPhotos([]); setVideos([]); e.currentTarget.reset(); }
