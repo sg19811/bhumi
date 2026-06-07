@@ -17,8 +17,10 @@ export default function NewListing() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitting(true); setError("");
     const f = new FormData(e.currentTarget);
+    // Honeypot: real users never see/fill this; bots do. Pretend success, skip DB.
+    if (f.get("company")) { setSuccess(true); return; }
+    setSubmitting(true); setError("");
     const { error: dbError } = await supabase.from("listings").insert({
       owner_user_id: user?.id ?? null,
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
@@ -30,6 +32,7 @@ export default function NewListing() {
       electricity: f.get("electricity") === "on",
       contact_email: f.get("contact_email"), contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
       photos, videos,
+      status: "pending",
     });
     setSubmitting(false);
     if (dbError) setError(dbError.message);
@@ -42,8 +45,8 @@ export default function NewListing() {
         <Header />
         <main className="mx-auto max-w-lg px-6 py-20 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">✓</div>
-          <h1 className="mb-2 text-2xl font-bold">Listing created!</h1>
-          <p className="mb-8 text-gray-500">Your land listing is now live on Bhūmi.</p>
+          <h1 className="mb-2 text-2xl font-bold">Listing submitted!</h1>
+          <p className="mb-8 text-gray-500">Thanks! Our team reviews new listings before they go live — yours will appear publicly once approved.</p>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <button onClick={() => setSuccess(false)} className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Create another</button>
             <Link href="/explore" className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">View listings</Link>
@@ -62,6 +65,9 @@ export default function NewListing() {
         <p className="text-gray-500 mb-8">The more you share, the faster it sells.</p>
         {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-8">
+          <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+            <label>Company (leave blank)<input type="text" name="company" tabIndex={-1} autoComplete="off" /></label>
+          </div>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Photos</h2>
             <PhotoUpload value={photos} onChange={setPhotos} />

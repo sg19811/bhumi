@@ -12,10 +12,13 @@ export default function BuyLand() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitting(true);
-    setError("");
 
     const f = new FormData(e.currentTarget);
+    // Honeypot: bots fill this hidden field; drop silently.
+    if (f.get("company")) { setSuccess(true); return; }
+
+    setSubmitting(true);
+    setError("");
 
     const landTypes = Array.from(f.getAll("land_types")) as string[];
 
@@ -92,6 +95,9 @@ export default function BuyLand() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
+          <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+            <label>Company (leave blank)<input type="text" name="company" tabIndex={-1} autoComplete="off" /></label>
+          </div>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">What are you looking for?</h2>
 
