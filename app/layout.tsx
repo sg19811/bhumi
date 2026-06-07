@@ -34,11 +34,35 @@ export const metadata: Metadata = {
   },
 };
 
+const orgLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      name: "AcreHub",
+      url: "https://bhumi.vercel.app",
+      description: "Trusted, parcel-first agricultural land marketplace for India.",
+      areaServed: "IN",
+    },
+    {
+      "@type": "WebSite",
+      name: "AcreHub",
+      url: "https://bhumi.vercel.app",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: { "@type": "EntryPoint", urlTemplate: "https://bhumi.vercel.app/explore?q={search_term_string}" },
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   return (
     <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
         <LanguageProvider locale={locale}>
         <AuthProvider>
           <SavedSearchesProvider>
