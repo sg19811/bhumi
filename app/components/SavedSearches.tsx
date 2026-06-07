@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSavedSearches } from "@/app/lib/saved-searches";
 import { formatINRShort } from "@/app/lib/format";
+import { useLang } from "@/app/lib/i18n-client";
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -23,6 +24,7 @@ function buildLabel(map: Record<string, string>): string {
 export default function SavedSearches() {
   const params = useSearchParams();
   const { searches, save, remove, has } = useSavedSearches();
+  const { t } = useLang();
 
   // Filters only (ignore sort) and sorted for a stable identity.
   const filterEntries = [...params.entries()].filter(([k, v]) => v && k !== "sort");
@@ -42,14 +44,14 @@ export default function SavedSearches() {
             onClick={() => remove(query)}
             className="inline-flex items-center gap-1.5 rounded-full border border-green-600 bg-green-50 px-3.5 py-1.5 text-sm font-medium text-green-800"
           >
-            ★ Saved
+            {t("ss.saved")}
           </button>
         ) : (
           <button
             onClick={() => save({ id: query, label: buildLabel(map), query })}
             className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3.5 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:border-green-600 hover:text-green-800"
           >
-            ☆ Save this search
+            {t("ss.save")}
           </button>
         ))}
 

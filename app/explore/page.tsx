@@ -7,6 +7,8 @@ import SavedSearches from "@/app/components/SavedSearches";
 import ActiveFilters from "@/app/components/ActiveFilters";
 import ExploreSplit from "@/app/components/ExploreSplit";
 import { cleanSearchTerm } from "@/app/lib/search";
+import { getLocale } from "@/app/lib/i18n-server";
+import { t as translate } from "@/app/lib/i18n";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,6 +18,8 @@ export const metadata: Metadata = {
 
 export default async function Explore({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) {
   const sp = await searchParams;
+  const locale = await getLocale();
+  const t = (k: string) => translate(locale, k);
   const sortMap: Record<string, { col: string; asc: boolean }> = {
     price_asc: { col: "price", asc: true },
     price_desc: { col: "price", asc: false },
@@ -43,17 +47,17 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
       <SearchLogger />
       <Header />
       <SearchFilters />
-      {sp.q && <p className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm text-gray-500">Results for &quot;{sp.q}&quot;</p>}
+      {sp.q && <p className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm text-gray-500">{t("explore.resultsFor")}: &quot;{sp.q}&quot;</p>}
       <main className="mx-auto max-w-7xl px-5 py-6 sm:px-6 sm:py-8">
-        <h2 className="text-xl font-semibold">{markers.length} {markers.length === 1 ? "listing" : "listings"} found</h2>
-        <p className="mb-5 mt-0.5 text-sm text-gray-500">Click a pin for details, or browse the list.</p>
+        <h2 className="text-xl font-semibold">{markers.length} {t("explore.found")}</h2>
+        <p className="mb-5 mt-0.5 text-sm text-gray-500">{t("explore.sub")}</p>
         <ActiveFilters />
         <SavedSearches />
 
         {markers.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
-            <p className="mb-4 text-lg text-gray-400">No listings match your search.</p>
-            <Link href="/buy" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">Tell us what you want</Link>
+            <p className="mb-4 text-lg text-gray-400">{t("explore.emptyTitle")}</p>
+            <Link href="/buy" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">{t("explore.emptyCta")}</Link>
           </div>
         ) : (
           <ExploreSplit listings={listings ?? []} markers={markers} />

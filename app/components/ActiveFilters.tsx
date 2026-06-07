@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { formatINRShort } from "@/app/lib/format";
+import { useLang } from "@/app/lib/i18n-client";
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -14,6 +15,7 @@ const sortLabels: Record<string, string> = {
 export default function ActiveFilters() {
   const params = useSearchParams();
   const router = useRouter();
+  const { t } = useLang();
   const g = (k: string) => params.get(k) ?? "";
 
   const chips: { key: string; label: string }[] = [];
@@ -37,7 +39,7 @@ export default function ActiveFilters() {
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2">
-      <span className="text-sm text-gray-500">Filters:</span>
+      <span className="text-sm text-gray-500">{t("filters.label")}</span>
       {chips.map((c) => (
         <button
           key={c.key}

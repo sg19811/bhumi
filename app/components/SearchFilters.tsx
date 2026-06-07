@@ -1,10 +1,12 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { useLang } from "@/app/lib/i18n-client";
 
 export default function SearchFilters() {
   const router = useRouter();
   const params = useSearchParams();
+  const { t } = useLang();
   const set = useCallback((k: string, v: string) => {
     const sp = new URLSearchParams(params.toString());
     v ? sp.set(k, v) : sp.delete(k);
@@ -46,7 +48,7 @@ export default function SearchFilters() {
         <option value="">Newest</option><option value="price_asc">Price: low to high</option>
         <option value="price_desc">Price: high to low</option><option value="area_desc">Largest area</option>
       </select>
-      {params.toString() && <button onClick={() => router.push("/explore")} className="shrink-0 px-2 text-sm font-medium text-red-600 hover:underline">Clear</button>}
+      {params.toString() && <button onClick={() => router.push("/explore")} className="shrink-0 px-2 text-sm font-medium text-red-600 hover:underline">{t("filters.clear")}</button>}
     </div>
   );
 }

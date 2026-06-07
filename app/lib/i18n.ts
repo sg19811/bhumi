@@ -79,6 +79,16 @@ const dict: Record<string, Entry> = {
   "footer.privacy": { en: "Privacy", hi: "गोपनीयता", kn: "ಗೌಪ್ಯತೆ" },
   "footer.terms": { en: "Terms", hi: "शर्तें", kn: "ನಿಯಮಗಳು" },
   "footer.tagline": { en: "© 2026 Bhūmi · Trusted land marketplace", hi: "© 2026 Bhūmi · भरोसेमंद ज़मीन बाज़ार", kn: "© 2026 Bhūmi · ವಿಶ್ವಾಸಾರ್ಹ ಭೂ ಮಾರುಕಟ್ಟೆ" },
+
+  "explore.found": { en: "listings found", hi: "सूचियाँ मिलीं", kn: "ಪಟ್ಟಿಗಳು ಸಿಕ್ಕಿವೆ" },
+  "explore.sub": { en: "Click a pin for details, or browse the list.", hi: "विवरण के लिए पिन पर क्लिक करें, या सूची देखें।", kn: "ವಿವರಗಳಿಗೆ ಪಿನ್ ಕ್ಲಿಕ್ ಮಾಡಿ, ಅಥವಾ ಪಟ್ಟಿ ನೋಡಿ." },
+  "explore.resultsFor": { en: "Results", hi: "परिणाम", kn: "ಫಲಿತಾಂಶಗಳು" },
+  "explore.emptyTitle": { en: "No listings match your search.", hi: "आपकी खोज से कोई सूची मेल नहीं खाती।", kn: "ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವ ಪಟ್ಟಿಯೂ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ." },
+  "explore.emptyCta": { en: "Tell us what you want", hi: "बताएँ आपको क्या चाहिए", kn: "ನಿಮಗೆ ಏನು ಬೇಕು ಹೇಳಿ" },
+  "filters.label": { en: "Filters:", hi: "फ़िल्टर:", kn: "ಫಿಲ್ಟರ್‌ಗಳು:" },
+  "filters.clear": { en: "Clear", hi: "साफ़ करें", kn: "ತೆರವುಗೊಳಿಸಿ" },
+  "ss.save": { en: "☆ Save this search", hi: "☆ यह खोज सहेजें", kn: "☆ ಈ ಹುಡುಕಾಟ ಉಳಿಸಿ" },
+  "ss.saved": { en: "★ Saved", hi: "★ सहेजा गया", kn: "★ ಉಳಿಸಲಾಗಿದೆ" },
 };
 
 export function t(locale: Locale, key: string): string {
