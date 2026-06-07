@@ -2,6 +2,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import SearchBar from "@/app/components/SearchBar";
 import RecentlyViewed from "@/app/components/RecentlyViewed";
+import WantedAreas from "@/app/components/WantedAreas";
 import ListingCard from "@/app/components/ListingCard";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
@@ -162,6 +163,11 @@ export default async function Home() {
           ))}
         </div>
       </section>
+
+      {/* Demand nudge for sellers (renders only when there's a clear signal) */}
+      <div className="mx-auto max-w-5xl px-6 pt-12 empty:hidden sm:pt-16">
+        <WantedAreas />
+      </div>
 
       {/* Just listed */}
       {latest && latest.length > 0 && (

@@ -7,6 +7,7 @@ import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
+import WantedAreas from "@/app/components/WantedAreas";
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -108,6 +109,7 @@ export default function NewListing() {
             <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-green-600" : "bg-gray-200"}`} />
           ))}
         </div>
+        {step === 0 && <div className="mb-6"><WantedAreas /></div>}
         {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
