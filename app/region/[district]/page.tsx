@@ -5,6 +5,8 @@ import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
 import NotifyMe from "@/app/components/NotifyMe";
+import MarketStats from "@/app/components/MarketStats";
+import { marketSummary } from "@/app/lib/price-insight";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
@@ -33,6 +35,7 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
 
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
   const types = [...new Set((listings ?? []).map((l) => l.land_type).filter(Boolean))];
+  const market = marketSummary(listings ?? []);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -70,6 +73,7 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
               ))}
             </div>
           )}
+          {market && <MarketStats summary={market} scopeLabel={`Land in ${name}`} />}
         </div>
 
         {markers.length > 0 && (

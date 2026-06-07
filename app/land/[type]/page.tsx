@@ -5,6 +5,8 @@ import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
 import NotifyMe from "@/app/components/NotifyMe";
+import MarketStats from "@/app/components/MarketStats";
+import { marketSummary } from "@/app/lib/price-insight";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
@@ -32,6 +34,8 @@ export default async function LandTypePage({ params }: { params: Promise<{ type:
     .order("created_at", { ascending: false });
 
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
+
+  const market = marketSummary(listings ?? []);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -61,6 +65,7 @@ export default async function LandTypePage({ params }: { params: Promise<{ type:
             {markers.length} {markers.length === 1 ? "listing" : "listings"} — verified land, real boundaries, and trust scores.{" "}
             <Link href={`/explore?land_type=${type}`} className="font-medium text-green-800 hover:underline">Refine with filters →</Link>
           </p>
+          {market && <MarketStats summary={market} scopeLabel={`${label} across India`} />}
         </div>
 
         {markers.length > 0 && (

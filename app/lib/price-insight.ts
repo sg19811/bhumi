@@ -15,6 +15,30 @@ function median(values: number[]): number {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
+export type MarketSummary = {
+  median: number;
+  min: number;
+  max: number;
+  sampleSize: number; // listings with a derivable ₹/acre
+};
+
+/**
+ * Aggregate ₹/acre stats across a set of listings, for region/land landing pages.
+ * Returns null with fewer than 3 derivable data points — too thin to be useful.
+ */
+export function marketSummary(
+  listings: Array<Parameters<typeof pricePerAcre>[0]>
+): MarketSummary | null {
+  const ppas = listings.map((l) => pricePerAcre(l)).filter((p): p is number => !!p);
+  if (ppas.length < 3) return null;
+  return {
+    median: median(ppas),
+    min: Math.min(...ppas),
+    max: Math.max(...ppas),
+    sampleSize: ppas.length,
+  };
+}
+
 /**
  * Compare a listing's normalized ₹/acre against active comparables. Prefers the
  * tightest comparable set (same district AND land type), then falls back to
