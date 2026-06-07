@@ -65,6 +65,14 @@ export default function Header() {
               >
                 Collections
               </Link>
+              {(role === "agent" || role === "admin") && (
+                <Link
+                  href="/agent"
+                  className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+                >
+                  Agent
+                </Link>
+              )}
               {role === "admin" && (
                 <Link
                   href="/admin"
@@ -118,6 +126,11 @@ export default function Header() {
               <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                 Collections
               </Link>
+              {(role === "agent" || role === "admin") && (
+                <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                  Agent
+                </Link>
+              )}
               {role === "admin" && (
                 <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                   Dashboard

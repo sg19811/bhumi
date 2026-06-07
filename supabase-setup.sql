@@ -67,7 +67,9 @@ drop policy if exists "read own profile" on public.profiles;
 create policy "read own profile" on public.profiles
   for select to authenticated using (auth.uid() = user_id);
 
--- 5) Inquiries: admins read all; owners read inquiries for their own listings.
+-- 5) Inquiries: lead status + read/update policies.
+alter table public.inquiries add column if not exists lead_status text not null default 'new';
+
 drop policy if exists "admins read inquiries" on public.inquiries;
 create policy "admins read inquiries" on public.inquiries
   for select to authenticated using (public.is_admin());
@@ -76,6 +78,13 @@ drop policy if exists "owners read inquiries on their listings" on public.inquir
 create policy "owners read inquiries on their listings" on public.inquiries
   for select to authenticated
   using (exists (select 1 from public.listings l where l.id = inquiries.listing_id and l.owner_user_id = auth.uid()));
+
+-- Owners (agents) can update the lead status of inquiries on their listings.
+drop policy if exists "owners update inquiries on their listings" on public.inquiries;
+create policy "owners update inquiries on their listings" on public.inquiries
+  for update to authenticated
+  using (exists (select 1 from public.listings l where l.id = inquiries.listing_id and l.owner_user_id = auth.uid()))
+  with check (exists (select 1 from public.listings l where l.id = inquiries.listing_id and l.owner_user_id = auth.uid()));
 
 -- 6) Buyer requirements + search logs: admins read.
 drop policy if exists "admins read buyer_interests" on public.buyer_interests;
