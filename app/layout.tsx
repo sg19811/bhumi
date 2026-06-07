@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { AuthProvider } from "@/app/lib/auth";
 import { CompareProvider } from "@/app/lib/compare";
@@ -32,6 +32,10 @@ export const metadata: Metadata = {
     title: "AcreHub — Trusted agricultural land marketplace",
     description: "Verified listings with legal clarity and real boundaries.",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#445626",
 };
 
 const orgLd = {
