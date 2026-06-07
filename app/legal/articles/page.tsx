@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
 import ArticleCard from "@/app/components/legal/ArticleCard";
-import { STATES, stateLabel } from "@/app/lib/legal/options";
+import { STATES } from "@/app/lib/legal/options";
 
 export const revalidate = 600;
 
@@ -12,14 +12,36 @@ export const metadata: Metadata = {
   alternates: { canonical: "/legal/articles" },
 };
 
-export default async function ArticlesIndex({ searchParams }: { searchParams: Promise<{ state?: string }> }) {
-  const { state } = await searchParams;
-  const active = state && STATES.some((s) => s.value === state) ? state : null;
+const TOPICS: { value: string; label: string }[] = [
+  { value: "eligibility", label: "Who can buy" },
+  { value: "nri", label: "NRI / OCI" },
+  { value: "company", label: "Companies" },
+  { value: "document", label: "Documents" },
+  { value: "rtc", label: "Land records" },
+  { value: "mutation", label: "Mutation" },
+  { value: "conversion", label: "Conversion" },
+];
+
+export default async function ArticlesIndex({ searchParams }: { searchParams: Promise<{ state?: string; topic?: string }> }) {
+  const { state, topic } = await searchParams;
+  const activeState = state && STATES.some((s) => s.value === state) ? state : null;
+  const activeTopic = topic && TOPICS.some((t) => t.value === topic) ? topic : null;
 
   let query = supabase.from("legal_articles").select("slug, title, summary, topic, reading_minutes, state").eq("published", true);
   // A state filter shows that state's guides plus pan-India ones (which apply everywhere).
-  if (active) query = query.or(`state.eq.${active},state.is.null`);
+  if (activeState) query = query.or(`state.eq.${activeState},state.is.null`);
+  if (activeTopic) query = query.eq("topic", activeTopic);
   const { data: articles } = await query.order("updated_at", { ascending: false });
+
+  // Preserve the other active filter when building a chip's href.
+  const hrefWith = (params: Record<string, string | null>) => {
+    const sp = new URLSearchParams();
+    const merged = { state: activeState, topic: activeTopic, ...params };
+    if (merged.state) sp.set("state", merged.state);
+    if (merged.topic) sp.set("topic", merged.topic);
+    const qs = sp.toString();
+    return qs ? `/legal/articles?${qs}` : "/legal/articles";
+  };
 
   const chip = (href: string, label: string, isActive: boolean) => (
     <Link
@@ -37,9 +59,15 @@ export default async function ArticlesIndex({ searchParams }: { searchParams: Pr
       <h1 className="text-3xl font-bold sm:text-4xl">Guides &amp; FAQs</h1>
       <p className="mt-2 max-w-2xl text-gray-600">Clear answers to the questions land buyers ask most.</p>
 
-      <div className="mt-5 flex flex-wrap gap-2">
-        {chip("/legal/articles", "All guides", !active)}
-        {STATES.map((s) => chip(`/legal/articles?state=${s.value}`, s.label, active === s.value))}
+      <div className="mt-5 space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {chip(hrefWith({ topic: null }), "All topics", !activeTopic)}
+          {TOPICS.map((t) => chip(hrefWith({ topic: t.value }), t.label, activeTopic === t.value))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {chip(hrefWith({ state: null }), "All states", !activeState)}
+          {STATES.map((s) => chip(hrefWith({ state: s.value }), s.label, activeState === s.value))}
+        </div>
       </div>
 
       {articles && articles.length > 0 ? (
@@ -48,7 +76,7 @@ export default async function ArticlesIndex({ searchParams }: { searchParams: Pr
         </div>
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-gray-300 py-16 text-center text-gray-500">
-          {active ? `No guides for ${stateLabel(active)} yet.` : "Lawyer-reviewed guides are being finalised. Check back soon."}
+          No guides match these filters yet.
         </div>
       )}
     </main>
