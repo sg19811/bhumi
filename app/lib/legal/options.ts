@@ -8,7 +8,7 @@ export const STATES: Array<Option & { covered: boolean }> = [
   { value: "karnataka", label: "Karnataka", covered: true },
   { value: "maharashtra", label: "Maharashtra", covered: true },
   { value: "tamil_nadu", label: "Tamil Nadu", covered: true },
-  { value: "andhra_pradesh", label: "Andhra Pradesh", covered: false },
+  { value: "andhra_pradesh", label: "Andhra Pradesh", covered: true },
   { value: "kerala", label: "Kerala", covered: false },
 ];
 
