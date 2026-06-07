@@ -6,6 +6,41 @@ import Header from "@/app/components/Header";
 import AdminListingRow from "@/app/components/AdminListingRow";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import { formatINRShort } from "@/app/lib/format";
+
+// Buyer requirements that match a listing (affordable + right place + right type).
+function matchesFor(listing: any, buyers: any[]) {
+  return buyers.filter((b) => {
+    if (b.status && b.status !== "active") return false;
+    const budgetOk = b.budget_max == null || Number(b.budget_max) >= Number(listing.price);
+    const district = (listing.district ?? "").toLowerCase();
+    const pref = (b.preferred_district ?? "").toLowerCase();
+    const districtOk = !pref || (!!district && (district === pref || district.includes(pref) || pref.includes(district)));
+    const typeOk = !b.land_types?.length || (!!listing.land_type && b.land_types.includes(listing.land_type));
+    return budgetOk && districtOk && typeOk;
+  });
+}
+
+function toCSV(rows: Record<string, any>[]): string {
+  if (!rows.length) return "";
+  const headers = Object.keys(rows[0]);
+  const esc = (v: any) => {
+    const s = v == null ? "" : Array.isArray(v) ? v.join("; ") : String(v);
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return [headers.join(","), ...rows.map((r) => headers.map((h) => esc(r[h])).join(","))].join("\n");
+}
+
+function downloadCSV(filename: string, rows: Record<string, any>[]) {
+  if (!rows.length) return;
+  const blob = new Blob([toCSV(rows)], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function topCounts(rows: any[], key: string, n = 5) {
   const m = new Map<string, number>();
@@ -119,7 +154,17 @@ export default function AdminDashboard() {
           </section>
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold">Recent inquiries</h2>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Recent inquiries</h2>
+              {inquiries.length > 0 && (
+                <button
+                  onClick={() => downloadCSV("inquiries.csv", inquiries.map((i) => ({ date: i.created_at, message: i.message, phone: i.contact_phone, listing: i.listings?.title ?? "" })))}
+                  className="text-sm text-green-700 hover:underline"
+                >
+                  Export CSV
+                </button>
+              )}
+            </div>
             <div className="mb-8 divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
               {inquiries.slice(0, 8).map((inq) => (
                 <div key={inq.id} className="p-4">
@@ -132,7 +177,20 @@ export default function AdminDashboard() {
               ))}
               {inquiries.length === 0 && <p className="p-4 text-sm text-gray-400">No inquiries yet.</p>}
             </div>
-            <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold">Buyer requirements</h2><Link href="/requirements" className="text-sm text-green-700 hover:underline">View all</Link></div>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">Buyer requirements</h2>
+              <div className="flex items-center gap-3">
+                {buyers.length > 0 && (
+                  <button
+                    onClick={() => downloadCSV("buyer-requirements.csv", buyers.map((b) => ({ date: b.created_at, intent: b.intent, district: b.preferred_district, taluka: b.preferred_taluka, budget_min: b.budget_min, budget_max: b.budget_max, acreage_min: b.acreage_min, acreage_max: b.acreage_max, land_types: b.land_types, phone: b.contact_phone, whatsapp: b.contact_whatsapp, notes: b.notes })))}
+                    className="text-sm text-green-700 hover:underline"
+                  >
+                    Export CSV
+                  </button>
+                )}
+                <Link href="/requirements" className="text-sm text-green-700 hover:underline">View all</Link>
+              </div>
+            </div>
             <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
               {buyers.slice(0, 5).map((b) => (
                 <div key={b.id} className="p-4">
@@ -155,6 +213,43 @@ export default function AdminDashboard() {
             <InsightList title="Top search terms" items={topCounts(searchLogs, "query")} />
           </div>
         </section>
+
+        {/* Match active listings to buyers who want them */}
+        {(() => {
+          const matchRows = listings
+            .filter((l) => l.status === "active")
+            .map((l) => ({ listing: l, matched: matchesFor(l, buyers) }))
+            .filter((x) => x.matched.length > 0)
+            .sort((a, b) => b.matched.length - a.matched.length)
+            .slice(0, 10);
+          return (
+            <section className="mt-10">
+              <h2 className="text-lg font-semibold">Demand matches</h2>
+              <p className="mb-4 text-sm text-gray-500">Live listings that fit what buyers are after — reach out and connect them.</p>
+              {matchRows.length === 0 ? (
+                <p className="rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-400 shadow-sm">No matches yet — they appear as buyers post requirements.</p>
+              ) : (
+                <div className="space-y-3">
+                  {matchRows.map(({ listing, matched }) => (
+                    <div key={listing.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <Link href={`/listing/${listing.id}`} className="truncate font-medium hover:text-green-700">{listing.title}</Link>
+                        <span className="shrink-0 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">{matched.length} buyer{matched.length > 1 ? "s" : ""}</span>
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {matched.slice(0, 8).map((b) => (
+                          <a key={b.id} href={`tel:${b.contact_phone}`} className="inline-flex items-center gap-1 rounded-full border border-gray-200 px-2.5 py-1 text-xs text-gray-600 hover:border-green-600 hover:text-green-800">
+                            📞 {b.contact_phone}{b.budget_max ? ` · up to ${formatINRShort(b.budget_max)}` : ""}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })()}
       </main>
     </div>
   );
