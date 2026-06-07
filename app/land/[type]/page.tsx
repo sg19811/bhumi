@@ -8,6 +8,8 @@ import NotifyMe from "@/app/components/NotifyMe";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
+export const revalidate = 600; // cache listings aggregation for 10 minutes
+
 export async function generateMetadata({ params }: { params: Promise<{ type: string }> }): Promise<Metadata> {
   const { type } = await params;
   const label = landLabel(type);

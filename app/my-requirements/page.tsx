@@ -13,6 +13,16 @@ const statusStyle: Record<string, string> = {
   withdrawn: "bg-gray-200 text-gray-700",
 };
 
+// Build an Explore link from a requirement's preferences.
+function matchHref(req: any): string {
+  const sp = new URLSearchParams();
+  if (req.preferred_district) sp.set("q", req.preferred_district);
+  if (req.land_types?.length) sp.set("land_type", req.land_types[0]);
+  if (req.budget_max) sp.set("max_price", String(req.budget_max));
+  if (req.acreage_max) sp.set("max_area", String(req.acreage_max));
+  return `/explore?${sp.toString()}`;
+}
+
 export default function MyRequirements() {
   const { user, loading } = useAuth();
   const [reqs, setReqs] = useState<any[]>([]);
@@ -82,7 +92,8 @@ export default function MyRequirements() {
                 {(req.acreage_min || req.acreage_max) && <span>📐 {req.acreage_min ?? "0"} – {req.acreage_max ?? "any"} acres</span>}
               </div>
               {req.notes && <p className="mt-2 text-sm text-gray-500">{req.notes}</p>}
-              <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 border-t border-gray-100 pt-3 text-xs">
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-gray-100 pt-3 text-xs">
+                <Link href={matchHref(req)} className="font-medium text-green-800 hover:underline">🔍 View matching listings →</Link>
                 {(req.status ?? "active") === "active" ? (
                   <button onClick={() => setStatus(req.id, "withdrawn")} disabled={busyId === req.id} className="font-medium text-gray-500 hover:text-amber-700 disabled:opacity-50">Withdraw</button>
                 ) : (
