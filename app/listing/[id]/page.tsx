@@ -54,6 +54,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       url: `https://bhumi.vercel.app/listing/${id}`,
       ...(image ? { images: [{ url: image }] } : {}),
     },
+    alternates: { canonical: `/listing/${id}` },
   };
 }
 
