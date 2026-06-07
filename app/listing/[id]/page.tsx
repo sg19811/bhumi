@@ -21,6 +21,8 @@ import ShareButton from "@/app/components/ShareButton";
 import ReportButton from "@/app/components/ReportButton";
 import PriceInsightPanel from "@/app/components/PriceInsight";
 import { buildPriceInsight } from "@/app/lib/price-insight";
+import { districtToState } from "@/app/lib/legal/districts";
+import { stateLabel } from "@/app/lib/legal/options";
 import { landLabel } from "@/app/lib/land";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 import type { Metadata } from "next";
@@ -219,6 +221,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <Link href={`/tools/emi-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">💰 Estimate EMI for this land →</Link>
           <Link href="/legal/wizard" className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
           <Link href="/legal/checklist" className="font-medium text-green-800 hover:underline">📋 Document checklist →</Link>
+          {districtToState(listing.district) && (
+            <Link href={`/legal/state/${districtToState(listing.district)}`} className="font-medium text-green-800 hover:underline">📖 Land rules in {stateLabel(districtToState(listing.district)!)} →</Link>
+          )}
         </div>
 
         {priceInsight && <PriceInsightPanel insight={priceInsight} />}
