@@ -220,7 +220,7 @@ export default function AdminDashboard() {
 
         <div className="grid gap-8 md:grid-cols-2">
           <section>
-            <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold">Manage listings</h2><Link href="/listing/new" className="text-sm text-green-700 hover:underline">+ New</Link></div>
+            <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold">Manage listings</h2><span className="flex gap-3 text-sm"><Link href="/admin/import" className="text-green-700 hover:underline">Import CSV</Link><Link href="/listing/new" className="text-green-700 hover:underline">+ New</Link></span></div>
             <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
               {sortedListings.map((l) => <AdminListingRow key={l.id} listing={l} />)}
               {listings.length === 0 && <p className="p-4 text-sm text-gray-400">No listings yet.</p>}
