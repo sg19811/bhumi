@@ -31,7 +31,7 @@ export default function PhotoUpload({ value, onChange }: { value: string[]; onCh
         {value.map((url, i) => (
           <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={url} alt={`Uploaded photo ${i + 1}`} className="w-full h-full object-cover" />
+            <img src={url} alt={`Uploaded photo ${i + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
             <button type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))}
               aria-label={`Remove photo ${i + 1}`}
               className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 text-xs">✕</button>
