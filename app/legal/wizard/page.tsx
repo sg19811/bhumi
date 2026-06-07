@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/legal/wizard" },
 };
 
-export default async function WizardPage({ searchParams }: { searchParams: Promise<{ state?: string; land_type?: string }> }) {
+export default async function WizardPage({ searchParams }: { searchParams: Promise<{ state?: string; land_type?: string; listing?: string }> }) {
   const sp = await searchParams;
   const initial: Partial<EligibilityAnswers> = {};
   if (sp.state && STATES.some((s) => s.value === sp.state)) initial.state = sp.state;
@@ -25,7 +25,7 @@ export default async function WizardPage({ searchParams }: { searchParams: Promi
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:px-6 sm:py-10">
       <LegalTrack event="legal_wizard_started" props={{ state: initial.state ?? null }} />
-      <Wizard initial={initial} />
+      <Wizard initial={initial} listingId={sp.listing} />
     </main>
   );
 }

@@ -23,7 +23,7 @@ const STEPS = [
   { id: "review", label: "Review", Comp: ReviewStep, required: null },
 ] as const;
 
-export default function Wizard({ initial }: { initial?: Partial<EligibilityAnswers> }) {
+export default function Wizard({ initial, listingId }: { initial?: Partial<EligibilityAnswers>; listingId?: string }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<EligibilityAnswers>>({
     resident_status: "resident",
@@ -82,7 +82,7 @@ export default function Wizard({ initial }: { initial?: Partial<EligibilityAnswe
   }
 
   if (final) {
-    return <ResultScreen result={final.result} answers={final.answers} resultId={final.id} trackOnMount />;
+    return <ResultScreen result={final.result} answers={final.answers} resultId={final.id} listingId={listingId} trackOnMount />;
   }
 
   const isReview = step === STEPS.length - 1;

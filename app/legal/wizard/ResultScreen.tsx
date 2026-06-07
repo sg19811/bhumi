@@ -23,11 +23,13 @@ export default function ResultScreen({
   result,
   answers,
   resultId,
+  listingId,
   trackOnMount = false,
 }: {
   result: EligibilityResult;
   answers: EligibilityAnswers;
   resultId: string | null;
+  listingId?: string;
   trackOnMount?: boolean;
 }) {
   const risk = buildRiskScore(answers, result);
@@ -96,12 +98,15 @@ export default function ResultScreen({
         <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="mb-3 text-lg font-semibold">Recommended next steps</h2>
           <div className="flex flex-col gap-2.5">
-            {result.next_steps.map((s) => (
-              <Link key={s.id} href={s.cta_target ?? "/legal"} className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-800 transition-colors hover:border-green-400 hover:bg-green-50">
-                <span>{s.label}</span>
-                <span className="text-green-700" aria-hidden="true">→</span>
-              </Link>
-            ))}
+            {result.next_steps.map((s) => {
+              const target = s.id === "dd" && listingId ? `/legal/due-diligence?listing=${listingId}` : (s.cta_target ?? "/legal");
+              return (
+                <Link key={s.id} href={target} className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-800 transition-colors hover:border-green-400 hover:bg-green-50">
+                  <span>{s.label}</span>
+                  <span className="text-green-700" aria-hidden="true">→</span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
