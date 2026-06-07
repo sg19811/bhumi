@@ -7,7 +7,24 @@ import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import DealRow from "@/app/components/DealRow";
-import { formatINR } from "@/app/lib/format";
+import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
+import { landLabel } from "@/app/lib/land";
+
+// Average ₹/acre grouped by a field, across listings where it can be derived.
+function avgPpaBy(rows: any[], key: string, n = 5) {
+  const groups = new Map<string, number[]>();
+  for (const r of rows) {
+    const ppa = pricePerAcre(r);
+    const v = (r[key] ?? "").toString().trim();
+    if (!ppa || !v) continue;
+    if (!groups.has(v)) groups.set(v, []);
+    groups.get(v)!.push(ppa);
+  }
+  return [...groups.entries()]
+    .map(([value, arr]) => ({ value, avg: arr.reduce((a, b) => a + b, 0) / arr.length, n: arr.length }))
+    .sort((a, b) => b.n - a.n)
+    .slice(0, n);
+}
 
 const LEAD_STATUSES = ["new", "contacted", "closed"] as const;
 const leadStyle: Record<string, string> = {
@@ -32,6 +49,7 @@ export default function AgentDashboard() {
   const [listings, setListings] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
   const [deals, setDeals] = useState<Record<string, { sale_price: number | null; commission_amount: number | null }>>({});
+  const [market, setMarket] = useState<any[]>([]);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,6 +64,14 @@ export default function AgentDashboard() {
       const map: Record<string, { sale_price: number | null; commission_amount: number | null }> = {};
       for (const d of dl ?? []) map[d.listing_id] = { sale_price: d.sale_price, commission_amount: d.commission_amount };
       setDeals(map);
+
+      // Market data (public active listings) for pricing insights.
+      const { data: mk } = await supabase
+        .from("listings")
+        .select("price, price_basis, area_value, area_unit, district, land_type")
+        .eq("status", "active")
+        .limit(1000);
+      setMarket(mk ?? []);
     })();
   }, [allowed, user]);
 
@@ -82,6 +108,8 @@ export default function AgentDashboard() {
   const districts = [...new Set(listings.map((l) => l.district).filter(Boolean))];
   const soldListings = listings.filter((l) => l.status === "sold");
   const commissionTotal = Object.values(deals).reduce((sum, d) => sum + (Number(d.commission_amount) || 0), 0);
+  const ppaByType = avgPpaBy(market, "land_type");
+  const ppaByDistrict = avgPpaBy(market, "district");
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
@@ -114,6 +142,41 @@ export default function AgentDashboard() {
               ))}
             </div>
           </div>
+        )}
+
+        {market.length > 0 && (ppaByType.length > 0 || ppaByDistrict.length > 0) && (
+          <section className="mb-8">
+            <h2 className="mb-1 text-lg font-semibold">Market insights</h2>
+            <p className="mb-4 text-sm text-gray-500">Average price per acre across {market.length} active listings — use it to price and source.</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 text-sm font-semibold text-gray-700">By land type</h3>
+                {ppaByType.length === 0 ? <p className="text-sm text-gray-400">Not enough data.</p> : (
+                  <ul className="space-y-2">
+                    {ppaByType.map((it) => (
+                      <li key={it.value} className="flex items-center justify-between text-sm">
+                        <span className="capitalize text-gray-700">{landLabel(it.value)}</span>
+                        <span className="text-gray-500">{formatINRShort(it.avg)}/acre <span className="text-gray-300">· {it.n}</span></span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <h3 className="mb-3 text-sm font-semibold text-gray-700">By district</h3>
+                {ppaByDistrict.length === 0 ? <p className="text-sm text-gray-400">Not enough data.</p> : (
+                  <ul className="space-y-2">
+                    {ppaByDistrict.map((it) => (
+                      <li key={it.value} className="flex items-center justify-between text-sm">
+                        <span className="capitalize text-gray-700">{it.value}</span>
+                        <span className="text-gray-500">{formatINRShort(it.avg)}/acre <span className="text-gray-300">· {it.n}</span></span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          </section>
         )}
 
         <h2 className="mb-4 text-lg font-semibold">Leads ({leads.length})</h2>

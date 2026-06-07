@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import Link from "next/link";
@@ -14,6 +14,29 @@ export default function NewListing() {
   const [error, setError] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
+  const [step, setStep] = useState(0);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const stepLabels = ["Photos & video", "Basics", "Location & features", "Contact"];
+
+  function validateStep(i: number) {
+    const el = stepRefs.current[i];
+    if (!el) return true;
+    const controls = Array.from(el.querySelectorAll<HTMLInputElement>("input, select, textarea"));
+    for (const c of controls) {
+      if (!c.checkValidity()) { c.reportValidity(); return false; }
+    }
+    return true;
+  }
+  function next() {
+    if (validateStep(step)) {
+      setStep((s) => Math.min(s + 1, stepLabels.length - 1));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+  function back() {
+    setStep((s) => Math.max(s - 1, 0));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -62,12 +85,20 @@ export default function NewListing() {
       <Header />
       <main className="max-w-2xl mx-auto px-6 py-10">
         <h1 className="text-3xl font-bold mb-2">List your land</h1>
-        <p className="text-gray-500 mb-8">The more you share, the faster it sells.</p>
+        <p className="text-gray-500 mb-6">Step {step + 1} of {stepLabels.length} · {stepLabels[step]}</p>
+        <div className="mb-8 flex gap-1.5">
+          {stepLabels.map((_, i) => (
+            <div key={i} className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-green-600" : "bg-gray-200"}`} />
+          ))}
+        </div>
         {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm">{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit}>
           <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
             <label>Company (leave blank)<input type="text" name="company" tabIndex={-1} autoComplete="off" /></label>
           </div>
+
+          {/* Step 1: media */}
+          <div ref={(el) => { stepRefs.current[0] = el; }} className={step === 0 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Photos</h2>
             <PhotoUpload value={photos} onChange={setPhotos} />
@@ -76,6 +107,10 @@ export default function NewListing() {
             <h2 className="text-lg font-semibold text-green-800">Videos</h2>
             <VideoUpload value={videos} onChange={setVideos} />
           </section>
+          </div>
+
+          {/* Step 2: basics */}
+          <div ref={(el) => { stepRefs.current[1] = el; }} className={step === 1 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Basic information</h2>
             <div><label className="block text-sm font-medium mb-1">Title *</label>
@@ -100,6 +135,10 @@ export default function NewListing() {
                 <select name="area_unit" className={inp}><option value="acre">Acres</option><option value="guntha">Gunthas</option><option value="hectare">Hectares</option><option value="sqft">Sq ft</option><option value="cent">Cents</option><option value="bigha">Bighas</option></select></div>
             </div>
           </section>
+          </div>
+
+          {/* Step 3: location & features */}
+          <div ref={(el) => { stepRefs.current[2] = el; }} className={step === 2 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Location</h2>
             <div className="grid grid-cols-3 gap-4">
@@ -123,6 +162,10 @@ export default function NewListing() {
             </div>
             <label className="flex items-center gap-2 cursor-pointer"><input name="electricity" type="checkbox" className="w-4 h-4 accent-green-700" /><span className="text-sm">Electricity available</span></label>
           </section>
+          </div>
+
+          {/* Step 4: contact & description */}
+          <div ref={(el) => { stepRefs.current[3] = el; }} className={step === 3 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Contact</h2>
             <p className="text-sm text-gray-500">No account needed — buyers will reach you using the details below.</p>
@@ -136,9 +179,20 @@ export default function NewListing() {
             <h2 className="text-lg font-semibold text-green-800">Description</h2>
             <textarea name="description" rows={4} placeholder="Crops grown, soil type, nearby landmarks, why you're selling..." className={inp} />
           </section>
-          <button type="submit" disabled={submitting} className="w-full rounded-full bg-green-700 py-3.5 text-lg font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">
-            {submitting ? "Publishing…" : "Publish listing"}
-          </button>
+          </div>
+
+          <div className="mt-8 flex items-center justify-between gap-3">
+            {step > 0 ? (
+              <button type="button" onClick={back} className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">← Back</button>
+            ) : <span />}
+            {step < stepLabels.length - 1 ? (
+              <button type="button" onClick={next} className="rounded-full bg-green-700 px-8 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Next →</button>
+            ) : (
+              <button type="submit" disabled={submitting} className="rounded-full bg-green-700 px-8 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">
+                {submitting ? "Publishing…" : "Publish listing"}
+              </button>
+            )}
+          </div>
         </form>
       </main>
     </div>
