@@ -48,7 +48,10 @@ export default async function LegalHub() {
 
         {/* State grid */}
         <section className="mb-12">
-          <h2 className="mb-1 text-2xl font-bold">State-wise rules</h2>
+          <div className="mb-1 flex items-end justify-between gap-3">
+            <h2 className="text-2xl font-bold">State-wise rules</h2>
+            <Link href="/legal/compare" className="shrink-0 text-sm font-medium text-green-800 hover:underline">Compare states →</Link>
+          </div>
           <p className="mb-5 text-gray-600">Land law differs by state. Start with yours.</p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {STATES.map((s) => {
