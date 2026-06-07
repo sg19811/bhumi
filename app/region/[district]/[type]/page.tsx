@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ district:
   const name = decodeURIComponent(district);
   const label = landLabel(type);
   return {
-    title: `${label} for sale in ${name} — Bhūmi`,
+    title: `${label} for sale in ${name} — AcreHub`,
     description: `Browse verified ${label.toLowerCase()} for sale in ${name} — real boundaries on the map, trust scores, and legal clarity.`,
     alternates: { canonical: `/region/${district}/${type}` },
   };

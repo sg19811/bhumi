@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /**
- * Bhūmi wordmark + leaf mark. Server-safe (no hooks) so it can be used in
+ * AcreHub wordmark + leaf mark. Server-safe (no hooks) so it can be used in
  * both server and client pages. Visual only — links to home, as before.
  */
 export default function Logo({ className = "" }: { className?: string }) {
@@ -29,7 +29,7 @@ export default function Logo({ className = "" }: { className?: string }) {
           strokeLinejoin="round"
         />
       </svg>
-      Bhūmi
+      AcreHub
     </Link>
   );
 }

@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Why Bhūmi — Trust, legal clarity & real maps for land",
-  description: "Bhūmi is a land marketplace built around trust: verified listings, legal clarity on what you can buy, and real boundaries on satellite maps.",
+  title: "Why AcreHub — Trust, legal clarity & real maps for land",
+  description: "AcreHub is a land marketplace built around trust: verified listings, legal clarity on what you can buy, and real boundaries on satellite maps.",
 };
 
 export default function About() {
@@ -13,10 +13,10 @@ export default function About() {
     <div className="min-h-screen bg-white text-gray-900">
       <Header />
       <main className="max-w-2xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold mb-4">Why Bhūmi</h1>
+        <h1 className="text-3xl font-bold mb-4">Why AcreHub</h1>
         <p className="text-gray-600 mb-8">
           Buying agricultural land in India is hard. Listings are fake, boundaries are unclear,
-          and nobody tells you whether you can even legally buy. Bhūmi fixes that — a land marketplace
+          and nobody tells you whether you can even legally buy. AcreHub fixes that — a land marketplace
           built around trust, legal clarity, and real maps.
         </p>
 

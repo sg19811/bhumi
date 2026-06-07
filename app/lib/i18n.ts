@@ -59,7 +59,7 @@ const dict: Record<string, Entry> = {
   "home.need.largestSub": { en: "Most acreage first", hi: "सबसे ज़्यादा रकबा पहले", kn: "ಹೆಚ್ಚು ವಿಸ್ತೀರ್ಣ ಮೊದಲು" },
 
   "home.justListed": { en: "Just listed", hi: "अभी सूचीबद्ध", kn: "ಈಗ ಪಟ್ಟಿ ಮಾಡಲಾಗಿದೆ" },
-  "home.justListedSub": { en: "The newest land on Bhūmi.", hi: "Bhūmi पर सबसे नई ज़मीन।", kn: "Bhūmi ನಲ್ಲಿ ಹೊಸ ಭೂಮಿ." },
+  "home.justListedSub": { en: "The newest land on AcreHub.", hi: "AcreHub पर सबसे नई ज़मीन।", kn: "AcreHub ನಲ್ಲಿ ಹೊಸ ಭೂಮಿ." },
   "common.viewAll": { en: "View all →", hi: "सभी देखें →", kn: "ಎಲ್ಲವನ್ನೂ ನೋಡಿ →" },
   "home.regionsTitle": { en: "Browse land by region", hi: "क्षेत्र के अनुसार ज़मीन देखें", kn: "ಪ್ರದೇಶದ ಪ್ರಕಾರ ಭೂಮಿ ಹುಡುಕಿ" },
   "home.regionsSub": { en: "Explore agricultural land in these districts.", hi: "इन ज़िलों में कृषि भूमि एक्सप्लोर करें।", kn: "ಈ ಜಿಲ್ಲೆಗಳಲ್ಲಿ ಕೃಷಿ ಭೂಮಿ ಅನ್ವೇಷಿಸಿ." },
@@ -78,7 +78,7 @@ const dict: Record<string, Entry> = {
   "footer.about": { en: "About", hi: "हमारे बारे में", kn: "ನಮ್ಮ ಬಗ್ಗೆ" },
   "footer.privacy": { en: "Privacy", hi: "गोपनीयता", kn: "ಗೌಪ್ಯತೆ" },
   "footer.terms": { en: "Terms", hi: "शर्तें", kn: "ನಿಯಮಗಳು" },
-  "footer.tagline": { en: "© 2026 Bhūmi · Trusted land marketplace", hi: "© 2026 Bhūmi · भरोसेमंद ज़मीन बाज़ार", kn: "© 2026 Bhūmi · ವಿಶ್ವಾಸಾರ್ಹ ಭೂ ಮಾರುಕಟ್ಟೆ" },
+  "footer.tagline": { en: "© 2026 AcreHub · Trusted land marketplace", hi: "© 2026 AcreHub · भरोसेमंद ज़मीन बाज़ार", kn: "© 2026 AcreHub · ವಿಶ್ವಾಸಾರ್ಹ ಭೂ ಮಾರುಕಟ್ಟೆ" },
 
   "explore.found": { en: "listings found", hi: "सूचियाँ मिलीं", kn: "ಪಟ್ಟಿಗಳು ಸಿಕ್ಕಿವೆ" },
   "explore.sub": { en: "Click a pin for details, or browse the list.", hi: "विवरण के लिए पिन पर क्लिक करें, या सूची देखें।", kn: "ವಿವರಗಳಿಗೆ ಪಿನ್ ಕ್ಲಿಕ್ ಮಾಡಿ, ಅಥವಾ ಪಟ್ಟಿ ನೋಡಿ." },

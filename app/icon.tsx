@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-// Brand-green app icon with a "B" wordmark mark.
+// Brand-green app icon with an "A" wordmark mark.
 export default function Icon() {
   return new ImageResponse(
     (
@@ -21,7 +21,7 @@ export default function Icon() {
           borderRadius: 7,
         }}
       >
-        B
+        A
       </div>
     ),
     size

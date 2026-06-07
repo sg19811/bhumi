@@ -3,8 +3,8 @@ import Footer from "@/app/components/Footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Bhūmi",
-  description: "How Bhūmi collects, uses, and protects your information.",
+  title: "Privacy Policy — AcreHub",
+  description: "How AcreHub collects, uses, and protects your information.",
 };
 
 export default function Privacy() {
@@ -18,7 +18,7 @@ export default function Privacy() {
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-gray-600">
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">What we collect</h2>
-            <p>When you use Bhūmi we may collect: account details (email, and the name/phone you provide), the content of listings and buyer requirements you post (including contact details), inquiries you send, and anonymous search activity used to improve the product.</p>
+            <p>When you use AcreHub we may collect: account details (email, and the name/phone you provide), the content of listings and buyer requirements you post (including contact details), inquiries you send, and anonymous search activity used to improve the product.</p>
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">How we use it</h2>

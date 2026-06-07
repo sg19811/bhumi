@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ district:
   const { district } = await params;
   const name = decodeURIComponent(district);
   return {
-    title: `Agricultural land for sale in ${name} — Bhūmi`,
+    title: `Agricultural land for sale in ${name} — AcreHub`,
     description: `Browse verified agricultural land, orchards, and farmhouse plots for sale in ${name}. Real boundaries on the map, trust scores, and legal clarity.`,
     alternates: { canonical: `/region/${district}` },
   };

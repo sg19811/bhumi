@@ -110,7 +110,7 @@ export default function AdminDashboard() {
         <main className="mx-auto max-w-md px-6 py-24 text-center">
           <h1 className="mb-2 text-2xl font-bold">Admins only</h1>
           <p className="mb-8 text-gray-500">
-            {user ? "This area is restricted to Bhūmi administrators." : "Please sign in with an admin account to continue."}
+            {user ? "This area is restricted to AcreHub administrators." : "Please sign in with an admin account to continue."}
           </p>
           <Link href={user ? "/" : "/auth/signin"} className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">
             {user ? "Go home" : "Sign in"}

@@ -27,13 +27,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     .eq("id", id)
     .single();
 
-  if (!l) return { title: "Listing not found — Bhūmi" };
+  if (!l) return { title: "Listing not found — AcreHub" };
 
   const location = [l.village, l.taluka, l.district].filter(Boolean).join(", ");
-  const title = `${l.title} — ${formatINR(l.price)} · Bhūmi`;
+  const title = `${l.title} — ${formatINR(l.price)} · AcreHub`;
   const description =
     (l.description?.trim()?.slice(0, 155)) ||
-    `${l.area_value} ${l.area_unit} of land${location ? ` in ${location}` : ""} for ${formatINR(l.price)} on Bhūmi.`;
+    `${l.area_value} ${l.area_unit} of land${location ? ` in ${location}` : ""} for ${formatINR(l.price)} on AcreHub.`;
   const image = l.photos?.[0];
 
   return {
@@ -222,7 +222,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             <p className="mt-4 text-sm text-gray-500">
               {listing.contact_phone && (
                 <>Call: <a href={`tel:${listing.contact_phone}`} className="font-medium text-green-800 hover:underline">{listing.contact_phone}</a>
-                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your land "${listing.title}" (${formatINRShort(listing.price)}) on Bhūmi.`)}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
+                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your land "${listing.title}" (${formatINRShort(listing.price)}) on AcreHub.`)}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
               )}
               {listing.contact_email && (
                 <>{listing.contact_phone ? " · " : ""}<a href={`mailto:${listing.contact_email}`} className="font-medium text-green-800 hover:underline">Email</a></>

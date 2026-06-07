@@ -91,7 +91,7 @@ export default function AgentDashboard() {
         <main className="mx-auto max-w-md px-6 py-24 text-center">
           <h1 className="mb-2 text-2xl font-bold">Agent dashboard</h1>
           <p className="mb-8 text-gray-500">
-            {user ? "This dashboard is for Bhūmi agents. Ask an admin to enable agent access for your account." : "Sign in with an agent account to continue."}
+            {user ? "This dashboard is for AcreHub agents. Ask an admin to enable agent access for your account." : "Sign in with an agent account to continue."}
           </p>
           <Link href={user ? "/" : "/auth/signin"} className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">
             {user ? "Go home" : "Sign in"}

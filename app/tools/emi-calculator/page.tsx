@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Land loan EMI calculator — Bhūmi",
+  title: "Land loan EMI calculator — AcreHub",
   description: "Estimate the monthly EMI, total interest, and total payable for a land loan. Free and instant.",
 };
 

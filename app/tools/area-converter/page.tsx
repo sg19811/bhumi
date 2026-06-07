@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Land area converter — acre, guntha, hectare, cent — Bhūmi",
+  title: "Land area converter — acre, guntha, hectare, cent — AcreHub",
   description: "Convert agricultural land area between acres, gunthas, hectares, cents, and square feet. Free, instant, and accurate.",
 };
 

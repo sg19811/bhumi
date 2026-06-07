@@ -55,14 +55,14 @@ export default async function Home() {
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Bhūmi",
+      name: "AcreHub",
       url: "https://bhumi.vercel.app",
       description: "Trusted agricultural land marketplace — verified listings, legal clarity, and real maps.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "Bhūmi",
+      name: "AcreHub",
       url: "https://bhumi.vercel.app",
       potentialAction: {
         "@type": "SearchAction",

@@ -4,8 +4,8 @@ import Footer from "@/app/components/Footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How Bhūmi works — buying & selling agricultural land",
-  description: "How to find trusted farmland and list your land on Bhūmi: search, check the Trust Score, contact sellers, do due diligence, and post for free.",
+  title: "How AcreHub works — buying & selling agricultural land",
+  description: "How to find trusted farmland and list your land on AcreHub: search, check the Trust Score, contact sellers, do due diligence, and post for free.",
 };
 
 const buyerSteps = [
@@ -46,7 +46,7 @@ export default function HowItWorks() {
     <div className="flex min-h-screen flex-col bg-white text-gray-900">
       <Header />
       <main className="mx-auto w-full max-w-4xl px-6 py-12">
-        <h1 className="text-3xl font-bold sm:text-4xl">How Bhūmi works</h1>
+        <h1 className="text-3xl font-bold sm:text-4xl">How AcreHub works</h1>
         <p className="mt-3 max-w-2xl text-lg text-gray-600">
           A land marketplace built around trust, legal clarity, and real maps — for buyers and sellers alike.
         </p>

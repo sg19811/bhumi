@@ -7,7 +7,7 @@ import { formatINRShort } from "@/app/lib/format";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Buyer requirements — who's looking for land — Bhūmi",
+  title: "Buyer requirements — who's looking for land — AcreHub",
   description: "Browse what buyers are looking for and reach them directly. Filter by district, land type, and budget.",
 };
 
@@ -86,7 +86,7 @@ export default async function Requirements({ searchParams }: { searchParams: Pro
                     </a>
                   )}
                   {wa && (
-                    <a href={`https://wa.me/91${wa}?text=${encodeURIComponent("Hi, I saw your land requirement on Bhūmi and may have land that matches.")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-green-700 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-800">
+                    <a href={`https://wa.me/91${wa}?text=${encodeURIComponent("Hi, I saw your land requirement on AcreHub and may have land that matches.")}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-green-700 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-green-800">
                       💬 WhatsApp
                     </a>
                   )}

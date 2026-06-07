@@ -32,7 +32,7 @@ export function computeTrust(listing: {
   // Verified is weighted so only team-verified listings can reach "Excellent",
   // and an unverified-but-complete listing tops out at "Good" (max 60).
   const weighted = [
-    { label: "Verified by the Bhūmi team", met: !!listing.is_verified, weight: 40 },
+    { label: "Verified by the AcreHub team", met: !!listing.is_verified, weight: 40 },
     { label: "Photos provided", met: photoCount > 0, weight: 15 },
     { label: "Map location pinned (GPS)", met: hasGps, weight: 15 },
     { label: "Contact number on file", met: !!listing.contact_phone, weight: 10 },

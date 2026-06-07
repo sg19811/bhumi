@@ -6,8 +6,8 @@ import Footer from "@/app/components/Footer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "All agricultural land listings — Bhūmi",
-  description: "Every active agricultural land, orchard, and farmhouse plot listing on Bhūmi.",
+  title: "All agricultural land listings — AcreHub",
+  description: "Every active agricultural land, orchard, and farmhouse plot listing on AcreHub.",
 };
 
 export default async function Listings() {

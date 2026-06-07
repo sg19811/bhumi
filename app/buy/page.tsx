@@ -79,7 +79,7 @@ export default function BuyLand() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <header className="border-b px-6 py-4">
-        <Link href="/" className="text-2xl font-bold text-green-800">Bhūmi</Link>
+        <Link href="/" className="text-2xl font-bold text-green-800">AcreHub</Link>
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-10">

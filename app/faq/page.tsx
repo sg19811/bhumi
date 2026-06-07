@@ -4,17 +4,17 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Frequently asked questions — Bhūmi",
-  description: "Common questions about buying and selling agricultural land on Bhūmi: trust scores, verification, fees, eligibility, and accounts.",
+  title: "Frequently asked questions — AcreHub",
+  description: "Common questions about buying and selling agricultural land on AcreHub: trust scores, verification, fees, eligibility, and accounts.",
 };
 
 const faqs = [
   {
     q: "Is it free to list my land?",
-    a: "Yes. Listing your land on Bhūmi is completely free, and you don't even need an account — just add your details and contact information.",
+    a: "Yes. Listing your land on AcreHub is completely free, and you don't even need an account — just add your details and contact information.",
   },
   {
-    q: "Do I need an account to use Bhūmi?",
+    q: "Do I need an account to use AcreHub?",
     a: "No. You can browse, search, contact sellers, and post a listing without an account. Signing in lets you save listings, build collections, sync saved searches across devices, and manage your own listings.",
   },
   {
@@ -56,7 +56,7 @@ export default function FAQ() {
       <Header />
       <main className="mx-auto w-full max-w-2xl flex-1 px-6 py-12">
         <h1 className="text-3xl font-bold sm:text-4xl">Frequently asked questions</h1>
-        <p className="mt-3 text-gray-600">Everything you need to know about buying and selling land on Bhūmi.</p>
+        <p className="mt-3 text-gray-600">Everything you need to know about buying and selling land on AcreHub.</p>
 
         <dl className="mt-8 space-y-6">
           {faqs.map((f) => (

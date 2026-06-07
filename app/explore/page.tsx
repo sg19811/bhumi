@@ -12,7 +12,7 @@ import { t as translate } from "@/app/lib/i18n";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Explore agricultural land for sale — Bhūmi",
+  title: "Explore agricultural land for sale — AcreHub",
   description: "Browse verified farmland, orchards, and farmhouse plots on a map. Filter by budget, land type, water, and road access.",
 };
 

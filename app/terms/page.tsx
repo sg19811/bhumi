@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Use — Bhūmi",
-  description: "The terms for using the Bhūmi agricultural land marketplace.",
+  title: "Terms of Use — AcreHub",
+  description: "The terms for using the AcreHub agricultural land marketplace.",
 };
 
 export default function Terms() {
@@ -18,8 +18,8 @@ export default function Terms() {
 
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-gray-600">
           <section>
-            <h2 className="mb-1 font-semibold text-gray-900">About Bhūmi</h2>
-            <p>Bhūmi is a marketplace that connects people buying and selling agricultural land. We are not a party to any transaction between users and do not act as a broker, agent, or guarantor.</p>
+            <h2 className="mb-1 font-semibold text-gray-900">About AcreHub</h2>
+            <p>AcreHub is a marketplace that connects people buying and selling agricultural land. We are not a party to any transaction between users and do not act as a broker, agent, or guarantor.</p>
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">Listings &amp; verification</h2>
@@ -35,7 +35,7 @@ export default function Terms() {
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">Liability</h2>
-            <p>The service is provided &quot;as is.&quot; To the extent permitted by law, Bhūmi is not liable for losses arising from listings, transactions, or reliance on information on the site.</p>
+            <p>The service is provided &quot;as is.&quot; To the extent permitted by law, AcreHub is not liable for losses arising from listings, transactions, or reliance on information on the site.</p>
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">Contact</h2>

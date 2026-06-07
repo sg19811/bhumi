@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Land tools — Bhūmi",
+  title: "Land tools — AcreHub",
   description: "Free tools for agricultural land buyers and sellers: area unit converter and land-loan EMI calculator.",
 };
 

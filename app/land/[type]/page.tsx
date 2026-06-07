@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   const { type } = await params;
   const label = landLabel(type);
   return {
-    title: `${label} for sale — Bhūmi`,
+    title: `${label} for sale — AcreHub`,
     description: `Browse verified ${label.toLowerCase()} for sale across India — real boundaries on the map, trust scores, and legal clarity.`,
     alternates: { canonical: `/land/${type}` },
   };

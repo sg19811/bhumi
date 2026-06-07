@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Bhūmi — Trusted agricultural land marketplace";
+export const alt = "AcreHub — Trusted agricultural land marketplace";
 
 // Default social share card for pages that don't define their own OG image.
 export default function OpengraphImage() {
@@ -20,7 +20,7 @@ export default function OpengraphImage() {
           color: "#fdfcf9",
         }}
       >
-        <div style={{ fontSize: 40, fontWeight: 600, opacity: 0.85 }}>Bhūmi</div>
+        <div style={{ fontSize: 40, fontWeight: 600, opacity: 0.85 }}>AcreHub</div>
         <div style={{ fontSize: 76, fontWeight: 700, lineHeight: 1.05, marginTop: 24, maxWidth: 900 }}>
           Find trusted agricultural land
         </div>
