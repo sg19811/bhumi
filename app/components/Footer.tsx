@@ -22,6 +22,17 @@ export default function Footer() {
         </nav>
         <p className="text-xs text-gray-400">{t("footer.tagline")}</p>
       </div>
+      <div className="border-t border-gray-200/70">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-6 py-4 text-xs text-gray-500">
+          <span className="font-semibold uppercase tracking-wide text-gray-400">Legal Navigator</span>
+          <Link href="/legal/wizard" className="hover:text-green-800">Eligibility wizard</Link>
+          <Link href="/legal/checklist" className="hover:text-green-800">Document checklist</Link>
+          <Link href="/legal/due-diligence" className="hover:text-green-800">Due diligence</Link>
+          <Link href="/legal/lawyers" className="hover:text-green-800">Land lawyers</Link>
+          <Link href="/legal/services" className="hover:text-green-800">Services</Link>
+          <Link href="/legal/articles" className="hover:text-green-800">Guides</Link>
+        </div>
+      </div>
     </footer>
   );
 }
