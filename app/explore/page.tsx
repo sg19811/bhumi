@@ -6,6 +6,7 @@ import SearchLogger from "@/app/components/SearchLogger";
 import SavedSearches from "@/app/components/SavedSearches";
 import ActiveFilters from "@/app/components/ActiveFilters";
 import ExploreSplit from "@/app/components/ExploreSplit";
+import NotifyMe from "@/app/components/NotifyMe";
 import { cleanSearchTerm } from "@/app/lib/search";
 import { getLocale } from "@/app/lib/i18n-server";
 import { t as translate } from "@/app/lib/i18n";
@@ -58,6 +59,11 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
           <div className="rounded-2xl border border-dashed border-gray-300 py-16 text-center">
             <p className="mb-4 text-lg text-gray-400">{t("explore.emptyTitle")}</p>
             <Link href="/buy" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">{t("explore.emptyCta")}</Link>
+            <NotifyMe
+              district={sp.q || sp.district}
+              landType={sp.land_type}
+              prompt={`No matches${sp.q ? ` for "${sp.q}"` : ""} yet — get notified the moment land like this is listed.`}
+            />
           </div>
         ) : (
           <ExploreSplit listings={listings ?? []} markers={markers} />
