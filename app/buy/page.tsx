@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
+import { useAuth } from "@/app/lib/auth";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
 
 export default function BuyLand() {
+  const { user } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -23,6 +25,7 @@ export default function BuyLand() {
     const landTypes = Array.from(f.getAll("land_types")) as string[];
 
     const { error: dbError } = await supabase.from("buyer_interests").insert({
+      owner_user_id: user?.id ?? null,
       intent: f.get("intent"),
       preferred_district: f.get("preferred_district"),
       preferred_taluka: f.get("preferred_taluka"),
@@ -65,10 +68,10 @@ export default function BuyLand() {
               Browse listings
             </Link>
             <Link
-              href="/"
+              href={user ? "/my-requirements" : "/"}
               className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50"
             >
-              Go home
+              {user ? "My requirements" : "Go home"}
             </Link>
           </div>
         </main>

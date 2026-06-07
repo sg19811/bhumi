@@ -101,6 +101,10 @@ drop policy if exists "admins read buyer_interests" on public.buyer_interests;
 create policy "admins read buyer_interests" on public.buyer_interests
   for select to authenticated using (public.is_admin());
 
+drop policy if exists "owners manage own requirements" on public.buyer_interests;
+create policy "owners manage own requirements" on public.buyer_interests
+  for all to authenticated using (auth.uid() = owner_user_id) with check (auth.uid() = owner_user_id);
+
 drop policy if exists "admins read search_logs" on public.search_logs;
 create policy "admins read search_logs" on public.search_logs
   for select to authenticated using (public.is_admin());

@@ -17,6 +17,7 @@ const dict: Record<string, Entry> = {
   "nav.saved": { en: "Saved", hi: "सहेजे गए", kn: "ಉಳಿಸಲಾಗಿದೆ" },
   "nav.collections": { en: "Collections", hi: "संग्रह", kn: "ಸಂಗ್ರಹಗಳು" },
   "nav.myListings": { en: "My listings", hi: "मेरी सूचियाँ", kn: "ನನ್ನ ಪಟ್ಟಿಗಳು" },
+  "nav.myRequirements": { en: "My requirements", hi: "मेरी आवश्यकताएँ", kn: "ನನ್ನ ಅಗತ್ಯಗಳು" },
   "nav.agent": { en: "Agent", hi: "एजेंट", kn: "ಏಜೆಂಟ್" },
   "nav.dashboard": { en: "Dashboard", hi: "डैशबोर्ड", kn: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್" },
 
