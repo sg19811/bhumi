@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { supabase } from "@/app/lib/supabase";
+import { CORRIDORS } from "@/app/lib/farm-plots/corridors";
 
 const BASE = "https://bhumi.vercel.app";
 
@@ -49,5 +50,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return { url: `${BASE}/region/${encodeURIComponent(d)}/${encodeURIComponent(t)}`, lastModified: new Date() };
   });
 
-  return [...staticPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
+  // Farm plot project surfaces (hub, city, + the 6 corridors).
+  const farmPlotPages = ["/farm-plots", "/farm-plots/bangalore", ...CORRIDORS.map((c) => `/farm-plots/${c.slug}`)].map((p) => ({
+    url: `${BASE}${p}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...farmPlotPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
 }

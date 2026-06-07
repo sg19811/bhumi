@@ -133,3 +133,16 @@ an explore *corridor* filter isn't built (search_logs.corridor is for logging) �
   review (spec risk #3).
 **Verified:** tsc + `next build` clean; all 4 routes present.
 **Open questions:** none.
+
+---
+
+## Phase 6 — Sitemap + smoke tests + build
+
+- **Sitemap:** `app/sitemap.ts` now enumerates `/farm-plots`, `/farm-plots/bangalore`, and the 6
+  corridor routes (dynamic from `CORRIDORS`) with `changeFrequency: weekly`, `priority: 0.7`.
+- **Smoke tests: skipped (conditional).** `tests/smoke/` does **not** exist on this branch — the
+  Playwright smoke layer lives on the unmerged `overnight/foundation-hardening` branch, not `main`.
+  Per the brief ("if the smoke layer exists"), I did not add Playwright here. **Morning action:** once
+  the hardening branch is merged, add the spec §13 farm-plot cases to `tests/smoke/pages.spec.ts`.
+- **Build:** `npm run build` clean.
+**Open questions:** none (smoke deferred by design, logged above).
