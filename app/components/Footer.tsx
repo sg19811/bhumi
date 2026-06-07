@@ -14,6 +14,8 @@ export default function Footer() {
           <Link href="/eligibility" className="hover:text-green-800">Eligibility</Link>
           <Link href="/faq" className="hover:text-green-800">FAQ</Link>
           <Link href="/about" className="hover:text-green-800">About</Link>
+          <Link href="/privacy" className="hover:text-green-800">Privacy</Link>
+          <Link href="/terms" className="hover:text-green-800">Terms</Link>
         </nav>
         <p className="text-xs text-gray-400">© 2026 Bhūmi · Trusted land marketplace</p>
       </div>

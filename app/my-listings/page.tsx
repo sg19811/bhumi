@@ -17,20 +17,34 @@ const statusStyle: Record<string, string> = {
 export default function MyListings() {
   const { user, loading } = useAuth();
   const [listings, setListings] = useState<any[]>([]);
+  const [inquiriesByListing, setInquiriesByListing] = useState<Record<string, any[]>>({});
   const [fetched, setFetched] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("listings")
-      .select("*")
-      .eq("owner_user_id", user.id)
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setListings(data ?? []);
-        setFetched(true);
-      });
+    (async () => {
+      const { data: ls } = await supabase
+        .from("listings")
+        .select("*")
+        .eq("owner_user_id", user.id)
+        .order("created_at", { ascending: false });
+      setListings(ls ?? []);
+
+      const ids = (ls ?? []).map((l) => l.id);
+      if (ids.length) {
+        // RLS lets owners read inquiries only for listings they own.
+        const { data: inq } = await supabase
+          .from("inquiries")
+          .select("*")
+          .in("listing_id", ids)
+          .order("created_at", { ascending: false });
+        const map: Record<string, any[]> = {};
+        for (const q of inq ?? []) (map[q.listing_id] ??= []).push(q);
+        setInquiriesByListing(map);
+      }
+      setFetched(true);
+    })();
   }, [user]);
 
   async function setStatus(id: string, status: string) {
@@ -88,6 +102,20 @@ export default function MyListings() {
                   <button onClick={() => setStatus(l.id, "active")} disabled={busyId === l.id} className="text-xs text-gray-500 hover:text-green-800 disabled:opacity-50">Re-list</button>
                 )}
               </div>
+              {(inquiriesByListing[l.id]?.length ?? 0) > 0 && (
+                <div className="mt-2 rounded-lg bg-green-50 px-3 py-2">
+                  <p className="text-xs font-medium text-green-800">📩 {inquiriesByListing[l.id].length} {inquiriesByListing[l.id].length === 1 ? "inquiry" : "inquiries"}</p>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {inquiriesByListing[l.id].slice(0, 6).map((q) => (
+                      q.contact_phone ? (
+                        <a key={q.id} href={`tel:${q.contact_phone}`} className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-white px-2.5 py-1 text-xs text-gray-700 hover:border-green-600 hover:text-green-800">
+                          📞 {q.contact_phone}
+                        </a>
+                      ) : null
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
