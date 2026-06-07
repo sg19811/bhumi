@@ -7,6 +7,7 @@ import AdminListingRow from "@/app/components/AdminListingRow";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import { formatINRShort } from "@/app/lib/format";
+import { STATES } from "@/app/lib/legal/options";
 
 // Buyer requirements that match a listing (affordable + right place + right type).
 function matchesFor(listing: any, buyers: any[]) {
@@ -88,6 +89,7 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState<any[]>([]);
   const [demand, setDemand] = useState<any[]>([]);
   const [legalLeads, setLegalLeads] = useState<any[]>([]);
+  const [liveStates, setLiveStates] = useState<string[]>([]);
   const [listingQuery, setListingQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -95,7 +97,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s, v, r, d, g] = await Promise.all([
+      const [l, i, b, s, v, r, d, g, ls] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
@@ -104,6 +106,7 @@ export default function AdminDashboard() {
         supabase.from("reports").select("*, listings(title)").eq("resolved", false).order("created_at", { ascending: false }),
         supabase.from("demand_signals").select("*").order("created_at", { ascending: false }).limit(1000),
         supabase.from("legal_inquiries").select("*").order("created_at", { ascending: false }).limit(200),
+        supabase.from("legal_state_rules").select("state").eq("published", true),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
@@ -113,6 +116,7 @@ export default function AdminDashboard() {
       setReports(r.data ?? []);
       setDemand(d.data ?? []);
       setLegalLeads(g.data ?? []);
+      setLiveStates((ls.data ?? []).map((x: any) => x.state));
     })();
   }, [isAdmin]);
 
@@ -236,6 +240,27 @@ export default function AdminDashboard() {
             </div>
           </section>
         )}
+
+        <section className="mb-10">
+          <h2 className="mb-1 text-lg font-semibold">Legal guide status</h2>
+          <p className="mb-3 text-sm text-gray-500">
+            State guides go live only when published with a reviewer recorded. {liveStates.length} of {STATES.length} live.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {STATES.map((st) => {
+              const live = liveStates.includes(st.value);
+              return (
+                <span key={st.value} className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm ${live ? "border-green-200 bg-green-50 text-green-800" : "border-amber-200 bg-amber-50 text-amber-800"}`}>
+                  {st.label}
+                  <span className="text-xs font-medium">{live ? "● Live" : "○ Draft"}</span>
+                </span>
+              );
+            })}
+          </div>
+          {liveStates.length < STATES.length && (
+            <p className="mt-2 text-xs text-gray-400">Publish drafts by running the UPDATE in each supabase-legal-seed*.sql with your reviewer name.</p>
+          )}
+        </section>
 
         {legalLeads.length > 0 && (
           <section className="mb-10">
