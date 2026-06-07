@@ -19,6 +19,7 @@ import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
 import ShareButton from "@/app/components/ShareButton";
 import ReportButton from "@/app/components/ReportButton";
+import StickyContactBar from "@/app/components/StickyContactBar";
 import PriceInsightPanel from "@/app/components/PriceInsight";
 import { buildPriceInsight } from "@/app/lib/price-insight";
 import { districtToState } from "@/app/lib/legal/districts";
@@ -144,7 +145,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
       <TrackRecentlyViewed id={listing.id} />
       <TrackView id={listing.id} />
       <Header />
-      <main className="mx-auto max-w-4xl px-5 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto max-w-4xl px-5 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <div className="mb-5 flex items-center justify-between gap-3">
           <nav className="flex min-w-0 items-center gap-1.5 text-sm text-gray-500" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-green-800">Home</Link>
@@ -256,7 +257,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <VerifyChecklist />
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
+        <div id="contact" className="scroll-mt-20 rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
           <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
           {(listing.contact_phone || listing.contact_email) && (
@@ -290,6 +291,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           </section>
         )}
       </main>
+      <StickyContactBar phone={listing.contact_phone} price={listing.price} basis={listing.price_basis} />
       <Footer />
     </div>
   );
