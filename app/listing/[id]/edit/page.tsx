@@ -6,6 +6,7 @@ import { useAuth } from "@/app/lib/auth";
 import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
+import LocationField from "@/app/components/LocationField";
 import Link from "next/link";
 
 export default function EditListing() {
@@ -47,9 +48,14 @@ export default function EditListing() {
     e.preventDefault();
     setSaving(true);
     const f = new FormData(e.currentTarget);
+    const latRaw = f.get("latitude");
+    const lngRaw = f.get("longitude");
     await supabase.from("listings").update({
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: Number(f.get("price")), area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
+      latitude: latRaw ? Number(latRaw) : listing.latitude,
+      longitude: lngRaw ? Number(lngRaw) : listing.longitude,
+      district: f.get("district"), taluka: f.get("taluka"), village: f.get("village"),
       water_source: f.get("water_source"), road_access: f.get("road_access"),
       electricity: f.get("electricity") === "on", status: f.get("status"),
       contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
@@ -91,6 +97,9 @@ export default function EditListing() {
               <select name="water_source" defaultValue={listing.water_source ?? ""} className={inp}><option value="">Select</option><option value="borewell">Borewell</option><option value="canal">Canal</option><option value="river">River</option><option value="rainfed">Rainfed</option><option value="none">None</option></select></div>
             <div><label className="block text-sm font-medium mb-1">Road access</label>
               <select name="road_access" defaultValue={listing.road_access ?? ""} className={inp}><option value="">Select</option><option value="highway">Highway</option><option value="paved">Paved</option><option value="dirt">Dirt</option><option value="none">None</option></select></div>
+          </div>
+          <div><label className="mb-1 block text-sm font-medium">Location</label>
+            <LocationField defaultLat={listing.latitude} defaultLng={listing.longitude} defaultDistrict={listing.district ?? ""} defaultTaluka={listing.taluka ?? ""} defaultVillage={listing.village ?? ""} />
           </div>
           <label className="flex items-center gap-2 cursor-pointer"><input name="electricity" type="checkbox" defaultChecked={listing.electricity} className="w-4 h-4 accent-green-700" /><span className="text-sm">Electricity available</span></label>
           <div className="grid grid-cols-2 gap-4">

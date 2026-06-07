@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
+import LocationField from "@/app/components/LocationField";
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -28,10 +29,17 @@ export default function NewListing() {
     return true;
   }
   function next() {
-    if (validateStep(step)) {
-      setStep((s) => Math.min(s + 1, stepLabels.length - 1));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!validateStep(step)) return;
+    if (step === 2) {
+      const latEl = stepRefs.current[2]?.querySelector('input[name="latitude"]') as HTMLInputElement | null;
+      if (!latEl?.value) {
+        setError("Please drop a pin on the map to set the location.");
+        return;
+      }
     }
+    setError("");
+    setStep((s) => Math.min(s + 1, stepLabels.length - 1));
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function back() {
     setStep((s) => Math.max(s - 1, 0));
@@ -43,6 +51,11 @@ export default function NewListing() {
     const f = new FormData(e.currentTarget);
     // Honeypot: real users never see/fill this; bots do. Pretend success, skip DB.
     if (f.get("company")) { setSuccess(true); return; }
+    if (!f.get("latitude") || !f.get("longitude")) {
+      setError("Please drop a pin on the map to set the location.");
+      setStep(2);
+      return;
+    }
     setSubmitting(true); setError("");
     const { error: dbError } = await supabase.from("listings").insert({
       owner_user_id: user?.id ?? null,
@@ -141,16 +154,7 @@ export default function NewListing() {
           <div ref={(el) => { stepRefs.current[2] = el; }} className={step === 2 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Location</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div><label className="block text-sm font-medium mb-1">District *</label><input name="district" required placeholder="Mysuru" className={inp} /></div>
-              <div><label className="block text-sm font-medium mb-1">Taluka</label><input name="taluka" placeholder="Hunsur" className={inp} /></div>
-              <div><label className="block text-sm font-medium mb-1">Village</label><input name="village" placeholder="Kallahalli" className={inp} /></div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Latitude *</label><input name="latitude" type="number" step="any" min="6" max="37" required placeholder="12.31" title="Latitude within India (approx 6 to 37)" className={inp} /></div>
-              <div><label className="block text-sm font-medium mb-1">Longitude *</label><input name="longitude" type="number" step="any" min="68" max="98" required placeholder="76.21" title="Longitude within India (approx 68 to 98)" className={inp} /></div>
-            </div>
-            <p className="text-xs text-gray-400">Tip: in Google Maps, right-click the land and click the coordinates to copy them.</p>
+            <LocationField />
           </section>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Features</h2>
