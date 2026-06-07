@@ -44,7 +44,12 @@ export default async function LegalHub() {
       <HeroSection />
 
       <div className="mx-auto max-w-5xl px-5 py-10 sm:px-6">
-        <div className="mb-12"><TrustBadgesRow /></div>
+        <div className="mb-8"><TrustBadgesRow /></div>
+
+        <Link href="/legal/nri" className="mb-12 block rounded-2xl border border-green-200 bg-green-50/50 p-4 text-center text-sm transition-colors hover:bg-green-50 sm:p-5">
+          <span className="font-semibold text-green-900">Buying from abroad?</span>{" "}
+          <span className="text-green-800">See the NRI &amp; OCI guide — what you can buy or inherit under FEMA →</span>
+        </Link>
 
         {/* State grid */}
         <section className="mb-12">
