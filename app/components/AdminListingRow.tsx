@@ -10,7 +10,7 @@ const statusStyle: Record<string, string> = {
   withdrawn: "bg-gray-200 text-gray-700",
 };
 
-export default function AdminListingRow({ listing }: { listing: any }) {
+export default function AdminListingRow({ listing, onStatusChange }: { listing: any; onStatusChange?: (id: string, status: string) => void }) {
   const [verified, setVerified] = useState(listing.is_verified);
   const [status, setStatus] = useState<string>(listing.status ?? "active");
   const [deleted, setDeleted] = useState(false);
@@ -25,7 +25,7 @@ export default function AdminListingRow({ listing }: { listing: any }) {
   async function approve() {
     setBusy(true);
     const { error } = await supabase.from("listings").update({ status: "active" }).eq("id", listing.id);
-    if (!error) setStatus("active");
+    if (!error) { setStatus("active"); onStatusChange?.(listing.id, "active"); }
     setBusy(false);
   }
   async function remove() {

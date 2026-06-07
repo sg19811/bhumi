@@ -125,6 +125,10 @@ export default function AdminDashboard() {
     setReports((cur) => cur.filter((x) => x.id !== reportId));
   }
 
+  function onListingStatusChange(id: string, status: string) {
+    setListings((cur) => cur.map((l) => (l.id === id ? { ...l, status } : l)));
+  }
+
   async function setLeadStatus(id: string, status: string) {
     await supabase.from("legal_inquiries").update({ status }).eq("id", id);
     setLegalLeads((cur) => cur.map((x) => (x.id === id ? { ...x, status } : x)));
@@ -198,7 +202,7 @@ export default function AdminDashboard() {
             <h2 className="mb-1 text-lg font-semibold">Awaiting approval ({pending})</h2>
             <p className="mb-4 text-sm text-gray-500">These stay hidden from buyers until you Approve them.</p>
             <div className="divide-y divide-gray-200 rounded-xl border border-amber-200 bg-amber-50/40 shadow-sm">
-              {sortedListings.filter((l) => (l.status ?? "active") === "pending").map((l) => <AdminListingRow key={l.id} listing={l} />)}
+              {sortedListings.filter((l) => (l.status ?? "active") === "pending").map((l) => <AdminListingRow key={l.id} listing={l} onStatusChange={onListingStatusChange} />)}
             </div>
           </section>
         )}
@@ -335,7 +339,7 @@ export default function AdminDashboard() {
               </select>
             </div>
             <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
-              {filteredListings.map((l) => <AdminListingRow key={l.id} listing={l} />)}
+              {filteredListings.map((l) => <AdminListingRow key={l.id} listing={l} onStatusChange={onListingStatusChange} />)}
               {filteredListings.length === 0 && <p className="p-4 text-sm text-gray-400">{listings.length === 0 ? "No listings yet." : "No listings match."}</p>}
             </div>
           </section>
