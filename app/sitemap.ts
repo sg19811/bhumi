@@ -28,5 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  return [...staticPages, ...regionPages, ...landPages, ...listingPages];
+  // District × land-type combos that actually have listings (long-tail SEO).
+  const pairs = [...new Set((listings ?? []).filter((l) => l.district && l.land_type).map((l) => `${l.district}|||${l.land_type}`))];
+  const comboPages = pairs.map((p) => {
+    const [d, t] = p.split("|||");
+    return { url: `${BASE}/region/${encodeURIComponent(d)}/${encodeURIComponent(t)}`, lastModified: new Date() };
+  });
+
+  return [...staticPages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
 }

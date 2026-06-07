@@ -4,26 +4,12 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
+import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
-
-const LABELS: Record<string, string> = {
-  agri_land: "Agricultural land",
-  irrigated_farmland: "Irrigated farmland",
-  dryland: "Dryland",
-  orchard: "Orchards",
-  plantation: "Plantations",
-  farmhouse_land: "Farmhouse land",
-  built_farmhouse: "Built farmhouses",
-  na_converted: "NA-converted land",
-  developed_rural_plot: "Developed rural plots",
-  other: "Land",
-};
-
-const labelFor = (type: string) => LABELS[type] ?? type.replace(/_/g, " ");
 
 export async function generateMetadata({ params }: { params: Promise<{ type: string }> }): Promise<Metadata> {
   const { type } = await params;
-  const label = labelFor(type);
+  const label = landLabel(type);
   return {
     title: `${label} for sale — Bhūmi`,
     description: `Browse verified ${label.toLowerCase()} for sale across India — real boundaries on the map, trust scores, and legal clarity.`,
@@ -33,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
 
 export default async function LandTypePage({ params }: { params: Promise<{ type: string }> }) {
   const { type } = await params;
-  const label = labelFor(type);
+  const label = landLabel(type);
 
   const { data: listings } = await supabase
     .from("listings")
