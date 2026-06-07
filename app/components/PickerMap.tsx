@@ -29,11 +29,19 @@ function Recenter({ center, tick }: { center?: [number, number]; tick?: number }
   return null;
 }
 
-function SizeFix() {
+// Keeps the map sized correctly even when it mounts hidden (e.g. inside a
+// wizard step with display:none) and becomes visible later.
+function ResizeHandler() {
   const map = useMap();
   useEffect(() => {
-    const raf = requestAnimationFrame(() => map.invalidateSize());
-    return () => cancelAnimationFrame(raf);
+    const invalidate = () => map.invalidateSize();
+    const raf = requestAnimationFrame(invalidate);
+    const ro = new ResizeObserver(invalidate);
+    ro.observe(map.getContainer());
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, [map]);
   return null;
 }
@@ -58,7 +66,7 @@ export default function PickerMap({
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
       <ClickHandler onPick={onPick} />
       <Recenter center={center} tick={recenterTick} />
-      <SizeFix />
+      <ResizeHandler />
       {hasPin && <Marker position={[lat!, lng!]} icon={pinIcon} />}
     </MapContainer>
   );

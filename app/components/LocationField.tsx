@@ -23,14 +23,19 @@ export default function LocationField({
   defaultTaluka?: string;
   defaultVillage?: string;
 }) {
-  const [lat, setLat] = useState<number | null>(defaultLat ?? null);
-  const [lng, setLng] = useState<number | null>(defaultLng ?? null);
+  const [latText, setLatText] = useState(defaultLat != null ? String(defaultLat) : "");
+  const [lngText, setLngText] = useState(defaultLng != null ? String(defaultLng) : "");
   const [district, setDistrict] = useState(defaultDistrict ?? "");
   const [taluka, setTaluka] = useState(defaultTaluka ?? "");
   const [village, setVillage] = useState(defaultVillage ?? "");
   const [center, setCenter] = useState<[number, number] | undefined>(undefined);
   const [tick, setTick] = useState(0);
   const [msg, setMsg] = useState("");
+
+  const latNum = latText.trim() === "" ? null : Number(latText);
+  const lngNum = lngText.trim() === "" ? null : Number(lngText);
+  const pinLat = latNum != null && Number.isFinite(latNum) ? latNum : null;
+  const pinLng = lngNum != null && Number.isFinite(lngNum) ? lngNum : null;
 
   async function reverseGeocode(la: number, lo: number) {
     try {
@@ -39,8 +44,7 @@ export default function LocationField({
         { headers: { Accept: "application/json" } }
       );
       if (!res.ok) return;
-      const data = await res.json();
-      const a = data?.address ?? {};
+      const a = (await res.json())?.address ?? {};
       const d = a.state_district || a.county || a.district || "";
       const t = a.city_district || a.municipality || a.county || a.suburb || "";
       const v = a.village || a.hamlet || a.town || a.suburb || "";
@@ -52,15 +56,25 @@ export default function LocationField({
     }
   }
 
+  // Pin placed by tapping the map or geolocation.
   function pick(la: number, lo: number) {
-    setLat(la);
-    setLng(lo);
+    setLatText(la.toFixed(6));
+    setLngText(lo.toFixed(6));
     reverseGeocode(la, lo);
+  }
+
+  // Coordinates typed manually — recenter the map and geocode once both are valid.
+  function applyTypedCoords() {
+    if (pinLat != null && pinLng != null) {
+      setCenter([pinLat, pinLng]);
+      setTick((x) => x + 1);
+      reverseGeocode(pinLat, pinLng);
+    }
   }
 
   function useMyLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setMsg("Geolocation isn't available in this browser — tap the map instead.");
+      setMsg("Geolocation isn't available in this browser — tap the map or type coordinates.");
       return;
     }
     setMsg("Locating…");
@@ -72,7 +86,7 @@ export default function LocationField({
         pick(latitude, longitude);
         setMsg("");
       },
-      () => setMsg("Couldn't get your location — tap the map to set it."),
+      () => setMsg("Couldn't get your location — tap the map or type coordinates."),
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }
@@ -80,7 +94,7 @@ export default function LocationField({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-gray-500">Tap the map to drop a pin on your land.</p>
+        <p className="text-sm text-gray-500">Tap the map, use your location, or type coordinates.</p>
         <button
           type="button"
           onClick={useMyLocation}
@@ -90,20 +104,23 @@ export default function LocationField({
         </button>
       </div>
 
-      <div className="h-[300px] overflow-hidden rounded-2xl border border-gray-200">
-        <PickerMap lat={lat} lng={lng} onPick={pick} center={center} recenterTick={tick} />
+      <div className="h-[300px] w-full overflow-hidden rounded-2xl border border-gray-200 sm:h-[360px]">
+        <PickerMap lat={pinLat} lng={pinLng} onPick={pick} center={center} recenterTick={tick} />
       </div>
 
       {msg && <p className="text-xs text-gray-500">{msg}</p>}
-      {lat != null && lng != null ? (
-        <p className="text-xs text-gray-400">Pin set at {lat.toFixed(5)}, {lng.toFixed(5)}</p>
-      ) : (
-        <p className="text-xs text-amber-700">No pin yet — tap the map to set the location.</p>
-      )}
 
-      {/* Submitted with the form (existing FormData logic reads these names). */}
-      <input type="hidden" name="latitude" value={lat ?? ""} readOnly />
-      <input type="hidden" name="longitude" value={lng ?? ""} readOnly />
+      {/* Manual coordinate entry (also what the form submits). */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="mb-1 block text-sm font-medium">Latitude *</label>
+          <input name="latitude" required inputMode="decimal" value={latText} onChange={(e) => setLatText(e.target.value)} onBlur={applyTypedCoords} placeholder="12.31" className={fieldCls} />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Longitude *</label>
+          <input name="longitude" required inputMode="decimal" value={lngText} onChange={(e) => setLngText(e.target.value)} onBlur={applyTypedCoords} placeholder="76.21" className={fieldCls} />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
