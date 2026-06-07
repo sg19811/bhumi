@@ -12,10 +12,10 @@ const budgets = [
   { label: "Under ₹1 crore", href: "/explore?max_price=10000000" },
 ];
 const purposes = [
-  { label: "Orchards", href: "/explore?land_type=orchard" },
-  { label: "Farmhouse land", href: "/explore?land_type=farmhouse_land" },
-  { label: "Irrigated farmland", href: "/explore?land_type=irrigated_farmland" },
-  { label: "NA-converted", href: "/explore?land_type=na_converted" },
+  { label: "Orchards", href: "/land/orchard" },
+  { label: "Farmhouse land", href: "/land/farmhouse_land" },
+  { label: "Irrigated farmland", href: "/land/irrigated_farmland" },
+  { label: "NA-converted", href: "/land/na_converted" },
 ];
 
 const needs = [
