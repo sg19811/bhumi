@@ -37,14 +37,21 @@ export default function AddToCollection({ listingId }: { listingId: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, user]);
 
-  // Close on outside click.
+  // Close on outside click or Escape.
   useEffect(() => {
     if (!open) return;
     const onClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   function toggleOpen() {
