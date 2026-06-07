@@ -58,6 +58,8 @@ const dict: Record<string, Entry> = {
   "home.need.budgetSub": { en: "Under ₹25 lakh", hi: "₹25 लाख से कम", kn: "₹25 ಲಕ್ಷದೊಳಗೆ" },
   "home.need.largest": { en: "Largest plots", hi: "सबसे बड़े प्लॉट", kn: "ಅತಿದೊಡ್ಡ ಪ್ಲಾಟ್‌ಗಳು" },
   "home.need.largestSub": { en: "Most acreage first", hi: "सबसे ज़्यादा रकबा पहले", kn: "ಹೆಚ್ಚು ವಿಸ್ತೀರ್ಣ ಮೊದಲು" },
+  "home.need.legal": { en: "Legal eligibility", hi: "कानूनी पात्रता", kn: "ಕಾನೂನು ಅರ್ಹತೆ" },
+  "home.need.legalSub": { en: "Can you buy? Check rules", hi: "क्या आप खरीद सकते हैं? नियम देखें", kn: "ಖರೀದಿಸಬಹುದೇ? ನಿಯಮ ನೋಡಿ" },
 
   "home.justListed": { en: "Just listed", hi: "अभी सूचीबद्ध", kn: "ಈಗ ಪಟ್ಟಿ ಮಾಡಲಾಗಿದೆ" },
   "home.justListedSub": { en: "The newest land on AcreHub.", hi: "AcreHub पर सबसे नई ज़मीन।", kn: "AcreHub ನಲ್ಲಿ ಹೊಸ ಭೂಮಿ." },

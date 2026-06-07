@@ -215,9 +215,11 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800 sm:text-lg">{listing.water_source || "—"}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">water</p></div>
         </div>
 
-        <p className="mb-8 text-sm">
+        <div className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <Link href={`/tools/emi-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">💰 Estimate EMI for this land →</Link>
-        </p>
+          <Link href="/legal/wizard" className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
+          <Link href="/legal/checklist" className="font-medium text-green-800 hover:underline">📋 Document checklist →</Link>
+        </div>
 
         {priceInsight && <PriceInsightPanel insight={priceInsight} />}
 

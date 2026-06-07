@@ -27,6 +27,7 @@ const needs = [
   { key: "home.need.orchards", subKey: "home.need.orchardsSub", href: "/explore?land_type=orchard", icon: <path d="M12 21v-6m0 0a6 6 0 1 0-4.2-10.3A5 5 0 0 0 5 13a4 4 0 0 0 4 2h6a4 4 0 0 0 3-6.7" /> },
   { key: "home.need.budget", subKey: "home.need.budgetSub", href: "/explore?max_price=2500000&sort=price_asc", icon: <path d="M9 8h6M9 12h6m-6 0c3 0 4 4 0 4m0-8c4 0 4 4 0 4m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /> },
   { key: "home.need.largest", subKey: "home.need.largestSub", href: "/explore?sort=area_desc", icon: <path d="M15 3h6v6m0-6-7 7M9 21H3v-6m0 6 7-7" /> },
+  { key: "home.need.legal", subKey: "home.need.legalSub", href: "/legal", icon: <path d="M12 3v3m0 0 7 3-7 3-7-3 7-3ZM5 11v4c0 1.7 3.1 3 7 3s7-1.3 7-3v-4M3 20h18" /> },
 ];
 
 const trust = [
