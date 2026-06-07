@@ -26,60 +26,72 @@ insert into public.legal_state_rules (state, state_label, data, reviewed_by, rev
 values
 ('karnataka', 'Karnataka', '{
   "agri_purchase": {
-    "allowed_for": ["farmer_resident", "inherited_farmer", "non_farmer_resident"],
-    "restricted_for": ["company", "llp", "trust", "partnership"],
+    "allowed_for": ["farmer_resident", "non_farmer_resident", "inherited_farmer"],
+    "restricted_for": ["company", "llp", "trust", "partnership", "nri", "oci"],
     "conditions": [
-      "Since the 2020 amendment to the Karnataka Land Reforms Act, non-farmers can purchase agricultural land in Karnataka.",
-      "Income limits on buyers have been removed.",
-      "Land ceiling rules still apply (around 54 acres for an individual / 108 acres for a joint family — verify current limits)."
+      "The Karnataka Land Reforms (Amendment) Ordinance, 2020 omitted Sections 79A, 79B and 79C, so Indian residents — including non-farmers — can generally buy private agricultural land.",
+      "Eligibility is only the first layer: title, RTC/Pahani, mutation history, 11E/survey sketch, Encumbrance Certificate, land classification, ceiling exposure, access and possession must all be verified.",
+      "Land-ceiling limits still apply (commonly cited as around 54 acres for an individual / 108 acres for a joint family — verify current limits).",
+      "Granted / PTCL-sensitive land carries special restrictions: Section 80-A bars relaxation for lands granted under the SC/ST (PTCL) Act, 1978. Treat such land as high-risk."
     ]
   },
   "nri_rules": {
     "can_purchase_agri": false,
     "can_inherit": true,
     "restrictions": [
-      "Per RBI/FEMA, NRIs cannot directly purchase agricultural land, plantation, or farmhouse land.",
-      "NRIs can inherit agricultural land from resident relatives.",
-      "Purchase of converted (NA) land is permitted."
+      "Under FEMA/MEA guidance, NRIs and PIOs do not have general permission to purchase agricultural land, plantation property, or farmhouse property in India.",
+      "An NRI/PIO may inherit such property, but transfer is restricted (generally only to Indian citizens permanently residing in India).",
+      "Purchase of converted (NA) land is treated differently; obtain a FEMA plus Karnataka land-law review."
     ]
   },
   "company_rules": {
     "can_purchase_agri": false,
     "conditions": [
-      "Companies/LLPs generally cannot own agricultural land in Karnataka without specific government permission.",
-      "Permitted use cases (e.g., agro-industrial, solar) require explicit state government approval under specific statutes."
+      "Company, LLP, trust and institutional purchases need legal review for ceiling exposure, permitted use, land-use conversion, planning rules, PTCL/granted-land risk, and FEMA where foreign investment exists.",
+      "Request a corporate land purchase review before signing an agreement or paying token advance."
     ]
   },
   "ceiling_limit_acres": 54,
   "conversion_required_for": ["agri", "agri_dry", "agri_irrigated"],
   "farmer_status_requirement": "none",
   "farmhouse_rules": [
-    "Farmhouse construction on agricultural land has a built-up area limit (verify current rules).",
-    "Land must remain primarily agricultural in classification."
+    "Farmhouse, farm-plot and plotted development usually need land conversion plus planning-authority / local-body approval.",
+    "Check whether the land is still agricultural in the RTC, whether a conversion order exists, and whether the layout and access road are legally formed.",
+    "Watch for lake-buffer, rajakaluve, forest, hill and eco-sensitive restrictions."
   ],
   "common_documents": [
-    "RTC (Pahani)",
-    "Mutation Register (MR) extract",
-    "Encumbrance Certificate (EC, Form 15)",
-    "Tippan / Akarband / FMB",
-    "Sale Deed (mother deed plus current)",
-    "Khata extract",
-    "Conversion order (if NA)",
+    "Latest sale deed",
+    "Parent document / mother deed",
+    "RTC / Pahani",
+    "Mutation Register extract / mutation history",
+    "Encumbrance Certificate",
+    "11E sketch (if a portion of a survey number is sold)",
+    "Tippan / survey sketch / Atlas / revenue map",
+    "Khata / e-khata extract (where applicable)",
     "Tax receipts (land revenue)",
-    "Survey sketch",
-    "Form 10 (family tree, where inheritance applies)"
+    "Conversion order (if non-agricultural use)",
+    "Layout / planning-authority approval (if plotted)",
+    "PTCL / granted-land status confirmation",
+    "Legal heir / partition documents (if inherited)"
   ],
   "common_risks": [
-    "Mutation pending or incorrect in the seller name",
-    "Encroachments not reflected in records",
-    "Joint ownership / family co-owner disputes",
-    "Outstanding loans (encumbrance)",
-    "Pending litigation"
+    "PTCL / granted (SC/ST) land with non-alienation conditions",
+    "Government / gomala / kharab / tank-bed / rajakaluve land wrongly listed as private",
+    "Seller name mismatch versus RTC, mutation and sale deed",
+    "Survey-number or hissa mismatch; missing 11E for a subdivided parcel",
+    "Short Encumbrance Certificate period hiding older charges",
+    "Power-of-Attorney sale without valid scope or registration",
+    "Inherited land sold without partition or co-owner consent",
+    "Farm plot sold without conversion / layout approval",
+    "Boundary dispute or unclear / illegal road access"
   ],
   "references": [
-    { "label": "Karnataka Land Reforms Act, 1961 (amended 2020)" },
-    { "label": "Karnataka Bhoomi land records portal", "url": "https://landrecords.karnataka.gov.in/" },
-    { "label": "RBI FEMA Regulations (NRI/OCI land ownership)" }
+    { "label": "Karnataka Land Reforms Act, 1961 (India Code)", "url": "https://www.indiacode.nic.in/handle/123456789/7740" },
+    { "label": "Karnataka Land Reforms (Amendment) Ordinance, 2020", "url": "https://upload.indiacode.nic.in/showfile?actid=AC_KA_71_596_00003_10_1551858304230&filename=13_of_2020-ordinance.pdf&type=ordinance" },
+    { "label": "Karnataka Revenue Department / Bhoomi services", "url": "https://landrecords.karnataka.gov.in/" },
+    { "label": "Mojini V3 (Karnataka survey services)", "url": "https://bhoomojini.karnataka.gov.in/" },
+    { "label": "MEA guidance on acquisition and transfer of immovable property in India", "url": "https://www.mea.gov.in/images/pdf/acquisition-and-transfer-of-immovable-property-in-india.pdf" },
+    { "label": "PRS: Land Records and Titles in India", "url": "https://prsindia.org/policy/analytical-reports/land-records-and-titles-india" }
   ]
 }'::jsonb, 'PENDING_LAWYER_REVIEW', null, false),
 
@@ -88,65 +100,77 @@ values
     "allowed_for": ["farmer_resident", "inherited_farmer"],
     "restricted_for": ["non_farmer_resident", "company", "llp", "trust", "partnership", "nri", "oci"],
     "conditions": [
-      "Maharashtra has historically restricted agricultural land purchase largely to agriculturists or those with an agricultural background.",
-      "Non-agriculturists may need Collector permission, or can purchase NA-converted land without that restriction.",
-      "Tenancy laws and land-ceiling limits apply — verify the current position for your district."
+      "Maharashtra is a restricted agricultural-land state. Section 63 of the Maharashtra Tenancy and Agricultural Lands Act generally bars transfer of agricultural land to a non-agriculturist unless the Act allows it or the Collector grants permission.",
+      "Agriculturist buyers may proceed to due diligence, but ceiling, tenancy, 7/12, 8A, Ferfar/mutation, eSearch/Index II, Occupant Class-II and tribal-land status must still be checked.",
+      "Limited routes for non-agriculturists exist — Collector permission, land inside municipal/planning-authority limits, land allocated for non-agricultural use in a plan (Section 63(1C)), or bona fide industrial/township use (Section 63-IA) — all conditional and needing legal review.",
+      "Occupant Class-II / new-tenure land and tribal land carry transfer restrictions; treat as high-risk."
     ]
   },
   "nri_rules": {
     "can_purchase_agri": false,
     "can_inherit": true,
     "restrictions": [
-      "Per RBI/FEMA, NRIs/OCIs cannot directly purchase agricultural, plantation, or farmhouse land.",
-      "Inheritance of agricultural land from a resident is generally permitted.",
-      "Purchase of NA-converted land is permitted."
+      "Under FEMA/MEA guidance, NRIs and PIOs do not have general permission to purchase agricultural land, plantation property, or farmhouse property in India.",
+      "An NRI/PIO may inherit such property, but transfer is restricted (generally only to Indian citizens permanently residing in India).",
+      "Converted (NA) land is treated differently; obtain a FEMA plus Maharashtra land-law review before proceeding."
     ]
   },
   "company_rules": {
     "can_purchase_agri": false,
     "conditions": [
-      "Companies/LLPs generally cannot purchase agricultural land in Maharashtra without specific permission.",
-      "Specific industrial / project use may be allowed with government approval — confirm the route."
+      "Company, LLP, trust, developer and institutional purchases need review for Section 63 / 63-IA applicability, ceiling exposure, permitted use, land-use conversion, Occupant Class-II and tribal restrictions, planning approvals, and FEMA where foreign investment exists.",
+      "Request a corporate / development land purchase review before signing an agreement or paying token advance."
     ]
   },
   "conversion_required_for": ["agri", "agri_dry", "agri_irrigated"],
   "farmer_status_requirement": "strict",
   "farmhouse_rules": [
-    "Farmhouse use on agricultural land is regulated; verify local zoning and built-up limits.",
-    "Conversion may be required depending on intended use."
+    "Farmhouse, farm-plot and plotted development require buyer eligibility plus NA/conversion or planning permission, layout approval, and legal road access.",
+    "Check whether the land falls within a planning-authority area and whether Section 63(1C) use-conditions and timelines apply.",
+    "Watch for tribal, Occupant Class-II, ceiling, forest, hill-station, eco-sensitive and CRZ restrictions."
   ],
   "common_documents": [
-    "7/12 extract (Satbara Utara)",
-    "8A extract (Khata)",
-    "Mutation entries (Ferfar)",
-    "Sale Deed (mother deed plus current)",
-    "NA / conversion order (if converted)",
-    "Encumbrance Certificate",
+    "Latest sale deed",
+    "Parent document / mother deed",
+    "7/12 extract (Satbara)",
+    "8A extract",
+    "Ferfar / mutation entries",
+    "eSearch / Index II registered-document search",
     "Property card (where applicable)",
+    "Survey / Gat number and subdivision details",
+    "Village map / measurement sketch",
+    "Encumbrance / registration search report",
     "Tax receipts (land revenue)",
-    "Title search report"
+    "Agriculturist proof of buyer (where required)",
+    "NA / conversion or planning permission (if non-agricultural use)",
+    "Occupant Class-II / tribal-land permission (if applicable)",
+    "Legal heir / partition documents (if inherited)"
   ],
   "common_risks": [
-    "Tenancy rights under tenancy law",
-    "Fragmentation / consolidation restrictions",
-    "Mutation pending or incorrect",
-    "Encroachment not reflected in records",
-    "Pending litigation or family disputes"
+    "Non-agriculturist buying raw agricultural land (Section 63 bar)",
+    "Occupant Class-II / new-tenure land without transfer permission or premium paid",
+    "Tribal / Scheduled-Tribe land (MLRC 36/36A; Restoration Act, 1974) — high restoration risk",
+    "Tenanted land or Section 43 transfer restriction",
+    "Ceiling-surplus exposure",
+    "7/12, 8A or Ferfar mismatch with the sale deed or eSearch records",
+    "Government / gairan / nazul land wrongly listed as private",
+    "Power-of-Attorney sale without valid scope or registration",
+    "Farm plot without layout / planning approval; Section 63(1C) use-timeline risk",
+    "Boundary dispute or unclear / illegal road access"
   ],
   "references": [
-    { "label": "Maharashtra Land Revenue Code, 1966" },
-    { "label": "Bombay Tenancy and Agricultural Lands Act, 1948" },
-    { "label": "Mahabhulekh 7/12 portal", "url": "https://bhulekh.mahabhumi.gov.in/" },
-    { "label": "RBI FEMA Regulations (NRI/OCI land ownership)" }
+    { "label": "Maharashtra Tenancy and Agricultural Lands Act (India Code)", "url": "https://www.indiacode.nic.in/handle/123456789/19824" },
+    { "label": "Section 63 / 63-IA (India Code PDF)", "url": "https://www.indiacode.nic.in/bitstream/123456789/19824/1/_tenancy_and_agricultural.pdf" },
+    { "label": "MahaBhulekh (7/12, 8A, property card)", "url": "https://bhulekh.mahabhumi.gov.in/" },
+    { "label": "Maharashtra IGR eSearch", "url": "https://esearchigr.maharashtra.gov.in/" },
+    { "label": "MEA guidance on acquisition and transfer of immovable property in India", "url": "https://www.mea.gov.in/images/pdf/acquisition-and-transfer-of-immovable-property-in-india.pdf" },
+    { "label": "PRS: Land Records and Titles in India", "url": "https://prsindia.org/policy/analytical-reports/land-records-and-titles-india" }
   ]
 }'::jsonb, 'PENDING_LAWYER_REVIEW', null, false)
 on conflict (state) do update set
   state_label = excluded.state_label,
   data = excluded.data,
   updated_at = now();
--- NOTE (Maharashtra gaps to confirm with lawyer): exact ceiling-limit acreage by
--- irrigation class; current Collector-permission process for non-agriculturists;
--- latest tenancy-law impact on resale. Left conservative ("strict") until verified.
 
 -- ---------------------------------------------------------------------------
 -- MOCK LAWYERS (clearly sample; published so the directory renders)
@@ -195,20 +219,64 @@ on conflict (slug) do update set
 -- ---------------------------------------------------------------------------
 insert into public.legal_articles (slug, title, summary, body_md, state, topic, land_types, reading_minutes, reviewed_by, reviewed_at, published, seo_title, seo_description)
 values
-('can-nris-buy-agricultural-land-in-india', 'Can NRIs buy agricultural land in India?', 'What NRIs and OCIs can and cannot buy, and the inheritance route.', 'PENDING LAWYER REVIEW
+('can-nris-buy-agricultural-land-in-india', 'Can NRIs buy agricultural land in India?', 'What NRIs and OCIs can and cannot buy, and the inheritance route.', 'DRAFT — confirm with your advocate before publishing.
 
 ## Short answer
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'nri', '{agri,plantation,farmhouse}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can NRIs buy agricultural land in India?', 'What NRIs and OCIs can and cannot buy, and the inheritance route.'),
-('can-a-non-farmer-buy-agricultural-land-in-karnataka', 'Can a non-farmer buy agricultural land in Karnataka?', 'How the 2020 amendment changed who can buy farmland in Karnataka.', 'PENDING LAWYER REVIEW
+Generally, no. Under FEMA and Ministry of External Affairs guidance, NRIs and PIOs do not have general permission to purchase agricultural land, plantation property, or farmhouse property in India.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', 'karnataka', 'eligibility', '{agri,agri_dry,agri_irrigated}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'Can a non-farmer buy agricultural land in Karnataka?', 'How the 2020 amendment changed who can buy farmland in Karnataka.'),
+## Inheritance is different
+
+An NRI or PIO may inherit agricultural land, plantation, or farmhouse property from a resident. But transfer of such inherited property is restricted — generally only to an Indian citizen permanently residing in India.
+
+## What you can do
+
+- Buy non-agricultural (residential or commercial) property under the general permission.
+- For agricultural land, plantation, or farmhouse purchase, specific approval may be required — get a FEMA plus state land-law review first.
+
+Source: MEA guidance on acquisition and transfer of immovable property in India.', null, 'nri', '{agri,plantation,farmhouse}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can NRIs buy agricultural land in India?', 'What NRIs and OCIs can and cannot buy, and the inheritance route.'),
+('can-a-non-farmer-buy-agricultural-land-in-karnataka', 'Can a non-farmer buy agricultural land in Karnataka?', 'How the 2020 amendment changed who can buy farmland in Karnataka.', 'DRAFT — confirm with your advocate before publishing.
+
+## Short answer
+
+Usually yes, after 2020. The Karnataka Land Reforms (Amendment) Ordinance, 2020 omitted Sections 79A, 79B and 79C, which earlier restricted many non-agriculturists and tied purchase to income limits.
+
+## But eligibility is only the first layer
+
+Even as an eligible buyer, verify:
+
+- Seller title and the parent / mother-deed chain
+- RTC / Pahani and mutation history
+- 11E sketch where a portion of a survey number is sold
+- Encumbrance Certificate and land classification
+- Land-ceiling exposure
+- PTCL / granted-land status — high-risk if SC/ST granted land
+
+## Bottom line
+
+The 2020 reform widened who can buy, but title, records, ceiling and PTCL/granted-land checks still decide whether a deal is safe.
+
+Sources: Karnataka Land Reforms (Amendment) Ordinance, 2020; Karnataka Bhoomi services.', 'karnataka', 'eligibility', '{agri,agri_dry,agri_irrigated}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'Can a non-farmer buy agricultural land in Karnataka?', 'How the 2020 amendment changed who can buy farmland in Karnataka.'),
 ('can-a-company-own-agricultural-land-in-india', 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.', 'PENDING LAWYER REVIEW
 
 Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'company', '{agri}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.'),
-('what-is-rtc-pahani-and-how-to-verify', 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.', 'PENDING LAWYER REVIEW
+('what-is-rtc-pahani-and-how-to-verify', 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.', 'DRAFT — confirm with your advocate before publishing.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', 'karnataka', 'rtc', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.'),
+## What RTC (Pahani) shows
+
+The RTC, or Pahani, is Karnataka''s Record of Rights. It shows the landholder, survey number, extent, land classification, and cultivation / crop details.
+
+## How to verify
+
+- View and download the RTC from the Karnataka Bhoomi portal.
+- Cross-check the holder name against the sale deed and mutation history.
+- For a subdivided parcel, confirm the 11E sketch and survey records.
+
+## Important
+
+RTC is not, by itself, final proof of title. Indian land records can be spread across departments and may not match ground reality. Read the RTC together with the sale deed, title chain, mutation, EC, survey sketch and possession.
+
+Sources: Karnataka Bhoomi services; PRS, Land Records and Titles in India.', 'karnataka', 'rtc', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.'),
 ('what-is-mutation-and-why-it-matters', 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.', 'PENDING LAWYER REVIEW
 
 Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'mutation', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.'),
@@ -226,7 +294,26 @@ Placeholder content — replace with lawyer-reviewed text before publishing.', n
 Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'conversion', '{agri,na_converted}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'What is land conversion (NA)?', 'When you must convert agricultural land for non-farm use.'),
 ('how-to-verify-land-ownership', 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.', 'PENDING LAWYER REVIEW
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{agri}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.')
+Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{agri}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.'),
+('can-a-non-farmer-buy-agricultural-land-in-maharashtra', 'Can a non-farmer buy agricultural land in Maharashtra?', 'Maharashtra restricts raw agricultural land to agriculturists under Section 63 — with limited exceptions.', 'DRAFT — confirm with your advocate before publishing.
+
+## Short answer
+
+Usually not directly. Maharashtra is a restricted state. Section 63 of the Maharashtra Tenancy and Agricultural Lands Act generally bars transfer of agricultural land to a non-agriculturist unless the Act allows it or the Collector grants permission.
+
+## Possible routes (all conditional)
+
+- Collector permission under Section 63.
+- Land inside municipal / planning-authority limits, or allocated for non-agricultural use in a regional or development plan (Section 63(1C)).
+- Bona fide industrial use or an integrated township project (Section 63-IA).
+
+These routes carry use-condition, timeline and non-utilisation-charge risks and need legal review.
+
+## Always check
+
+7/12 and 8A extracts, Ferfar / mutation entries, eSearch / Index II, Occupant Class-II / new-tenure status, tribal-land restrictions, ceiling exposure, and tenancy (Section 43) restrictions.
+
+Sources: Maharashtra Tenancy and Agricultural Lands Act, Sections 63 / 63-IA; MahaBhulekh.', 'maharashtra', 'eligibility', '{agri,agri_dry,agri_irrigated}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can a non-farmer buy agricultural land in Maharashtra?', 'Maharashtra restricts raw agricultural land to agriculturists under Section 63, with limited planning and industrial exceptions.')
 on conflict (slug) do update set
   title = excluded.title, summary = excluded.summary, body_md = excluded.body_md,
   state = excluded.state, topic = excluded.topic, land_types = excluded.land_types,
