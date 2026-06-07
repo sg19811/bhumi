@@ -231,6 +231,9 @@ export default function BuyLand() {
                 <input
                   name="contact_phone"
                   required
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  title="Enter a 10-digit phone number"
                   placeholder="e.g. 9876543210"
                   className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />
@@ -239,6 +242,9 @@ export default function BuyLand() {
                 <label className="block text-sm font-medium mb-1">WhatsApp</label>
                 <input
                   name="contact_whatsapp"
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  title="Enter a 10-digit WhatsApp number"
                   placeholder="Same as phone if blank"
                   className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
                 />

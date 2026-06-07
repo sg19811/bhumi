@@ -211,7 +211,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             <p className="mt-4 text-sm text-gray-500">
               {listing.contact_phone && (
                 <>Call: <a href={`tel:${listing.contact_phone}`} className="font-medium text-green-800 hover:underline">{listing.contact_phone}</a>
-                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
+                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your land "${listing.title}" (${formatINRShort(listing.price)}) on Bhūmi.`)}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
               )}
               {listing.contact_email && (
                 <>{listing.contact_phone ? " · " : ""}<a href={`mailto:${listing.contact_email}`} className="font-medium text-green-800 hover:underline">Email</a></>

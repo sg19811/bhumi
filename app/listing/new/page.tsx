@@ -90,12 +90,12 @@ export default function NewListing() {
                 <option value="developed_rural_plot">Developed rural plot</option><option value="other">Other</option>
               </select></div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Price (₹) *</label><input name="price" type="number" required placeholder="5000000" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">Price (₹) *</label><input name="price" type="number" min="1" required placeholder="5000000" className={inp} /></div>
               <div><label className="block text-sm font-medium mb-1">Price is for</label>
                 <select name="price_basis" className={inp}><option value="total">Total</option><option value="per_acre">Per acre</option><option value="per_guntha">Per guntha</option><option value="per_sqft">Per sq ft</option></select></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Area *</label><input name="area_value" type="number" step="0.01" required placeholder="2.5" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">Area *</label><input name="area_value" type="number" step="0.01" min="0.01" required placeholder="2.5" className={inp} /></div>
               <div><label className="block text-sm font-medium mb-1">Unit</label>
                 <select name="area_unit" className={inp}><option value="acre">Acres</option><option value="guntha">Gunthas</option><option value="hectare">Hectares</option><option value="sqft">Sq ft</option><option value="cent">Cents</option><option value="bigha">Bighas</option></select></div>
             </div>
@@ -108,8 +108,8 @@ export default function NewListing() {
               <div><label className="block text-sm font-medium mb-1">Village</label><input name="village" placeholder="Kallahalli" className={inp} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Latitude *</label><input name="latitude" type="number" step="any" required placeholder="12.31" className={inp} /></div>
-              <div><label className="block text-sm font-medium mb-1">Longitude *</label><input name="longitude" type="number" step="any" required placeholder="76.21" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">Latitude *</label><input name="latitude" type="number" step="any" min="6" max="37" required placeholder="12.31" title="Latitude within India (approx 6 to 37)" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">Longitude *</label><input name="longitude" type="number" step="any" min="68" max="98" required placeholder="76.21" title="Longitude within India (approx 68 to 98)" className={inp} /></div>
             </div>
             <p className="text-xs text-gray-400">Tip: in Google Maps, right-click the land and click the coordinates to copy them.</p>
           </section>
@@ -128,8 +128,8 @@ export default function NewListing() {
             <p className="text-sm text-gray-500">No account needed — buyers will reach you using the details below.</p>
             <div><label className="block text-sm font-medium mb-1">Email *</label><input name="contact_email" type="email" required placeholder="you@example.com" className={inp} /></div>
             <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium mb-1">Phone *</label><input name="contact_phone" required placeholder="9876543210" className={inp} /></div>
-              <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" placeholder="Same if blank" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">Phone *</label><input name="contact_phone" required inputMode="numeric" pattern="[0-9]{10}" title="Enter a 10-digit phone number" placeholder="9876543210" className={inp} /></div>
+              <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" inputMode="numeric" pattern="[0-9]{10}" title="Enter a 10-digit WhatsApp number" placeholder="Same if blank" className={inp} /></div>
             </div>
           </section>
           <section className="space-y-4">

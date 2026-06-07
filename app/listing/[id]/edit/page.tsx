@@ -73,7 +73,8 @@ export default function EditListing() {
             <select name="land_type" defaultValue={listing.land_type} className={inp}>
               <option value="agri_land">Agricultural land</option><option value="irrigated_farmland">Irrigated farmland</option>
               <option value="dryland">Dryland</option><option value="orchard">Orchard</option><option value="plantation">Plantation</option>
-              <option value="farmhouse_land">Farmhouse land</option><option value="na_converted">NA-converted</option><option value="other">Other</option>
+              <option value="farmhouse_land">Farmhouse land</option><option value="built_farmhouse">Built farmhouse</option><option value="na_converted">NA-converted</option>
+              <option value="developed_rural_plot">Developed rural plot</option><option value="other">Other</option>
             </select></div>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">Price (₹)</label><input name="price" type="number" defaultValue={listing.price} className={inp} /></div>
