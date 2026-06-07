@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
+import NotifyMe from "@/app/components/NotifyMe";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
@@ -74,6 +75,7 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
                 <Link href="/explore" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">Browse all land</Link>
                 <Link href="/listing/new" className="inline-block rounded-full border border-green-700 px-6 py-2.5 font-medium text-green-800 transition-colors hover:bg-green-50">List land in {name}</Link>
               </div>
+              <NotifyMe district={name} prompt={`Want land in ${name}? Get notified when it's listed.`} />
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

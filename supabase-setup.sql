@@ -245,7 +245,23 @@ create policy "admins update reports" on public.reports for update to authentica
 alter table public.listings add column if not exists previous_price numeric;
 alter table public.listings add column if not exists price_changed_at timestamptz;
 
--- 15) Refresh the API schema cache.
+-- 15) Demand signals — captured when a region/type has no listings yet.
+create table if not exists public.demand_signals (
+  id         uuid primary key default gen_random_uuid(),
+  district   text,
+  land_type  text,
+  contact    text,
+  created_at timestamptz not null default now()
+);
+alter table public.demand_signals enable row level security;
+
+drop policy if exists "anyone can signal demand" on public.demand_signals;
+create policy "anyone can signal demand" on public.demand_signals for insert to public with check (true);
+
+drop policy if exists "admins read demand" on public.demand_signals;
+create policy "admins read demand" on public.demand_signals for select to authenticated using (public.is_admin());
+
+-- 16) Refresh the API schema cache.
 notify pgrst, 'reload schema';
 
 -- ============================================================

@@ -86,18 +86,20 @@ export default function AdminDashboard() {
   const [verifications, setVerifications] = useState<any[]>([]);
   const [vBusy, setVBusy] = useState<string | null>(null);
   const [reports, setReports] = useState<any[]>([]);
+  const [demand, setDemand] = useState<any[]>([]);
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s, v, r] = await Promise.all([
+      const [l, i, b, s, v, r, d] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
         supabase.from("search_logs").select("*").order("created_at", { ascending: false }).limit(1000),
         supabase.from("verification_requests").select("*, listings(title)").eq("status", "pending").order("created_at", { ascending: false }),
         supabase.from("reports").select("*, listings(title)").eq("resolved", false).order("created_at", { ascending: false }),
+        supabase.from("demand_signals").select("*").order("created_at", { ascending: false }).limit(1000),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
@@ -105,6 +107,7 @@ export default function AdminDashboard() {
       setSearchLogs(s.data ?? []);
       setVerifications(v.data ?? []);
       setReports(r.data ?? []);
+      setDemand(d.data ?? []);
     })();
   }, [isAdmin]);
 
@@ -287,6 +290,17 @@ export default function AdminDashboard() {
             <InsightList title="Top search terms" items={topCounts(searchLogs, "query")} />
           </div>
         </section>
+
+        {demand.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-lg font-semibold">Demand signals</h2>
+            <p className="mb-4 text-sm text-gray-500">People asked to be notified where we had no listings ({demand.length}) — source land here.</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <InsightList title="Wanted districts" items={topCounts(demand, "district")} />
+              <InsightList title="Wanted land types" items={topCounts(demand, "land_type")} />
+            </div>
+          </section>
+        )}
 
         {/* Match active listings to buyers who want them */}
         {(() => {

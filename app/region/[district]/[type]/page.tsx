@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
+import NotifyMe from "@/app/components/NotifyMe";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
@@ -68,6 +69,7 @@ export default async function RegionTypePage({ params }: { params: Promise<{ dis
                 <Link href={`/region/${district}`} className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">All land in {name}</Link>
                 <Link href={`/land/${type}`} className="inline-block rounded-full border border-green-700 px-6 py-2.5 font-medium text-green-800 transition-colors hover:bg-green-50">{label} everywhere</Link>
               </div>
+              <NotifyMe district={name} landType={type} prompt={`Get notified when ${label.toLowerCase()} is listed in ${name}.`} />
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
