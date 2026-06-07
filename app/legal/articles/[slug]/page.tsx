@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { supabase } from "@/app/lib/supabase";
 import MarkdownLite from "@/app/components/legal/MarkdownLite";
+import ArticleCard from "@/app/components/legal/ArticleCard";
 import LawyerCTA from "@/app/components/legal/LawyerCTA";
 import LegalDisclaimer from "@/app/components/legal/LegalDisclaimer";
 import LegalTrack from "@/app/components/legal/LegalTrack";
@@ -43,6 +44,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       </main>
     );
   }
+
+  // Related guides on the same topic, for internal linking.
+  const { data: related } = await supabase
+    .from("legal_articles")
+    .select("slug, title, summary, topic, reading_minutes")
+    .eq("published", true)
+    .eq("topic", a.topic)
+    .neq("slug", a.slug)
+    .limit(3);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -107,9 +117,24 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <MarkdownLite md={a.body_md} />
       </article>
 
+      {a.state && (
+        <p className="mt-6 text-sm">
+          <Link href={`/legal/state/${a.state}`} className="font-medium text-green-800 hover:underline">📖 Read the full {stateLabel(a.state)} land guide →</Link>
+        </p>
+      )}
+
       <div className="mt-10">
         <LawyerCTA context="article" state={a.state ?? undefined} />
       </div>
+
+      {related && related.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-4 text-xl font-semibold">Related guides</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((r) => <ArticleCard key={r.slug} article={r} />)}
+          </div>
+        </section>
+      )}
     </main>
   );
 }
