@@ -76,3 +76,18 @@ unreachable, so a gate outage can't block listing creation. **Recommended follow
 write through an authenticated server action/route handler to enforce validation at the boundary.
 
 ---
+
+## Phase 4 — Validate env vars on startup ✅
+
+- `app/lib/env.ts` validates the three required vars: URL must parse; anon key must be
+  `sb_publishable_…` **or** a JWT (`eyJ…`); service-role key must be `sb_secret_…` **or** a JWT;
+  and flags the service-role key if ever exposed via `NEXT_PUBLIC_`. **Throws in production**,
+  **warns in dev**. Never logs secret values — only the var name + expected shape.
+- Imported as a side-effect in `app/layout.tsx`, so it runs on the server at build + request time.
+- **Verified:** tsc clean; `next build` clean (local `.env.local` present → no false positive).
+
+**Note:** key checks accept both the new `sb_*` format and legacy JWT keys, so a valid legacy
+project won't trip the guard. The CI `smoke` job (which builds) has the Supabase secrets, so its
+build won't throw; the typecheck/lint jobs don't build.
+
+---

@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/app/lib/i18n-client";
 import { getLocale } from "@/app/lib/i18n-server";
 import CompareTray from "@/app/components/CompareTray";
 import Analytics from "@/app/components/Analytics";
+import "@/app/lib/env"; // boot-time env validation (throws in prod if misconfigured)
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
