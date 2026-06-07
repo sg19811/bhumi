@@ -141,7 +141,29 @@ create policy "own collection items" on public.collection_listings
   using (exists (select 1 from public.collections c where c.id = collection_listings.collection_id and c.user_id = auth.uid()))
   with check (exists (select 1 from public.collections c where c.id = collection_listings.collection_id and c.user_id = auth.uid()));
 
--- 9) Refresh the API schema cache.
+-- 9) Deals — private sale price + commission per listing (agent CRM).
+--    Kept separate from the public "listings" table so financials never leak.
+create table if not exists public.deals (
+  id                uuid primary key default gen_random_uuid(),
+  listing_id        uuid not null unique references public.listings (id) on delete cascade,
+  agent_user_id     uuid not null references auth.users (id) on delete cascade,
+  sale_price        numeric,
+  commission_amount numeric,
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
+);
+create index if not exists deals_agent_idx on public.deals (agent_user_id);
+alter table public.deals enable row level security;
+
+drop policy if exists "agents manage own deals" on public.deals;
+create policy "agents manage own deals" on public.deals
+  for all to authenticated using (auth.uid() = agent_user_id) with check (auth.uid() = agent_user_id);
+
+drop policy if exists "admins read deals" on public.deals;
+create policy "admins read deals" on public.deals
+  for select to authenticated using (public.is_admin());
+
+-- 10) Refresh the API schema cache.
 notify pgrst, 'reload schema';
 
 -- ============================================================

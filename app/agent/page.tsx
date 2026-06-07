@@ -6,6 +6,8 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import DealRow from "@/app/components/DealRow";
+import { formatINR } from "@/app/lib/format";
 
 const LEAD_STATUSES = ["new", "contacted", "closed"] as const;
 const leadStyle: Record<string, string> = {
@@ -29,6 +31,7 @@ export default function AgentDashboard() {
 
   const [listings, setListings] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
+  const [deals, setDeals] = useState<Record<string, { sale_price: number | null; commission_amount: number | null }>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,6 +42,10 @@ export default function AgentDashboard() {
       // RLS returns only inquiries on listings this user owns.
       const { data: inq } = await supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false });
       setLeads(inq ?? []);
+      const { data: dl } = await supabase.from("deals").select("*").eq("agent_user_id", user.id);
+      const map: Record<string, { sale_price: number | null; commission_amount: number | null }> = {};
+      for (const d of dl ?? []) map[d.listing_id] = { sale_price: d.sale_price, commission_amount: d.commission_amount };
+      setDeals(map);
     })();
   }, [allowed, user]);
 
@@ -73,6 +80,8 @@ export default function AgentDashboard() {
   const sold = listings.filter((l) => l.status === "sold").length;
   const newLeads = leads.filter((l) => (l.lead_status ?? "new") === "new").length;
   const districts = [...new Set(listings.map((l) => l.district).filter(Boolean))];
+  const soldListings = listings.filter((l) => l.status === "sold");
+  const commissionTotal = Object.values(deals).reduce((sum, d) => sum + (Number(d.commission_amount) || 0), 0);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900">
@@ -145,6 +154,28 @@ export default function AgentDashboard() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        <div className="mt-10 mb-4 flex items-end justify-between gap-3">
+          <h2 className="text-lg font-semibold">Deals &amp; commission</h2>
+          <span className="text-sm text-gray-500">Earned: <span className="font-semibold text-green-800">{formatINR(commissionTotal)}</span></span>
+        </div>
+        {soldListings.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-gray-300 bg-white py-12 text-center text-gray-400">
+            Mark a listing as <span className="font-medium">sold</span> (in Manage listings) to record its sale price and commission here.
+          </p>
+        ) : (
+          <div className="divide-y divide-gray-200 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            {soldListings.map((l) => (
+              <DealRow
+                key={l.id}
+                listing={l}
+                agentId={user.id}
+                deal={deals[l.id]}
+                onSaved={(id, d) => setDeals((prev) => ({ ...prev, [id]: d }))}
+              />
+            ))}
           </div>
         )}
       </main>
