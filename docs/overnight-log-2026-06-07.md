@@ -109,3 +109,27 @@ PriceInsight/Trust block.
 **Untouched:** Trust Score, Suitability, photos, map, save/share/compare, inquiry — all still render.
 **Verified:** tsc + `next build` clean.
 **Open questions:** none.
+
+---
+
+## Phase 5 — SEO surfaces
+
+**New pages (server, `revalidate=3600`):** `app/farm-plots/page.tsx` (hub), `.../bangalore/page.tsx`
+(city), `.../[corridor]/page.tsx` (dynamic, `generateStaticParams` from corridors.ts),
+`.../legal-checklist/page.tsx` (redirect → `/legal/checklist`). **New components:** `FarmPlotHero`,
+`CorridorGrid`. **New helper:** `app/lib/farm-plots/queries.ts` (`getCorridorCounts`,
+`getProjectListings` — both defensive, return zero/empty if the corridor column/table isn't there yet).
+- Hub: hero + intro + CorridorGrid (counts) + 3 sample projects (ListingCard) + FAQPage JSON-LD + legal CTAs.
+- City: hero + breadcrumb JSON-LD + intro + **computed price band** + corridor grid + FAQs + KA legal link.
+- Corridor: `generateStaticParams` for the 6; FAQPage + BreadcrumbList JSON-LD; stats tiles
+  (projects, avg distance, state, near); ListingCard project grid (or empty CTA); **state-routed legal
+  link** (`/legal/state/karnataka` or `/legal/state/tamil_nadu`); unknown slug → `notFound()`.
+- **All copy from `copy.ts` placeholders** — founder edits the prose.
+**Deviations:** (a) corridor pages render a graceful empty state rather than `notFound()` when they have
+zero projects — the spec's "404 if <1 project for 30 days" is a publishing/SEO decision left to the
+founder (flagged). (b) The "Browse all farm plot projects" link filters `/explore` by `land_type` only;
+an explore *corridor* filter isn't built (search_logs.corridor is for logging) — deferred.
+- **TN risk handled:** Hosur corridor shows a prominent amber disclaimer that TN legal content is under
+  review (spec risk #3).
+**Verified:** tsc + `next build` clean; all 4 routes present.
+**Open questions:** none.
