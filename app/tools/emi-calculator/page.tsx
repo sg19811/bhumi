@@ -26,7 +26,7 @@ export default async function EmiCalculatorPage({ searchParams }: { searchParams
 
         <p className="mt-8 text-sm text-gray-500">
           Ready to buy? <Link href="/explore" className="font-medium text-green-800 hover:underline">Browse land</Link> or check{" "}
-          <Link href="/eligibility" className="font-medium text-green-800 hover:underline">who can buy farmland</Link>.
+          <Link href="/legal" className="font-medium text-green-800 hover:underline">who can buy farmland</Link>.
         </p>
       </main>
       <Footer />

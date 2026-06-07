@@ -34,7 +34,7 @@ export default function About() {
             <h2 className="font-semibold text-green-800 mb-2">Legal clarity first</h2>
             <p className="text-sm text-gray-600">
               We tell you up front whether you can buy a given type of land in a given state — with sources,
-              not guesses. See our <Link href="/eligibility" className="text-green-700 hover:underline">eligibility guide</Link>.
+              not guesses. See our <Link href="/legal" className="text-green-700 hover:underline">eligibility guide</Link>.
             </p>
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">

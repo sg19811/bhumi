@@ -27,7 +27,7 @@ export default function Terms() {
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">Not legal or financial advice</h2>
-            <p>Eligibility guidance, checklists, and other content are general information, not legal, financial, or tax advice. Land law varies by state and changes often — see our <Link href="/eligibility" className="text-green-700 hover:underline">eligibility guide</Link> and always consult a qualified lawyer before buying.</p>
+            <p>Eligibility guidance, checklists, and other content are general information, not legal, financial, or tax advice. Land law varies by state and changes often — see our <Link href="/legal" className="text-green-700 hover:underline">eligibility guide</Link> and always consult a qualified lawyer before buying.</p>
           </section>
           <section>
             <h2 className="mb-1 font-semibold text-gray-900">Acceptable use</h2>

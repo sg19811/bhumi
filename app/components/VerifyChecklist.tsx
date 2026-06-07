@@ -30,7 +30,7 @@ export default function VerifyChecklist() {
       </ul>
       <p className="mt-4 text-sm text-amber-800">
         Rules vary by state — see the{" "}
-        <Link href="/eligibility" className="font-medium underline">eligibility guide</Link>, and always confirm with a lawyer or the local revenue office.
+        <Link href="/legal" className="font-medium underline">eligibility guide</Link>, and always confirm with a lawyer or the local revenue office.
       </p>
     </div>
   );

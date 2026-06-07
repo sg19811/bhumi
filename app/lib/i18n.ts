@@ -11,7 +11,7 @@ const dict: Record<string, Entry> = {
   "nav.list": { en: "List your land", hi: "अपनी ज़मीन सूचीबद्ध करें", kn: "ನಿಮ್ಮ ಭೂಮಿ ಪಟ್ಟಿ ಮಾಡಿ" },
   "nav.buy": { en: "I want to buy", hi: "मुझे खरीदना है", kn: "ಖರೀದಿಸಲು ಬಯಸುತ್ತೇನೆ" },
   "nav.requirements": { en: "Requirements", hi: "आवश्यकताएँ", kn: "ಅಗತ್ಯಗಳು" },
-  "nav.eligibility": { en: "Eligibility", hi: "पात्रता", kn: "ಅರ್ಹತೆ" },
+  "nav.legal": { en: "Legal", hi: "कानूनी", kn: "ಕಾನೂನು" },
   "nav.signin": { en: "Sign in", hi: "साइन इन करें", kn: "ಸೈನ್ ಇನ್" },
   "nav.signout": { en: "Sign out", hi: "साइन आउट", kn: "ಸೈನ್ ಔಟ್" },
   "nav.saved": { en: "Saved", hi: "सहेजे गए", kn: "ಉಳಿಸಲಾಗಿದೆ" },

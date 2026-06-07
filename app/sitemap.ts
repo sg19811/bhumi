@@ -6,9 +6,23 @@ const BASE = "https://bhumi.vercel.app";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: listings } = await supabase.from("listings").select("id, updated_at, district, land_type").eq("status", "active");
 
-  const staticPages = ["", "/explore", "/listings", "/buy", "/requirements", "/eligibility", "/about", "/how-it-works", "/faq", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/privacy", "/terms", "/listing/new"].map((p) => ({
+  const staticPages = ["", "/explore", "/listings", "/buy", "/requirements", "/legal", "/legal/wizard", "/legal/checklist", "/legal/due-diligence", "/legal/lawyers", "/legal/services", "/legal/articles", "/legal/talk-to-lawyer", "/about", "/how-it-works", "/faq", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/privacy", "/terms", "/listing/new"].map((p) => ({
     url: `${BASE}${p}`,
     lastModified: new Date(),
+  }));
+
+  // Published legal content (drafts are excluded by RLS on the anon client).
+  const [{ data: legalStates }, { data: legalArticles }] = await Promise.all([
+    supabase.from("legal_state_rules").select("state, updated_at").eq("published", true),
+    supabase.from("legal_articles").select("slug, updated_at").eq("published", true),
+  ]);
+  const legalStatePages = (legalStates ?? []).map((s) => ({
+    url: `${BASE}/legal/state/${encodeURIComponent(s.state)}`,
+    lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
+  }));
+  const legalArticlePages = (legalArticles ?? []).map((a) => ({
+    url: `${BASE}/legal/articles/${a.slug}`,
+    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
   }));
 
   const listingPages = (listings ?? []).map((l) => ({
@@ -35,5 +49,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return { url: `${BASE}/region/${encodeURIComponent(d)}/${encodeURIComponent(t)}`, lastModified: new Date() };
   });
 
-  return [...staticPages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
+  return [...staticPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
 }

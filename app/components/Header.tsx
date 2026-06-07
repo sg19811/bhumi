@@ -17,7 +17,7 @@ export default function Header() {
     { href: "/listing/new", key: "nav.list" },
     { href: "/buy", key: "nav.buy" },
     { href: "/requirements", key: "nav.requirements" },
-    { href: "/eligibility", key: "nav.eligibility" },
+    { href: "/legal", key: "nav.legal" },
   ];
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname?.startsWith(href));

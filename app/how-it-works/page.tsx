@@ -74,7 +74,7 @@ export default function HowItWorks() {
           <p className="mx-auto mt-2 max-w-xl text-sm text-gray-600">
             Land laws vary by state. Our eligibility guide explains who can buy and what to verify — with sources, not guesses.
           </p>
-          <Link href="/eligibility" className="mt-5 inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">
+          <Link href="/legal" className="mt-5 inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">
             Read the eligibility guide
           </Link>
         </div>

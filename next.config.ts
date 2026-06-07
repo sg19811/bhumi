@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Eligibility was folded into the Land Legal Navigator.
+      { source: "/eligibility", destination: "/legal", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

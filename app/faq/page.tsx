@@ -71,7 +71,7 @@ export default function FAQ() {
           <p className="text-gray-700">Still have a question?</p>
           <div className="mt-4 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/how-it-works" className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white transition-colors hover:bg-green-800">How it works</Link>
-            <Link href="/eligibility" className="rounded-full border border-green-700 px-6 py-2.5 font-medium text-green-800 transition-colors hover:bg-green-50">Eligibility guide</Link>
+            <Link href="/legal" className="rounded-full border border-green-700 px-6 py-2.5 font-medium text-green-800 transition-colors hover:bg-green-50">Eligibility guide</Link>
           </div>
         </div>
       </main>
