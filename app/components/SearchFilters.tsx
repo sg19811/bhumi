@@ -20,16 +20,31 @@ export default function SearchFilters() {
         <option value="orchard">Orchard</option><option value="farmhouse_land">Farmhouse land</option>
         <option value="na_converted">NA-converted</option><option value="plantation">Plantation</option><option value="dryland">Dryland</option>
       </select>
-      <select defaultValue={params.get("max_price") ?? ""} onChange={(e) => set("max_price", e.target.value)} className={sel}>
-        <option value="">Any price</option><option value="2500000">Under ₹25L</option><option value="5000000">Under ₹50L</option>
+      <select defaultValue={params.get("min_price") ?? ""} onChange={(e) => set("min_price", e.target.value)} className={sel} aria-label="Minimum price">
+        <option value="">Any min</option><option value="1000000">₹10L+</option><option value="2500000">₹25L+</option>
+        <option value="5000000">₹50L+</option><option value="10000000">₹1Cr+</option>
+      </select>
+      <select defaultValue={params.get("max_price") ?? ""} onChange={(e) => set("max_price", e.target.value)} className={sel} aria-label="Maximum price">
+        <option value="">Any max</option><option value="2500000">Under ₹25L</option><option value="5000000">Under ₹50L</option>
         <option value="10000000">Under ₹1Cr</option><option value="25000000">Under ₹2.5Cr</option>
       </select>
       <select defaultValue={params.get("max_area") ?? ""} onChange={(e) => set("max_area", e.target.value)} className={sel}>
         <option value="">Any size</option><option value="1">≤1 acre</option><option value="2">≤2 acres</option>
         <option value="5">≤5 acres</option><option value="10">≤10 acres</option><option value="25">≤25 acres</option>
       </select>
+      <select defaultValue={params.get("water_source") ?? ""} onChange={(e) => set("water_source", e.target.value)} className={sel}>
+        <option value="">Any water</option><option value="borewell">Borewell</option><option value="canal">Canal</option>
+        <option value="river">River</option><option value="rainfed">Rainfed</option>
+      </select>
+      <select defaultValue={params.get("road_access") ?? ""} onChange={(e) => set("road_access", e.target.value)} className={sel}>
+        <option value="">Any road</option><option value="highway">Highway</option><option value="paved">Paved</option><option value="dirt">Dirt road</option>
+      </select>
       <select defaultValue={params.get("verified") ?? ""} onChange={(e) => set("verified", e.target.value)} className={sel}>
         <option value="">All</option><option value="true">Verified only</option>
+      </select>
+      <select defaultValue={params.get("sort") ?? ""} onChange={(e) => set("sort", e.target.value)} className={sel} aria-label="Sort listings">
+        <option value="">Newest</option><option value="price_asc">Price: low to high</option>
+        <option value="price_desc">Price: high to low</option><option value="area_desc">Largest area</option>
       </select>
       {params.toString() && <button onClick={() => router.push("/explore")} className="shrink-0 px-2 text-sm font-medium text-red-600 hover:underline">Clear</button>}
     </div>

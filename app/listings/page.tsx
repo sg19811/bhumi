@@ -2,6 +2,13 @@ import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
 import ListingCard from "@/app/components/ListingCard";
+import Footer from "@/app/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "All agricultural land listings — Bhūmi",
+  description: "Every active agricultural land, orchard, and farmhouse plot listing on Bhūmi.",
+};
 
 export default async function Listings() {
   const { data: listings, error } = await supabase
@@ -54,6 +61,7 @@ export default async function Listings() {
           ))}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

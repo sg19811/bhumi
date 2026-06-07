@@ -37,7 +37,10 @@ export default async function AdminDashboard() {
               {inquiries?.slice(0, 8).map((inq) => (
                 <div key={inq.id} className="p-4">
                   <p className="text-sm font-medium">{inq.message || "Interested"}</p>
-                  <p className="text-xs text-gray-500">on <Link href={`/listing/${inq.listing_id}`} className="text-green-700 hover:underline">{inq.listings?.title ?? "a listing"}</Link> · {new Date(inq.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
+                  <p className="text-xs text-gray-500">
+                    {inq.contact_phone && <>📞 <a href={`tel:${inq.contact_phone}`} className="text-green-700 hover:underline">{inq.contact_phone}</a> · </>}
+                    on <Link href={`/listing/${inq.listing_id}`} className="text-green-700 hover:underline">{inq.listings?.title ?? "a listing"}</Link> · {new Date(inq.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                  </p>
                 </div>
               ))}
               {(!inquiries || inquiries.length === 0) && <p className="p-4 text-sm text-gray-400">No inquiries yet.</p>}

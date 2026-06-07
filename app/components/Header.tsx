@@ -54,6 +54,12 @@ export default function Header() {
                 Saved
               </Link>
               <Link
+                href="/collections"
+                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+              >
+                Collections
+              </Link>
+              <Link
                 href="/admin"
                 className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
               >
@@ -97,6 +103,9 @@ export default function Header() {
             <>
               <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                 Saved
+              </Link>
+              <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                Collections
               </Link>
               <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                 Dashboard

@@ -1,4 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
+import TrustScore from "@/app/components/TrustScore";
+import CompareToggle from "@/app/components/CompareToggle";
+import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 
 function priceBasisLabel(basis?: string) {
   return basis === "per_acre"
@@ -18,6 +22,8 @@ function priceBasisLabel(basis?: string) {
 export default function ListingCard({ listing }: { listing: any }) {
   const photo = listing.photos?.[0];
   const location = [listing.village, listing.taluka, listing.district].filter(Boolean).join(", ");
+  const ppa = pricePerAcre(listing);
+  const isNew = listing.created_at && Date.now() - new Date(listing.created_at).getTime() < 14 * 24 * 60 * 60 * 1000;
 
   return (
     <Link
@@ -26,11 +32,12 @@ export default function ListingCard({ listing }: { listing: any }) {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-green-50">
         {photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={photo}
             alt={listing.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-green-700/40">
@@ -40,9 +47,15 @@ export default function ListingCard({ listing }: { listing: any }) {
             <span className="text-xs font-medium">Photo coming soon</span>
           </div>
         )}
-        {listing.is_verified && (
-          <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-green-800 shadow-sm backdrop-blur">
-            ✓ Verified
+        <div className="absolute left-3 top-3">
+          <TrustScore listing={listing} variant="badge" />
+        </div>
+        <div className="absolute right-3 top-3">
+          <CompareToggle id={listing.id} />
+        </div>
+        {isNew && (
+          <span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-green-800 shadow-sm backdrop-blur">
+            New
           </span>
         )}
       </div>
@@ -51,10 +64,13 @@ export default function ListingCard({ listing }: { listing: any }) {
         <h3 className="line-clamp-2 font-semibold leading-snug text-gray-900 group-hover:text-green-800">
           {listing.title}
         </h3>
-        <p className="mt-1.5 text-xl font-bold text-green-800">
-          ₹{Number(listing.price).toLocaleString("en-IN")}
+        <p className="mt-1.5 text-xl font-bold text-green-800" title={formatINR(listing.price)}>
+          {formatINRShort(listing.price)}
           <span className="ml-1 text-sm font-normal text-gray-500">{priceBasisLabel(listing.price_basis)}</span>
         </p>
+        {ppa && listing.price_basis !== "per_acre" && (
+          <p className="text-xs text-gray-400">≈ {formatINRShort(ppa)} / acre</p>
+        )}
         <p className="mt-1 text-sm text-gray-500">
           {listing.area_value} {listing.area_unit}
           {listing.land_type ? ` · ${listing.land_type.replace(/_/g, " ")}` : ""}

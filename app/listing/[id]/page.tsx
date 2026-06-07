@@ -1,11 +1,51 @@
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
+import PhotoGallery from "@/app/components/PhotoGallery";
+import VerifyChecklist from "@/app/components/VerifyChecklist";
 import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
 import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
+import TrustScore from "@/app/components/TrustScore";
+import ListingCard from "@/app/components/ListingCard";
+import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
+import AddToCollection from "@/app/components/AddToCollection";
+import ShareButton from "@/app/components/ShareButton";
+import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const { data: l } = await supabase
+    .from("listings")
+    .select("title, description, price, area_value, area_unit, village, taluka, district, photos")
+    .eq("id", id)
+    .single();
+
+  if (!l) return { title: "Listing not found — Bhūmi" };
+
+  const location = [l.village, l.taluka, l.district].filter(Boolean).join(", ");
+  const title = `${l.title} — ${formatINR(l.price)} · Bhūmi`;
+  const description =
+    (l.description?.trim()?.slice(0, 155)) ||
+    `${l.area_value} ${l.area_unit} of land${location ? ` in ${location}` : ""} for ${formatINR(l.price)} on Bhūmi.`;
+  const image = l.photos?.[0];
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `https://bhumi.vercel.app/listing/${id}`,
+      ...(image ? { images: [{ url: image }] } : {}),
+    },
+  };
+}
 
 export default async function ListingDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -23,10 +63,43 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
     );
   }
 
+  const { data: similarRaw } = listing.land_type
+    ? await supabase
+        .from("listings")
+        .select("*")
+        .eq("status", "active")
+        .eq("land_type", listing.land_type)
+        .neq("id", listing.id)
+        .order("is_verified", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(3)
+    : { data: [] };
+  const similar = similarRaw ?? [];
+
   const url = `https://bhumi.vercel.app/listing/${listing.id}`;
   const photos: string[] = listing.photos ?? [];
+  const videos: string[] = listing.videos ?? [];
+  const ppa = pricePerAcre(listing);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: listing.title,
+    ...(listing.description ? { description: listing.description } : {}),
+    ...(photos.length ? { image: photos } : {}),
+    category: listing.land_type?.replace(/_/g, " "),
+    offers: {
+      "@type": "Offer",
+      price: Number(listing.price),
+      priceCurrency: "INR",
+      availability: listing.status === "active" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+      url,
+    },
+  };
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <TrackRecentlyViewed id={listing.id} />
       <Header />
       <main className="mx-auto max-w-4xl px-5 py-6 sm:px-6 sm:py-8">
         <div className="mb-5 flex items-center justify-between">
@@ -47,23 +120,17 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
               {[listing.village, listing.taluka, listing.district].filter(Boolean).join(", ")}
             </p>
           </div>
-          {listing.is_verified
-            ? <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">✓ Verified</span>
-            : <span className="shrink-0 rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-500">Unverified</span>}
+          <div className="shrink-0">
+            <TrustScore listing={listing} variant="badge" />
+          </div>
         </div>
 
-        {photos.length > 0 && (
-          <div className={`mb-6 grid gap-2 overflow-hidden rounded-2xl ${photos.length === 1 ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4 md:grid-rows-2"}`}>
-            {photos.slice(0, 5).map((p: string, i: number) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={i}
-                src={p}
-                alt={listing.title}
-                className={`h-full w-full object-cover ${
-                  photos.length > 1 && i === 0 ? "md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto" : "aspect-[4/3]"
-                }`}
-              />
+        {photos.length > 0 && <PhotoGallery photos={photos} title={listing.title} />}
+
+        {videos.length > 0 && (
+          <div className="mb-6 grid gap-3 sm:grid-cols-2">
+            {videos.map((v: string, i: number) => (
+              <video key={i} src={v} controls playsInline preload="metadata" className="w-full rounded-2xl border border-gray-200 bg-black" />
             ))}
           </div>
         )}
@@ -73,10 +140,14 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         </div>
 
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-          <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : "total"}</p></div>
+          <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : listing.price_basis === "per_sqft" ? "per sq ft" : "total"}</p>{ppa && listing.price_basis !== "per_acre" && <p className="mt-1 text-xs text-gray-400">≈ {formatINRShort(ppa)}/acre</p>}</div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">{listing.area_value}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.area_unit}</p></div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800 sm:text-lg">{listing.land_type?.replace(/_/g, " ")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">land type</p></div>
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800 sm:text-lg">{listing.water_source || "—"}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">water</p></div>
+        </div>
+
+        <div className="mb-8">
+          <TrustScore listing={listing} variant="full" />
         </div>
 
         {(listing.road_access || listing.electricity || listing.fencing) && (
@@ -91,15 +162,38 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <div className="mb-8"><h2 className="mb-2 text-lg font-semibold">Description</h2><p className="whitespace-pre-line leading-relaxed text-gray-600">{listing.description}</p></div>
         )}
 
+        <div className="mb-8">
+          <VerifyChecklist />
+        </div>
+
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
-          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><SaveButton listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /></div>
-          {listing.contact_phone && (
-            <p className="mt-4 text-sm text-gray-500">Call: <a href={`tel:${listing.contact_phone}`} className="font-medium text-green-800 hover:underline">{listing.contact_phone}</a>
-              {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</p>
+          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
+          {(listing.contact_phone || listing.contact_email) && (
+            <p className="mt-4 text-sm text-gray-500">
+              {listing.contact_phone && (
+                <>Call: <a href={`tel:${listing.contact_phone}`} className="font-medium text-green-800 hover:underline">{listing.contact_phone}</a>
+                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
+              )}
+              {listing.contact_email && (
+                <>{listing.contact_phone ? " · " : ""}<a href={`mailto:${listing.contact_email}`} className="font-medium text-green-800 hover:underline">Email</a></>
+              )}
+            </p>
           )}
         </div>
+
+        {similar.length > 0 && (
+          <section className="mt-12">
+            <h2 className="mb-4 text-xl font-semibold">Similar land</h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {similar.map((l) => (
+                <ListingCard key={l.id} listing={l} />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
+      <Footer />
     </div>
   );
 }

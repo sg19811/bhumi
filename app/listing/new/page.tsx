@@ -5,36 +5,22 @@ import { useAuth } from "@/app/lib/auth";
 import Link from "next/link";
 import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
+import VideoUpload from "@/app/components/VideoUpload";
 
 export default function NewListing() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-400">Loading...</div>;
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-white text-gray-900">
-        <Header />
-        <main className="mx-auto max-w-md px-6 py-24 text-center">
-          <h1 className="mb-2 text-2xl font-bold">Sign in to list your land</h1>
-          <p className="mb-8 text-gray-500">Create a free account to post and manage your listings.</p>
-          <Link href="/auth/signin" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Sign in</Link>
-          <p className="mt-4 text-sm text-gray-500">No account? <Link href="/auth/signup" className="font-medium text-green-800 hover:underline">Create one</Link></p>
-        </main>
-      </div>
-    );
-  }
+  const [videos, setVideos] = useState<string[]>([]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true); setError("");
     const f = new FormData(e.currentTarget);
     const { error: dbError } = await supabase.from("listings").insert({
-      owner_user_id: user!.id,
+      owner_user_id: user?.id ?? null,
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: Number(f.get("price")), price_basis: f.get("price_basis"),
       area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
@@ -42,12 +28,12 @@ export default function NewListing() {
       district: f.get("district"), taluka: f.get("taluka"), village: f.get("village"),
       water_source: f.get("water_source"), road_access: f.get("road_access"),
       electricity: f.get("electricity") === "on",
-      contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
-      photos,
+      contact_email: f.get("contact_email"), contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
+      photos, videos,
     });
     setSubmitting(false);
     if (dbError) setError(dbError.message);
-    else { setSuccess(true); setPhotos([]); e.currentTarget.reset(); }
+    else { setSuccess(true); setPhotos([]); setVideos([]); e.currentTarget.reset(); }
   }
 
   if (success) {
@@ -79,6 +65,10 @@ export default function NewListing() {
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Photos</h2>
             <PhotoUpload value={photos} onChange={setPhotos} />
+          </section>
+          <section className="space-y-4">
+            <h2 className="text-lg font-semibold text-green-800">Videos</h2>
+            <VideoUpload value={videos} onChange={setVideos} />
           </section>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Basic information</h2>
@@ -129,6 +119,8 @@ export default function NewListing() {
           </section>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Contact</h2>
+            <p className="text-sm text-gray-500">No account needed — buyers will reach you using the details below.</p>
+            <div><label className="block text-sm font-medium mb-1">Email *</label><input name="contact_email" type="email" required placeholder="you@example.com" className={inp} /></div>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Phone *</label><input name="contact_phone" required placeholder="9876543210" className={inp} /></div>
               <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" placeholder="Same if blank" className={inp} /></div>

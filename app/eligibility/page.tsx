@@ -1,5 +1,12 @@
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
+import Footer from "@/app/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Can you buy agricultural land? — Bhūmi eligibility guide",
+  description: "A simplified, state-wise guide (Karnataka & Maharashtra) to who can buy farmland in India and what documents to verify. Not legal advice.",
+};
 
 export default function Eligibility() {
   return (
@@ -156,6 +163,7 @@ export default function Eligibility() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

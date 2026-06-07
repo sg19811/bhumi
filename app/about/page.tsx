@@ -1,5 +1,12 @@
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Why Bhūmi — Trust, legal clarity & real maps for land",
+  description: "Bhūmi is a land marketplace built around trust: verified listings, legal clarity on what you can buy, and real boundaries on satellite maps.",
+};
 
 export default function About() {
   return (
@@ -43,6 +50,7 @@ export default function About() {
           <Link href="/explore" className="inline-block rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Browse listings</Link>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

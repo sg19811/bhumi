@@ -5,6 +5,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
+import VideoUpload from "@/app/components/VideoUpload";
 import Link from "next/link";
 
 export default function EditListing() {
@@ -13,6 +14,7 @@ export default function EditListing() {
   const { user, loading } = useAuth();
   const [listing, setListing] = useState<any>(null);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
@@ -21,6 +23,7 @@ export default function EditListing() {
       if (!data) { setNotFound(true); return; }
       setListing(data);
       setPhotos(data.photos ?? []);
+      setVideos(data.videos ?? []);
     });
   }, [id]);
 
@@ -50,20 +53,21 @@ export default function EditListing() {
       water_source: f.get("water_source"), road_access: f.get("road_access"),
       electricity: f.get("electricity") === "on", status: f.get("status"),
       contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
-      photos, updated_at: new Date().toISOString(),
+      photos, videos, updated_at: new Date().toISOString(),
     }).eq("id", id);
     setSaving(false);
     router.push(`/listing/${id}`);
   }
 
-  const inp = "w-full border rounded-lg px-4 py-2 outline-none focus:border-green-600";
+  const inp = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <Header />
-      <main className="max-w-2xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-bold mb-8">Edit listing</h1>
+      <main className="mx-auto max-w-2xl px-6 py-10">
+        <h1 className="mb-8 text-3xl font-bold">Edit listing</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <PhotoUpload value={photos} onChange={setPhotos} />
+          <div><label className="mb-1 block text-sm font-medium">Photos</label><PhotoUpload value={photos} onChange={setPhotos} /></div>
+          <div><label className="mb-1 block text-sm font-medium">Videos</label><VideoUpload value={videos} onChange={setVideos} /></div>
           <div><label className="block text-sm font-medium mb-1">Title</label><input name="title" defaultValue={listing.title} className={inp} /></div>
           <div><label className="block text-sm font-medium mb-1">Land type</label>
             <select name="land_type" defaultValue={listing.land_type} className={inp}>
@@ -94,8 +98,8 @@ export default function EditListing() {
           </div>
           <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /></div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="flex-1 bg-green-700 text-white py-3 rounded-lg font-medium hover:bg-green-800 disabled:opacity-50">{saving ? "Saving..." : "Save changes"}</button>
-            <Link href={`/listing/${id}`} className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</Link>
+            <button type="submit" disabled={saving} className="flex-1 rounded-full bg-green-700 py-3 font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
+            <Link href={`/listing/${id}`} className="rounded-full border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50">Cancel</Link>
           </div>
         </form>
       </main>

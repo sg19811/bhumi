@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Header from "@/app/components/Header";
 import SearchBar from "@/app/components/SearchBar";
-import Logo from "@/app/components/Logo";
+import RecentlyViewed from "@/app/components/RecentlyViewed";
+import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 
 const budgets = [
@@ -14,6 +15,15 @@ const purposes = [
   { label: "Farmhouse land", href: "/explore?land_type=farmhouse_land" },
   { label: "Irrigated farmland", href: "/explore?land_type=irrigated_farmland" },
   { label: "NA-converted", href: "/explore?land_type=na_converted" },
+];
+
+const needs = [
+  { label: "Verified listings", sub: "Checked by our team", href: "/explore?verified=true", icon: <path d="M9 12.5l2 2 4-4.5M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3Z" /> },
+  { label: "Borewell water", sub: "Assured irrigation", href: "/explore?water_source=borewell", icon: <path d="M12 3s6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 6-11 6-11Z" /> },
+  { label: "Highway access", sub: "Easy to reach", href: "/explore?road_access=highway", icon: <path d="M12 3v18M8 3v4m8-4v4M7 21l1.5-9m8.5 9-1.5-9" /> },
+  { label: "Orchards", sub: "Mango, coconut & more", href: "/explore?land_type=orchard", icon: <path d="M12 21v-6m0 0a6 6 0 1 0-4.2-10.3A5 5 0 0 0 5 13a4 4 0 0 0 4 2h6a4 4 0 0 0 3-6.7" /> },
+  { label: "Budget picks", sub: "Under ₹25 lakh", href: "/explore?max_price=2500000&sort=price_asc", icon: <path d="M9 8h6M9 12h6m-6 0c3 0 4 4 0 4m0-8c4 0 4 4 0 4m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /> },
+  { label: "Largest plots", sub: "Most acreage first", href: "/explore?sort=area_desc", icon: <path d="M15 3h6v6m0-6-7 7M9 21H3v-6m0 6 7-7" /> },
 ];
 
 const trust = [
@@ -108,6 +118,31 @@ export default async function Home() {
         </main>
       </section>
 
+      {/* Browse by need */}
+      <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-20">
+        <h2 className="mb-1 text-center text-2xl font-semibold sm:text-3xl">Browse by what matters</h2>
+        <p className="mb-8 text-center text-gray-500">Jump straight to land that fits how you&apos;ll use it.</p>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+          {needs.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className="group flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-green-300 hover:shadow-md"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-700">
+                <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  {n.icon}
+                </svg>
+              </span>
+              <span className="min-w-0">
+                <span className="block font-semibold leading-tight text-gray-900 group-hover:text-green-800">{n.label}</span>
+                <span className="block text-sm text-gray-500">{n.sub}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* Trust pillars */}
       <section className="mx-auto max-w-5xl px-6 py-16 sm:py-20">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -125,19 +160,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-50">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-          <Logo className="text-xl" />
-          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-gray-600">
-            <Link href="/explore" className="hover:text-green-800">Explore</Link>
-            <Link href="/buy" className="hover:text-green-800">Buy land</Link>
-            <Link href="/eligibility" className="hover:text-green-800">Eligibility</Link>
-            <Link href="/about" className="hover:text-green-800">About</Link>
-          </nav>
-          <p className="text-xs text-gray-400">© 2026 Bhūmi · Trusted land marketplace</p>
-        </div>
-      </footer>
+      <RecentlyViewed />
+
+      <Footer />
     </div>
   );
 }

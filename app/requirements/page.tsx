@@ -1,6 +1,7 @@
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
 import Link from "next/link";
 import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 export default async function Requirements() {
   const { data: requirements } = await db
@@ -73,6 +74,7 @@ export default async function Requirements() {
           ))}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

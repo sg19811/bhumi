@@ -15,9 +15,9 @@ export default function PhotoUpload({ value, onChange }: { value: string[]; onCh
 
     for (const file of Array.from(files)) {
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-      const { error } = await supabase.storage.from("listings").upload(path, file);
+      const { error } = await supabase.storage.from("Listings").upload(path, file);
       if (error) { setErr(error.message); continue; }
-      const { data } = supabase.storage.from("listings").getPublicUrl(path);
+      const { data } = supabase.storage.from("Listings").getPublicUrl(path);
       newUrls.push(data.publicUrl);
     }
 
@@ -30,13 +30,16 @@ export default function PhotoUpload({ value, onChange }: { value: string[]; onCh
       <div className="flex flex-wrap gap-3 mb-3">
         {value.map((url, i) => (
           <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border">
-            <img src={url} alt="" className="w-full h-full object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={url} alt={`Uploaded photo ${i + 1}`} className="w-full h-full object-cover" />
             <button type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))}
+              aria-label={`Remove photo ${i + 1}`}
               className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-5 h-5 text-xs">✕</button>
           </div>
         ))}
         <label className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer text-gray-400 hover:border-green-600 hover:text-green-600 text-3xl">
-          +
+          <span aria-hidden="true">+</span>
+          <span className="sr-only">Add photos</span>
           <input type="file" accept="image/*" multiple onChange={handleFiles} className="hidden" />
         </label>
       </div>
