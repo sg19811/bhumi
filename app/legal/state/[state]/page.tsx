@@ -1,8 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { supabase } from "@/app/lib/supabase";
 import { getPublishedStateRule } from "@/app/lib/legal/stateRules";
 import { STATES, stateLabel } from "@/app/lib/legal/options";
 import StateGuideContent from "@/app/components/legal/StateGuideContent";
+import ServiceCard from "@/app/components/legal/ServiceCard";
+import LawyerCard from "@/app/components/legal/LawyerCard";
 import LawyerCTA from "@/app/components/legal/LawyerCTA";
 import LegalDisclaimer from "@/app/components/legal/LegalDisclaimer";
 import LegalTrack from "@/app/components/legal/LegalTrack";
@@ -27,7 +30,14 @@ export async function generateMetadata({ params }: { params: Promise<{ state: st
 export default async function StateGuide({ params }: { params: Promise<{ state: string }> }) {
   const { state } = await params;
   const label = stateLabel(state);
-  const rule = await getPublishedStateRule(state);
+
+  const [rule, { data: stateServices }, { data: stateLawyers }] = await Promise.all([
+    getPublishedStateRule(state),
+    supabase.from("legal_services").select("*").eq("published", true).eq("state", state).order("display_order"),
+    supabase.from("lawyers").select("*").eq("published", true).eq("state", state).order("experience_years", { ascending: false }).limit(3),
+  ]);
+  const services = stateServices ?? [];
+  const lawyers = stateLawyers ?? [];
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -73,7 +83,31 @@ export default async function StateGuide({ params }: { params: Promise<{ state: 
         </div>
       )}
 
-      <div className="mt-8">
+      {services.length > 0 && (
+        <section className="mt-10">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <h2 className="text-xl font-semibold">{label} legal services</h2>
+            <Link href="/legal/services" className="shrink-0 text-sm font-medium text-green-800 hover:underline">All services →</Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {services.map((s) => <ServiceCard key={s.slug} service={s} />)}
+          </div>
+        </section>
+      )}
+
+      {lawyers.length > 0 && (
+        <section className="mt-10">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <h2 className="text-xl font-semibold">{label} land lawyers</h2>
+            <Link href="/legal/lawyers" className="shrink-0 text-sm font-medium text-green-800 hover:underline">All lawyers →</Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {lawyers.map((l) => <LawyerCard key={l.id} lawyer={l} />)}
+          </div>
+        </section>
+      )}
+
+      <div className="mt-10">
         <LawyerCTA context="state_guide" state={state} />
       </div>
     </main>
