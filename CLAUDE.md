@@ -150,6 +150,19 @@ without users teach you nothing.
 6. When in doubt about Windows vs Linux command syntax, ask the user or default to
    cross-platform Node scripts.
 
+## Testing & CI
+
+- **Smoke tests** (Playwright, request-based — no browser binaries): `tests/smoke/pages.spec.ts`
+  GETs the key public routes and asserts `200` + a unique per-page string, plus the
+  `/eligibility → /legal` permanent redirect. They need the app running with Supabase env
+  vars (the Playwright `webServer` builds + starts it), so CI provides them via secrets.
+- **Scripts:** `npm run test:typecheck` (tsc), `npm run test:lint` (eslint), `npm run test:smoke` (playwright).
+- **CI:** `.github/workflows/checks.yml` runs typecheck + lint on every push/PR (no env needed);
+  the `smoke` job needs repo secrets `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+  `SUPABASE_SERVICE_ROLE_KEY` to go green.
+- Note: `/agent` gates **client-side** (no HTTP redirect to signin); a browser-based test to
+  assert its logged-out gate UI is a documented follow-up.
+
 ## Where to look for more
 
 - `docs/land-portal-blueprint.md` — full product vision (long; reference only when asked)

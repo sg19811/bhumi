@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:lint": "eslint",
+    "test:typecheck": "tsc --noEmit",
+    "test:smoke": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.107.0",
@@ -17,6 +20,7 @@
     "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
