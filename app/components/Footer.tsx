@@ -12,6 +12,7 @@ export default function Footer() {
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-gray-600">
           <Link href="/explore" className="hover:text-green-800">{t("nav.explore")}</Link>
           <Link href="/buy" className="hover:text-green-800">{t("footer.buy")}</Link>
+          <Link href="/sell" className="hover:text-green-800">Sell land</Link>
           <Link href="/how-it-works" className="hover:text-green-800">{t("footer.howItWorks")}</Link>
           <Link href="/tools" className="hover:text-green-800">{t("footer.tools")}</Link>
           <Link href="/legal" className="hover:text-green-800">{t("nav.legal")}</Link>
