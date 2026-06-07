@@ -14,6 +14,7 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={go}
+      role="search"
       className="mx-auto flex w-full max-w-xl items-center gap-2 rounded-full border border-gray-300 bg-white p-1.5 pl-5 shadow-md transition-shadow focus-within:border-green-600 focus-within:shadow-lg"
     >
       <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -24,6 +25,7 @@ export default function SearchBar() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder={t("search.placeholder")}
+        aria-label={t("search.placeholder")}
         className="min-w-0 flex-1 bg-transparent py-2.5 text-[15px] outline-none placeholder:text-gray-400"
       />
       <button
