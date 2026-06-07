@@ -194,9 +194,13 @@ export default function AdminDashboard() {
         </div>
 
         {pending > 0 && (
-          <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-            <span className="font-semibold">{pending}</span> listing{pending > 1 ? "s" : ""} awaiting review — they stay hidden from buyers until you Approve them below.
-          </div>
+          <section className="mb-10">
+            <h2 className="mb-1 text-lg font-semibold">Awaiting approval ({pending})</h2>
+            <p className="mb-4 text-sm text-gray-500">These stay hidden from buyers until you Approve them.</p>
+            <div className="divide-y divide-gray-200 rounded-xl border border-amber-200 bg-amber-50/40 shadow-sm">
+              {sortedListings.filter((l) => (l.status ?? "active") === "pending").map((l) => <AdminListingRow key={l.id} listing={l} />)}
+            </div>
+          </section>
         )}
 
         {reports.length > 0 && (
