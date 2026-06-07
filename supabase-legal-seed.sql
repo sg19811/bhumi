@@ -257,9 +257,24 @@ Even as an eligible buyer, verify:
 The 2020 reform widened who can buy, but title, records, ceiling and PTCL/granted-land checks still decide whether a deal is safe.
 
 Sources: Karnataka Land Reforms (Amendment) Ordinance, 2020; Karnataka Bhoomi services.', 'karnataka', 'eligibility', '{agri,agri_dry,agri_irrigated}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'Can a non-farmer buy agricultural land in Karnataka?', 'How the 2020 amendment changed who can buy farmland in Karnataka.'),
-('can-a-company-own-agricultural-land-in-india', 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.', 'PENDING LAWYER REVIEW
+('can-a-company-own-agricultural-land-in-india', 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.', 'DRAFT — confirm with your advocate before publishing.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'company', '{agri}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.'),
+## Short answer
+
+It depends on the state and the structure. In many states, companies, LLPs and trusts cannot freely buy raw agricultural land without specific permission or a recognised route.
+
+## What to check
+
+- State rules: Karnataka generally restricts entity purchase of agricultural land without permission; Maharashtra routes industrial / township use through Section 63-IA and other purchases through Section 63.
+- Permitted use: agro-industrial, solar, warehousing or township use often needs explicit approval.
+- Land-use conversion and planning permissions for any non-farming activity.
+- FEMA / FDI review where any foreign ownership or investment exists.
+
+## Before you sign
+
+Request a corporate land purchase review covering eligibility, ceiling exposure, conversion, and entity documents (board resolution, objects clause, authorised signatory).
+
+Sources: Karnataka Land Reforms Act; Maharashtra Tenancy and Agricultural Lands Act (Sections 63 / 63-IA).', null, 'company', '{agri}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Can a company own agricultural land in India?', 'Entity restrictions and the permission routes that may apply.'),
 ('what-is-rtc-pahani-and-how-to-verify', 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.', 'DRAFT — confirm with your advocate before publishing.
 
 ## What RTC (Pahani) shows
@@ -277,24 +292,124 @@ The RTC, or Pahani, is Karnataka''s Record of Rights. It shows the landholder, s
 RTC is not, by itself, final proof of title. Indian land records can be spread across departments and may not match ground reality. Read the RTC together with the sale deed, title chain, mutation, EC, survey sketch and possession.
 
 Sources: Karnataka Bhoomi services; PRS, Land Records and Titles in India.', 'karnataka', 'rtc', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is RTC (Pahani) and how to verify it?', 'Reading the Record of Rights and spotting red flags.'),
-('what-is-mutation-and-why-it-matters', 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.', 'PENDING LAWYER REVIEW
+('what-is-mutation-and-why-it-matters', 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.', 'DRAFT — confirm with your advocate before publishing.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'mutation', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.'),
-('what-is-encumbrance-certificate-ec', 'What is an Encumbrance Certificate (EC) and how to check it?', 'Finding loans, mortgages, and charges on a parcel.', 'PENDING LAWYER REVIEW
+## What mutation is
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is an Encumbrance Certificate (EC)?', 'Finding loans, mortgages, and charges on a parcel.'),
-('document-checklist-for-buying-agricultural-land', 'Document checklist for buying agricultural land', 'The core documents to verify before any farmland purchase.', 'PENDING LAWYER REVIEW
+Mutation (Ferfar in Maharashtra, the Mutation Register / MR in Karnataka) is the update of revenue records after a change of ownership — sale, inheritance, partition, gift, or court order.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{agri,agri_dry,agri_irrigated}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'Document checklist for buying agricultural land', 'The core documents to verify before any farmland purchase.'),
-('document-checklist-for-buying-a-farmhouse', 'Document checklist for buying a farmhouse', 'Extra approvals to check when buying farmhouse land.', 'PENDING LAWYER REVIEW
+## Why it matters
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{farmhouse}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Document checklist for buying a farmhouse', 'Extra approvals to check when buying farmhouse land.'),
-('what-is-land-conversion-na', 'What is land conversion (NA) and when is it required?', 'When you must convert agricultural land for non-farm use.', 'PENDING LAWYER REVIEW
+- It should show the current owner. If the mutation does not reflect the seller, treat the sale as a red flag.
+- A mutation entry must be backed by a valid registered document, inheritance record, or order — never accept it on its own.
+- Recent or pending mutation can hide disputes or an incomplete transfer.
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'conversion', '{agri,na_converted}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'What is land conversion (NA)?', 'When you must convert agricultural land for non-farm use.'),
-('how-to-verify-land-ownership', 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.', 'PENDING LAWYER REVIEW
+## How to check
 
-Placeholder content — replace with lawyer-reviewed text before publishing.', null, 'document', '{agri}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.'),
+Pull the mutation history (Bhoomi in Karnataka, MahaBhulekh / Village Form 6 in Maharashtra) and match it against the sale deed and the RTC / 7-12.
+
+Sources: Karnataka Bhoomi services; MahaBhulekh.', null, 'mutation', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is mutation and why does it matter?', 'Why the mutation entry must match the seller before you buy.'),
+('what-is-encumbrance-certificate-ec', 'What is an Encumbrance Certificate (EC) and how to check it?', 'Finding loans, mortgages, and charges on a parcel.', 'DRAFT — confirm with your advocate before publishing.
+
+## What an EC shows
+
+An Encumbrance Certificate lists registered transactions on a property — sales, mortgages, gifts, settlements, releases, court attachments, and charges — over a period.
+
+## What to look for
+
+- Active mortgages, loans or charges that must be cleared before purchase
+- Court attachments or litigation references
+- Suspicious recent transfers, or gaps in the title chain
+- Mismatch between the EC and the sale-deed chain
+
+## Practical tip
+
+Ask for a long EC — at least 30 years where practical. In Maharashtra, also run an IGR eSearch / Index II registration search; that data is informational and not an ownership certificate, so confirm through the Sub-Registrar where needed.
+
+Sources: Karnataka Kaveri Online Services; Maharashtra IGR eSearch.', null, 'document', '{agri}', 5, 'PENDING_LAWYER_REVIEW', null, false, 'What is an Encumbrance Certificate (EC)?', 'Finding loans, mortgages, and charges on a parcel.'),
+('document-checklist-for-buying-agricultural-land', 'Document checklist for buying agricultural land', 'The core documents to verify before any farmland purchase.', 'DRAFT — confirm with your advocate before publishing.
+
+## Core documents to request
+
+- Latest sale deed and the parent / mother-deed chain
+- Record of Rights — RTC / Pahani (Karnataka), 7-12 and 8A (Maharashtra), Patta / Chitta and A-Register (Tamil Nadu)
+- Mutation history (MR / Ferfar)
+- Encumbrance Certificate (and eSearch / Index II in Maharashtra)
+- Survey records — 11E sketch (KA, for subdivided parcels), FMB sketch (TN), survey / Gat map (MH)
+- Tax / land-revenue receipts
+- Seller identity proof and survey / subdivision details
+
+## Case-specific extras
+
+- Inherited land: legal heir certificate, partition / release deeds, consent of all co-owners
+- POA sale: registered POA, scope, and revocation check
+- Non-farm use: conversion order and layout / planning approval
+- Karnataka: PTCL / granted-land status confirmation
+
+## Bottom line
+
+Records are presumptive, not a guaranteed title. Match every document against the others and against the ground before you pay a token advance.
+
+Sources: state land-record portals; PRS, Land Records and Titles in India.', null, 'document', '{agri,agri_dry,agri_irrigated}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'Document checklist for buying agricultural land', 'The core documents to verify before any farmland purchase.'),
+('document-checklist-for-buying-a-farmhouse', 'Document checklist for buying a farmhouse', 'Extra approvals to check when buying farmhouse land.', 'DRAFT — confirm with your advocate before publishing.
+
+## Everything in the agricultural-land checklist, plus
+
+- Land-use / conversion: is the land still agricultural, and does the intended farmhouse use need NA conversion?
+- Planning approval: DTCP / planning-authority or local-body approval where applicable
+- Layout approval and legally formed plots (for farm-plot or gated-farm projects)
+- Legal road access, and road / common-area handover
+- Building / construction permission if a structure exists or is planned
+- Zone restrictions: lake-buffer, forest, hill-station, eco-sensitive or CRZ areas
+- Maharashtra: buyer eligibility under Section 63, and Occupant Class-II / tribal-land status
+- RERA / project registration where the land is marketed as a plotted development
+
+## Bottom line
+
+Farmhouse and farm-plot buys fail more often on land-use and approvals than on title — verify both.
+
+Sources: Tamil Nadu DTCP advisory; state revenue / planning rules.', null, 'document', '{farmhouse}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'Document checklist for buying a farmhouse', 'Extra approvals to check when buying farmhouse land.'),
+('what-is-land-conversion-na', 'What is land conversion (NA) and when is it required?', 'When you must convert agricultural land for non-farm use.', 'DRAFT — confirm with your advocate before publishing.
+
+## What conversion (NA) is
+
+Land conversion, or NA (non-agricultural) permission, changes the permitted use of agricultural land so it can be used for housing, farmhouse, commercial, industrial, or other non-farming purposes.
+
+## When it is required
+
+- Building a farmhouse, resort, warehouse, or any structure beyond permitted agricultural use
+- Plotted / layout development
+- Commercial, industrial, or solar projects
+
+## How it works
+
+- Karnataka: apply through the Revenue Department; check, and download, the final conversion order.
+- Maharashtra: conversion / planning permission, with Section 63(1C) for planning-zone land and Section 63-IA for industrial / township use.
+- Tamil Nadu: DTCP land-use change rules (e.g. G.O. Ms. No. 79) and the Combined Development Regulations, 2019.
+
+## Watch for
+
+Use-condition timelines and non-utilisation charges, the master-plan / zone, and whether the RTC / 7-12 still shows the land as agricultural.
+
+Sources: Karnataka Revenue Department; Maharashtra Tenancy Act (63(1C) / 63-IA); Tamil Nadu DTCP.', null, 'conversion', '{agri,na_converted}', 6, 'PENDING_LAWYER_REVIEW', null, false, 'What is land conversion (NA)?', 'When you must convert agricultural land for non-farm use.'),
+('how-to-verify-land-ownership', 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.', 'DRAFT — confirm with your advocate before publishing.
+
+## A step-by-step check
+
+1. Confirm the seller is the recorded owner — match ID to the RTC / 7-12 / Patta and the latest sale deed.
+2. Trace the title chain back through the parent / mother deed (30+ years).
+3. Pull the mutation history and confirm each entry is backed by a valid document or order.
+4. Get a long Encumbrance Certificate (and eSearch / Index II in Maharashtra) to surface loans, charges, or attachments.
+5. Verify survey records and boundaries — 11E / FMB / survey map versus the recorded extent and physical possession.
+6. Check land classification — private versus government / poramboke / gairan / granted / tribal / forest land.
+7. For non-farm use, confirm conversion and planning approvals.
+8. Rule out litigation, co-owner / inheritance claims, and POA risks.
+
+## Remember
+
+In India, ownership is presumptive — records are not a government-guaranteed title. When the records and the ground do not match, stop and get a lawyer before paying anything.
+
+Sources: state land-record portals; PRS, Land Records and Titles in India.', null, 'document', '{agri}', 7, 'PENDING_LAWYER_REVIEW', null, false, 'How to verify land ownership before buying', 'A step-by-step way to confirm the seller truly owns the land.'),
 ('can-a-non-farmer-buy-agricultural-land-in-maharashtra', 'Can a non-farmer buy agricultural land in Maharashtra?', 'Maharashtra restricts raw agricultural land to agriculturists under Section 63 — with limited exceptions.', 'DRAFT — confirm with your advocate before publishing.
 
 ## Short answer
