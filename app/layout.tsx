@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Fraunces } from "next/font/google";
 import { AuthProvider } from "@/app/lib/auth";
 import { CompareProvider } from "@/app/lib/compare";
 import { SavedSearchesProvider } from "@/app/lib/saved-searches";
+import { LanguageProvider } from "@/app/lib/i18n-client";
+import { getLocale } from "@/app/lib/i18n-server";
 import CompareTray from "@/app/components/CompareTray";
 import "./globals.css";
 
@@ -32,10 +34,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}>
+        <LanguageProvider locale={locale}>
         <AuthProvider>
           <SavedSearchesProvider>
             <CompareProvider>
@@ -50,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </CompareProvider>
           </SavedSearchesProvider>
         </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

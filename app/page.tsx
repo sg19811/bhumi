@@ -5,6 +5,8 @@ import RecentlyViewed from "@/app/components/RecentlyViewed";
 import ListingCard from "@/app/components/ListingCard";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
+import { getLocale } from "@/app/lib/i18n-server";
+import { t as translate } from "@/app/lib/i18n";
 
 const budgets = [
   { label: "Under ₹25 lakh", href: "/explore?max_price=2500000" },
@@ -52,6 +54,8 @@ const trust = [
 ];
 
 export default async function Home() {
+  const locale = await getLocale();
+  const t = (k: string) => translate(locale, k);
   const { count } = await supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active");
   const { count: buyerCount } = await supabase.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
   const { data: latest } = await supabase.from("listings").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(4);
@@ -104,14 +108,14 @@ export default async function Home() {
         />
         <main className="relative mx-auto max-w-3xl px-6 py-20 text-center sm:py-28">
           <span className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-white/70 px-3.5 py-1.5 text-xs font-medium text-green-800">
-            🌿 The land marketplace built for trust
+            {t("home.badge")}
           </span>
           <h1 className="text-balance text-4xl font-semibold leading-[1.08] tracking-tight md:text-6xl">
-            Find trusted{" "}
-            <span className="text-green-800">agricultural land</span>
+            {t("home.titlePre")}{" "}
+            <span className="text-green-800">{t("home.titleHighlight")}</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-gray-600">
-            Verified listings with legal clarity and real boundaries — so you can buy farmland with confidence.
+            {t("home.subtitle")}
           </p>
 
           <div className="mt-8">
@@ -135,10 +139,10 @@ export default async function Home() {
 
           <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/listing/new" className="rounded-full bg-green-700 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">
-              List your land for free
+              {t("home.listFree")}
             </Link>
             <Link href="/buy" className="rounded-full border border-green-700 px-6 py-3 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">
-              Post what you want to buy
+              {t("home.postBuy")}
             </Link>
           </div>
 

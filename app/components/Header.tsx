@@ -3,18 +3,21 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/app/lib/auth";
+import { useLang } from "@/app/lib/i18n-client";
 import Logo from "@/app/components/Logo";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const { user, role, signOut } = useAuth();
+  const { t } = useLang();
   const pathname = usePathname();
   const links = [
-    { href: "/explore", label: "Explore" },
-    { href: "/listing/new", label: "List your land" },
-    { href: "/buy", label: "I want to buy" },
-    { href: "/requirements", label: "Requirements" },
-    { href: "/eligibility", label: "Eligibility" },
+    { href: "/explore", key: "nav.explore" },
+    { href: "/listing/new", key: "nav.list" },
+    { href: "/buy", key: "nav.buy" },
+    { href: "/requirements", key: "nav.requirements" },
+    { href: "/eligibility", key: "nav.eligibility" },
   ];
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname?.startsWith(href));
@@ -41,61 +44,28 @@ export default function Header() {
                   : "text-gray-600 hover:bg-gray-100 hover:text-green-800"
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
           <span className="mx-1 h-5 w-px bg-gray-200" />
           {user ? (
             <>
-              <Link
-                href="/my-listings"
-                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-              >
-                My listings
-              </Link>
-              <Link
-                href="/saved"
-                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-              >
-                Saved
-              </Link>
-              <Link
-                href="/collections"
-                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-              >
-                Collections
-              </Link>
+              <Link href="/my-listings" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.myListings")}</Link>
+              <Link href="/saved" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.saved")}</Link>
+              <Link href="/collections" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.collections")}</Link>
               {(role === "agent" || role === "admin") && (
-                <Link
-                  href="/agent"
-                  className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-                >
-                  Agent
-                </Link>
+                <Link href="/agent" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (
-                <Link
-                  href="/admin"
-                  className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-                >
-                  Dashboard
-                </Link>
+                <Link href="/admin" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.dashboard")}</Link>
               )}
-              <button
-                onClick={signOut}
-                className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600"
-              >
-                Sign out
-              </button>
+              <button onClick={signOut} className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600">{t("nav.signout")}</button>
             </>
           ) : (
-            <Link
-              href="/auth/signin"
-              className="rounded-full bg-green-700 px-5 py-2 font-medium text-white shadow-sm transition-colors hover:bg-green-800"
-            >
-              Sign in
-            </Link>
+            <Link href="/auth/signin" className="rounded-full bg-green-700 px-5 py-2 font-medium text-white shadow-sm transition-colors hover:bg-green-800">{t("nav.signin")}</Link>
           )}
+          <span className="mx-1 h-5 w-px bg-gray-200" />
+          <LanguageSwitcher />
         </nav>
       </div>
       {open && (
@@ -111,50 +81,27 @@ export default function Header() {
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              {l.label}
+              {t(l.key)}
             </Link>
           ))}
           <span className="my-1 h-px w-full bg-gray-200" />
           {user ? (
             <>
-              <Link href="/my-listings" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                My listings
-              </Link>
-              <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                Saved
-              </Link>
-              <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                Collections
-              </Link>
+              <Link href="/my-listings" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.myListings")}</Link>
+              <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.saved")}</Link>
+              <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.collections")}</Link>
               {(role === "agent" || role === "admin") && (
-                <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                  Agent
-                </Link>
+                <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (
-                <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                  Dashboard
-                </Link>
+                <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.dashboard")}</Link>
               )}
-              <button
-                onClick={() => {
-                  signOut();
-                  setOpen(false);
-                }}
-                className="rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50"
-              >
-                Sign out
-              </button>
+              <button onClick={() => { signOut(); setOpen(false); }} className="rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50">{t("nav.signout")}</button>
             </>
           ) : (
-            <Link
-              href="/auth/signin"
-              onClick={() => setOpen(false)}
-              className="mt-1 rounded-full bg-green-700 px-3 py-2.5 text-center font-medium text-white"
-            >
-              Sign in
-            </Link>
+            <Link href="/auth/signin" onClick={() => setOpen(false)} className="mt-1 rounded-full bg-green-700 px-3 py-2.5 text-center font-medium text-white">{t("nav.signin")}</Link>
           )}
+          <div className="mt-2 px-3"><LanguageSwitcher /></div>
         </nav>
       )}
     </header>
