@@ -87,6 +87,7 @@ export default function AdminDashboard() {
   const [vBusy, setVBusy] = useState<string | null>(null);
   const [reports, setReports] = useState<any[]>([]);
   const [demand, setDemand] = useState<any[]>([]);
+  const [legalLeads, setLegalLeads] = useState<any[]>([]);
   const [listingQuery, setListingQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -94,7 +95,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s, v, r, d] = await Promise.all([
+      const [l, i, b, s, v, r, d, g] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
@@ -102,6 +103,7 @@ export default function AdminDashboard() {
         supabase.from("verification_requests").select("*, listings(title)").eq("status", "pending").order("created_at", { ascending: false }),
         supabase.from("reports").select("*, listings(title)").eq("resolved", false).order("created_at", { ascending: false }),
         supabase.from("demand_signals").select("*").order("created_at", { ascending: false }).limit(1000),
+        supabase.from("legal_inquiries").select("*").order("created_at", { ascending: false }).limit(200),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
@@ -110,12 +112,18 @@ export default function AdminDashboard() {
       setVerifications(v.data ?? []);
       setReports(r.data ?? []);
       setDemand(d.data ?? []);
+      setLegalLeads(g.data ?? []);
     })();
   }, [isAdmin]);
 
   async function resolveReport(reportId: string) {
     await supabase.from("reports").update({ resolved: true }).eq("id", reportId);
     setReports((cur) => cur.filter((x) => x.id !== reportId));
+  }
+
+  async function setLeadStatus(id: string, status: string) {
+    await supabase.from("legal_inquiries").update({ status }).eq("id", id);
+    setLegalLeads((cur) => cur.map((x) => (x.id === id ? { ...x, status } : x)));
   }
 
   async function viewDoc(path: string) {
@@ -225,6 +233,51 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        )}
+
+        {legalLeads.length > 0 && (
+          <section className="mb-10">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">Legal enquiries ({legalLeads.length})</h2>
+              <button
+                onClick={() => downloadCSV("legal-enquiries.csv", legalLeads.map((g) => ({ date: g.created_at, name: g.name, phone: g.phone, whatsapp: g.whatsapp, email: g.email, state: g.state, district: g.district, land_type: g.land_type, buyer_type: g.buyer_type, concern: g.legal_concern, source: g.source_page, service: g.related_service_slug, status: g.status })))}
+                className="text-sm text-green-700 hover:underline"
+              >
+                Export CSV
+              </button>
+            </div>
+            <div className="divide-y divide-gray-200 rounded-xl border border-green-200 bg-white shadow-sm">
+              {[...legalLeads]
+                .sort((a, b) => (a.status === "new" ? 0 : 1) - (b.status === "new" ? 0 : 1))
+                .slice(0, 25)
+                .map((g) => {
+                  const tone = g.status === "new" ? "bg-amber-100 text-amber-800" : g.status === "closed" ? "bg-gray-200 text-gray-600" : g.status === "routed" ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-700";
+                  return (
+                    <div key={g.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
+                          {g.name || "Enquiry"}
+                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${tone}`}>{g.status ?? "new"}</span>
+                          {g.state && <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs capitalize text-green-800">{g.state.replace(/_/g, " ")}</span>}
+                        </p>
+                        <p className="mt-1 text-xs text-gray-600">
+                          {g.phone && <>📞 <a href={`tel:${g.phone}`} className="text-green-700 hover:underline">{g.phone}</a></>}
+                          {g.email && <> · ✉ <a href={`mailto:${g.email}`} className="text-green-700 hover:underline">{g.email}</a></>}
+                        </p>
+                        {g.legal_concern && <p className="mt-1 text-xs text-gray-500">{g.legal_concern}</p>}
+                        <p className="mt-1 text-[11px] text-gray-400">
+                          {g.related_service_slug ? `service: ${g.related_service_slug} · ` : ""}{g.source_page ? `from ${g.source_page} · ` : ""}{new Date(g.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        {g.status !== "contacted" && <button onClick={() => setLeadStatus(g.id, "contacted")} className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">Mark contacted</button>}
+                        {g.status !== "closed" && <button onClick={() => setLeadStatus(g.id, "closed")} className="rounded-full border border-gray-300 px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50">Close</button>}
+                      </div>
+                    </div>
+                  );
+                })}
             </div>
           </section>
         )}
