@@ -82,10 +82,14 @@ export default function NewListing() {
         <main className="mx-auto max-w-lg px-6 py-20 text-center">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl text-green-700">✓</div>
           <h1 className="mb-2 text-2xl font-bold">Listing submitted!</h1>
-          <p className="mb-8 text-gray-500">Thanks! Our team reviews new listings before they go live — yours will appear publicly once approved.</p>
+          <p className="mb-4 text-gray-600">Thanks — we&apos;ve received your land details.</p>
+          <div className="mx-auto mb-8 max-w-md rounded-2xl border border-amber-200 bg-amber-50 p-4 text-left text-sm text-amber-800">
+            <p className="font-semibold">⏳ Pending review</p>
+            <p className="mt-1">Your land will become visible to buyers on AcreHub <span className="font-medium">once our team approves it</span>. This helps keep listings trustworthy. You can track its status anytime under <Link href="/my-listings" className="font-medium underline">My listings</Link>.</p>
+          </div>
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             <button onClick={() => { setSuccess(false); setStep(0); }} className="rounded-full bg-green-700 px-6 py-2.5 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Create another</button>
-            <Link href="/explore" className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">View listings</Link>
+            <Link href="/my-listings" className="rounded-full border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-colors hover:bg-gray-50">My listings</Link>
           </div>
         </main>
       </div>

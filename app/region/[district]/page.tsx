@@ -7,6 +7,8 @@ import ListingCard from "@/app/components/ListingCard";
 import NotifyMe from "@/app/components/NotifyMe";
 import MarketStats from "@/app/components/MarketStats";
 import { marketSummary } from "@/app/lib/price-insight";
+import { districtToState } from "@/app/lib/legal/districts";
+import { stateLabel } from "@/app/lib/legal/options";
 import { landLabel } from "@/app/lib/land";
 import type { Metadata } from "next";
 
@@ -74,6 +76,11 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
             </div>
           )}
           {market && <MarketStats summary={market} scopeLabel={`Land in ${name}`} />}
+          {districtToState(name) && (
+            <p className="mt-4 text-sm">
+              <Link href={`/legal/state/${districtToState(name)}`} className="font-medium text-green-800 hover:underline">⚖️ Land-buying rules in {stateLabel(districtToState(name)!)} →</Link>
+            </p>
+          )}
         </div>
 
         {markers.length > 0 && (
