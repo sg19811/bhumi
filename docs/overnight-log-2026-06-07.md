@@ -103,3 +103,13 @@ build won't throw; the typecheck/lint jobs don't build.
 - **Verified:** `grep` shows no `confirm(` left; tsc clean; `next build` clean.
 
 ---
+
+## Phase 6 — Route-level error boundaries ✅
+
+- `app/components/RouteError.tsx` — shared, on-brand error UI: calm message, **Try again** (calls
+  `reset()`), **Go home**, shows `error.digest` ref, and `console.error(error)` (surfaces in Vercel logs).
+- `error.tsx` added to 6 segments: `app/legal`, `app/listing`, `app/admin`, `app/agent`,
+  `app/region`, `app/land` — each a `"use client"` boundary rendering `RouteError`.
+- **Verified:** tsc clean; `next build` clean.
+
+---
