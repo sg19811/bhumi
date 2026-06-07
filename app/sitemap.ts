@@ -6,7 +6,7 @@ const BASE = "https://bhumi.vercel.app";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: listings } = await supabase.from("listings").select("id, updated_at, district, land_type").eq("status", "active");
 
-  const staticPages = ["", "/explore", "/listings", "/buy", "/requirements", "/legal", "/legal/wizard", "/legal/checklist", "/legal/due-diligence", "/legal/lawyers", "/legal/services", "/legal/articles", "/legal/compare", "/legal/nri", "/legal/talk-to-lawyer", "/about", "/how-it-works", "/faq", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/privacy", "/terms", "/listing/new"].map((p) => ({
+  const staticPages = ["", "/explore", "/listings", "/buy", "/requirements", "/legal", "/legal/wizard", "/legal/checklist", "/legal/due-diligence", "/legal/lawyers", "/legal/services", "/legal/articles", "/legal/compare", "/legal/nri", "/legal/company", "/legal/talk-to-lawyer", "/about", "/how-it-works", "/faq", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/privacy", "/terms", "/listing/new"].map((p) => ({
     url: `${BASE}${p}`,
     lastModified: new Date(),
   }));
