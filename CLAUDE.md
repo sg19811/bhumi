@@ -110,6 +110,23 @@ MVP + Stage 2 are live in production:
 - Sitemap, robots, SEO meta
 - Earthy visual redesign — shared Logo + ListingCard, Tailwind v4 @theme tokens
 
+**Farm Plot Projects MVP** (branch `overnight/farm-plots-mvp` — needs `supabase-farm-plots.sql` run):
+- New `land_type` values (in `app/lib/land.ts`): `farm_plot_project`, `managed_farmland`,
+  `farmhouse_plot`, `gated_farm_plot`, `plantation_project` — surfaced in explore filter, create
+  wizard, edit, and the `/buy` form.
+- Schema (in `supabase-farm-plots.sql`, **not yet applied**): 17 nullable project columns on
+  `listings` + one child table `farm_project_plots` (plot inventory, RLS: public-read-active / owner /
+  admin) + `search_logs.corridor`.
+- Conditional project fields + optional plot-inventory editor in `/listing/new` and `/listing/[id]/edit`
+  (`app/components/farm-plots/ProjectFieldsStep`, `PlotInventoryEditor`).
+- Conditional sections on `/listing/[id]` (`FarmProjectSections`: overview, plot table, amenities,
+  developer placeholder, corridor badge) — render only for project types; existing sections untouched.
+- New SEO surfaces (server, ISR): `/farm-plots` (hub), `/farm-plots/bangalore` (city),
+  `/farm-plots/[corridor]` (6 corridors via `generateStaticParams`), `/farm-plots/legal-checklist`
+  (redirect). Sitemap extended.
+- Lib: `app/lib/farm-plots/{types,corridors,amenities,copy,submit,queries}.ts`. Copy is placeholder
+  prose (TODO) for the founder to edit. All field reads are null-safe (migration applied separately).
+
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 
 1. **v1.x — refine current**: composite Trust Score, compare properties, more

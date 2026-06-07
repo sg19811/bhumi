@@ -146,3 +146,53 @@ an explore *corridor* filter isn't built (search_logs.corridor is for logging) �
   the hardening branch is merged, add the spec §13 farm-plot cases to `tests/smoke/pages.spec.ts`.
 - **Build:** `npm run build` clean.
 **Open questions:** none (smoke deferred by design, logged above).
+
+---
+
+## Phase 7 — Docs
+
+- CLAUDE.md "What's built" gains a Farm Plot Projects MVP block (land types, schema/tables,
+  components, routes, lib). (Did **not** do the broader Bhūmi→AcreHub/Stage-3 resync — that's the
+  separate `chore/tracker-resync` branch's job; kept this change scoped to farm plots.)
+- `docs/project-tracker.md` gains a "Farm Plot Projects MVP ✅" section with what shipped, Phase-2
+  deferrals, and founder follow-ups.
+
+---
+
+## FINAL SUMMARY
+
+**Branch:** `overnight/farm-plots-mvp` (from `main`). **Not pushed. No SQL run. No RLS/.env edits.**
+All 7 phases complete, one commit each (eaec894 → final). Every phase: `tsc` + `next build` clean.
+
+**What shipped:**
+- Migration FILE `supabase-farm-plots.sql` (output only — additive columns + `farm_project_plots` + RLS + `search_logs.corridor`).
+- 5 new project `land_type`s wired through land registry, explore filter, create wizard, edit, `/buy`.
+- `app/lib/farm-plots/` (types, corridors×6, amenities, copy placeholders, submit, queries).
+- Create/edit: conditional `ProjectFieldsStep` + optional `PlotInventoryEditor` + defensive validation.
+- Listing detail: `FarmProjectSections` (overview, plot table, amenities, developer, corridor badge) — self-gating, existing sections untouched.
+- ListingCard project badge. SEO: `/farm-plots` hub + `/farm-plots/bangalore` + 6 `/farm-plots/[corridor]` + legal-checklist redirect; sitemap + JSON-LD.
+- Docs updated (CLAUDE.md + tracker).
+
+**What's blocked / deferred:** nothing blocked (no `overnight-blocked.md` needed). Deliberately deferred:
+Playwright smoke tests (the smoke layer isn't on this branch — it's on `overnight/foundation-hardening`);
+all spec Phase-2 items (calculator, site-visit, developer dashboard, etc.).
+
+**Defensive design (because the migration isn't applied yet):** project columns are sent only for
+project-type listings; `farm_project_plots` reads/writes are wrapped (table-missing tolerated → empty
+states); corridor counts/listings default to zero/empty on query error; all detail-page field reads are
+null-safe. **The build does not touch the DB, so it is safe before the migration runs.**
+
+**MORNING TO-DO (in order):**
+1. **Run `supabase-farm-plots.sql`** in the Supabase SQL Editor (after any other outstanding
+   `supabase-*.sql`). This adds the columns + `farm_project_plots` table + RLS. Nothing works end-to-end until this is done.
+2. On the `overnight/farm-plots-mvp` branch, test per spec §13: create a `farm_plot_project` listing
+   (add 2 plots via **edit** after approval — see note below), approve it in `/admin`, view the detail
+   page sections, the corridor page, the hub/city, the `/buy` option, and `/sitemap.xml`.
+3. **Edit the placeholder copy** in `app/lib/farm-plots/copy.ts` (hero/corridor/FAQ prose) before going public.
+4. Then merge to `main` (Vercel auto-deploys).
+
+**Known nuance to verify in the morning:** create-time plot inventory may not persist (pending listings
+aren't owner-readable under current RLS, so the new listing's id isn't retrievable client-side) — add
+plots via **edit** after the listing exists. This matches the spec's "optional — add later via edit."
+If you want create-time plot save, that needs an owner-read RLS policy or a server write path (logged as
+an architecture decision, not done).
