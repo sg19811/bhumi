@@ -20,13 +20,20 @@ export const metadata: Metadata = {
 };
 
 export default async function LegalHub() {
-  const [{ data: articles }, { data: services }, publishedStates] = await Promise.all([
+  const [{ data: articles }, { data: services }, publishedStates, { count: guidesCount }, { count: lawyersCount }] = await Promise.all([
     supabase.from("legal_articles").select("slug, title, summary, topic, reading_minutes").eq("published", true).order("updated_at", { ascending: false }).limit(4),
     supabase.from("legal_services").select("slug, name, description, included_items, turnaround_days_min, turnaround_days_max, starting_price_placeholder").eq("published", true).order("display_order").limit(6),
     getAllPublishedStates(),
+    supabase.from("legal_articles").select("id", { count: "exact", head: true }).eq("published", true),
+    supabase.from("lawyers").select("id", { count: "exact", head: true }).eq("published", true),
   ]);
 
   const publishedSet = new Set(publishedStates.map((s) => s.state));
+  const stats = [
+    publishedStates.length ? { n: publishedStates.length, label: `state${publishedStates.length === 1 ? "" : "s"} covered` } : null,
+    guidesCount ? { n: guidesCount, label: `guide${guidesCount === 1 ? "" : "s"}` } : null,
+    lawyersCount ? { n: lawyersCount, label: `verified lawyer${lawyersCount === 1 ? "" : "s"}` } : null,
+  ].filter(Boolean) as { n: number; label: string }[];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -45,6 +52,17 @@ export default async function LegalHub() {
 
       <div className="mx-auto max-w-5xl px-5 py-10 sm:px-6">
         <div className="mb-8"><TrustBadgesRow /></div>
+
+        {stats.length > 0 && (
+          <div className="mb-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center">
+                <p className="text-2xl font-bold text-green-800">{s.n}</p>
+                <p className="text-xs uppercase tracking-wide text-gray-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="mb-12 grid gap-3 sm:grid-cols-2">
           <Link href="/legal/nri" className="block rounded-2xl border border-green-200 bg-green-50/50 p-4 text-sm transition-colors hover:bg-green-50 sm:p-5">
