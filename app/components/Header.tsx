@@ -7,7 +7,7 @@ import Logo from "@/app/components/Logo";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, role, signOut } = useAuth();
   const pathname = usePathname();
   const links = [
     { href: "/explore", label: "Explore" },
@@ -65,12 +65,14 @@ export default function Header() {
               >
                 Collections
               </Link>
-              <Link
-                href="/admin"
-                className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
-              >
-                Dashboard
-              </Link>
+              {role === "admin" && (
+                <Link
+                  href="/admin"
+                  className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800"
+                >
+                  Dashboard
+                </Link>
+              )}
               <button
                 onClick={signOut}
                 className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600"
@@ -116,9 +118,11 @@ export default function Header() {
               <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
                 Collections
               </Link>
-              <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
-                Dashboard
-              </Link>
+              {role === "admin" && (
+                <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">
+                  Dashboard
+                </Link>
+              )}
               <button
                 onClick={() => {
                   signOut();
