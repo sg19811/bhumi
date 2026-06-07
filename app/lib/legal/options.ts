@@ -7,7 +7,7 @@ export type Option<T extends string = string> = { value: T; label: string; hint?
 export const STATES: Array<Option & { covered: boolean }> = [
   { value: "karnataka", label: "Karnataka", covered: true },
   { value: "maharashtra", label: "Maharashtra", covered: true },
-  { value: "tamil_nadu", label: "Tamil Nadu", covered: false },
+  { value: "tamil_nadu", label: "Tamil Nadu", covered: true },
   { value: "andhra_pradesh", label: "Andhra Pradesh", covered: false },
   { value: "kerala", label: "Kerala", covered: false },
 ];
