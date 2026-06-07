@@ -88,8 +88,8 @@ export function computeEligibility(
     }
   }
 
-  // Rule 3: Company/LLP/Trust/Partnership buying agricultural land
-  if (["company", "llp", "trust", "partnership"].includes(answers.buyer_type) && CORE_AGRI.includes(answers.land_type)) {
+  // Rule 3: Company/LLP/Trust/Partnership/Developer/Institutional buying agri land
+  if (["company", "llp", "trust", "partnership", "developer", "institutional"].includes(answers.buyer_type) && CORE_AGRI.includes(answers.land_type)) {
     if (!rule.data.company_rules.can_purchase_agri) {
       rationale.push({
         rule_id: "company_no_agri",
@@ -199,6 +199,12 @@ function generateNextSteps(verdict: Verdict, needsLawyer: boolean, answers: Elig
     steps.push({ id: "lawyer", label: "Talk to a verified lawyer", cta_type: "lawyer", cta_target: "/legal/talk-to-lawyer" });
   } else {
     steps.push({ id: "lawyer_verify", label: "Have a lawyer verify the documents", cta_type: "lawyer", cta_target: "/legal/talk-to-lawyer" });
+  }
+  // Contextual guide for the buyer's situation.
+  if (answers.citizenship === "nri" || answers.citizenship === "oci" || answers.citizenship === "foreign") {
+    steps.push({ id: "nri", label: "Read the NRI & OCI guide", cta_type: "article", cta_target: "/legal/nri" });
+  } else if (["company", "llp", "trust", "partnership", "developer", "institutional"].includes(answers.buyer_type)) {
+    steps.push({ id: "company", label: "Read the company & entity guide", cta_type: "article", cta_target: "/legal/company" });
   }
   steps.push({ id: "checklist", label: "Get your document checklist", cta_type: "doc_check", cta_target: `/legal/checklist?state=${answers.state}&land_type=${answers.land_type}` });
   steps.push({ id: "dd", label: "Run the 10-step due-diligence guide", cta_type: "service", cta_target: "/legal/due-diligence" });
