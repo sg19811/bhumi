@@ -8,6 +8,10 @@ import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
 import Link from "next/link";
+import ProjectFieldsStep from "@/app/components/farm-plots/ProjectFieldsStep";
+import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
+import { isProjectType } from "@/app/lib/farm-plots/types";
+import { collectProjectFields, validateProjectFields, plotRowsForInsert } from "@/app/lib/farm-plots/submit";
 
 export default function EditListing() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +22,9 @@ export default function EditListing() {
   const [videos, setVideos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState("");
+  const [landType, setLandType] = useState("");
+  const [plots, setPlots] = useState<DraftPlot[]>([]);
 
   useEffect(() => {
     supabase.from("listings").select("*").eq("id", id).single().then(({ data }) => {
@@ -25,6 +32,17 @@ export default function EditListing() {
       setListing(data);
       setPhotos(data.photos ?? []);
       setVideos(data.videos ?? []);
+      setLandType(data.land_type ?? "");
+    });
+    // Existing plot inventory (table may not exist until the migration runs — handled gracefully).
+    supabase.from("farm_project_plots").select("*").eq("listing_id", id).order("created_at", { ascending: true }).then(({ data }) => {
+      if (data?.length) setPlots(data.map((p: Record<string, unknown>) => ({
+        plot_label: (p.plot_label as string) ?? "",
+        size_value: p.size_value != null ? String(p.size_value) : "",
+        size_unit: ((p.size_unit as string) ?? "sqft") as DraftPlot["size_unit"],
+        price: p.price != null ? String(p.price) : "",
+        status: ((p.status as string) ?? "available") as DraftPlot["status"],
+      })));
     });
   }, [id]);
 
@@ -46,13 +64,12 @@ export default function EditListing() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     const f = new FormData(e.currentTarget);
     const latRaw = f.get("latitude");
     const lngRaw = f.get("longitude");
     const newPrice = Number(f.get("price"));
     const dropped = Number.isFinite(newPrice) && newPrice < Number(listing.price);
-    await supabase.from("listings").update({
+    const updates: Record<string, unknown> = {
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: newPrice, area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
       previous_price: dropped ? listing.price : null,
@@ -64,7 +81,25 @@ export default function EditListing() {
       electricity: f.get("electricity") === "on", status: f.get("status"),
       contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
       photos, videos, updated_at: new Date().toISOString(),
-    }).eq("id", id);
+    };
+    const projectType = isProjectType(f.get("land_type") as string);
+    if (projectType) {
+      const project = collectProjectFields(f);
+      const verr = validateProjectFields(project, plots);
+      if (verr) { setError(verr); return; }
+      Object.assign(updates, project);
+    }
+    setSaving(true); setError("");
+    const { error: dbError } = await supabase.from("listings").update(updates).eq("id", id);
+    if (dbError) { setSaving(false); setError(dbError.message); return; }
+    // Sync plot inventory (replace-all). Best-effort: table may not exist until the migration runs.
+    if (projectType) {
+      try {
+        await supabase.from("farm_project_plots").delete().eq("listing_id", id);
+        const rows = plotRowsForInsert(id, plots);
+        if (rows.length) await supabase.from("farm_project_plots").insert(rows);
+      } catch { /* best-effort */ }
+    }
     setSaving(false);
     router.push(`/listing/${id}`);
   }
@@ -80,11 +115,18 @@ export default function EditListing() {
           <div><label className="mb-1 block text-sm font-medium">Videos</label><VideoUpload value={videos} onChange={setVideos} /></div>
           <div><label className="block text-sm font-medium mb-1">Title</label><input name="title" defaultValue={listing.title} className={inp} /></div>
           <div><label className="block text-sm font-medium mb-1">Land type</label>
-            <select name="land_type" defaultValue={listing.land_type} className={inp}>
+            <select name="land_type" value={landType} onChange={(e) => setLandType(e.target.value)} className={inp}>
               <option value="agri_land">Agricultural land</option><option value="irrigated_farmland">Irrigated farmland</option>
               <option value="dryland">Dryland</option><option value="orchard">Orchard</option><option value="plantation">Plantation</option>
               <option value="farmhouse_land">Farmhouse land</option><option value="built_farmhouse">Built farmhouse</option><option value="na_converted">NA-converted</option>
               <option value="developed_rural_plot">Developed rural plot</option><option value="other">Other</option>
+              <optgroup label="Farm plot projects">
+                <option value="farm_plot_project">Farm plot project</option>
+                <option value="managed_farmland">Managed farmland</option>
+                <option value="farmhouse_plot">Farmhouse plot</option>
+                <option value="gated_farm_plot">Gated farm plot</option>
+                <option value="plantation_project">Plantation project</option>
+              </optgroup>
             </select></div>
           <div className="grid grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">Price (₹)</label><input name="price" type="number" defaultValue={listing.price} className={inp} /></div>
@@ -116,6 +158,17 @@ export default function EditListing() {
             <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" defaultValue={listing.contact_whatsapp ?? ""} className={inp} /></div>
           </div>
           <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /></div>
+
+          {isProjectType(landType) && (
+            <div className="space-y-6">
+              <ProjectFieldsStep d={listing} />
+              <div className="rounded-2xl border border-gray-200 p-5">
+                <PlotInventoryEditor value={plots} onChange={setPlots} />
+              </div>
+            </div>
+          )}
+
+          {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>}
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="flex-1 rounded-full bg-green-700 py-3 font-medium text-white shadow-sm transition-colors hover:bg-green-800 disabled:opacity-50">{saving ? "Saving…" : "Save changes"}</button>
             <Link href={`/listing/${id}`} className="rounded-full border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50">Cancel</Link>

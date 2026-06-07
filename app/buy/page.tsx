@@ -130,6 +130,11 @@ export default function BuyLand() {
                   ["farmhouse_land", "Farmhouse land"],
                   ["na_converted", "NA-converted"],
                   ["plantation", "Plantation"],
+                  ["farm_plot_project", "Farm plot project"],
+                  ["managed_farmland", "Managed farmland"],
+                  ["farmhouse_plot", "Farmhouse plot"],
+                  ["gated_farm_plot", "Gated farm plot"],
+                  ["plantation_project", "Plantation project"],
                 ].map(([value, label]) => (
                   <label key={value} className="flex items-center gap-2 text-sm cursor-pointer">
                     <input

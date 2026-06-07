@@ -3,6 +3,7 @@ import Image from "next/image";
 import TrustScore from "@/app/components/TrustScore";
 import CompareToggle from "@/app/components/CompareToggle";
 import CardSaveButton from "@/app/components/CardSaveButton";
+import { isProjectType } from "@/app/lib/farm-plots/types";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 
 function priceBasisLabel(basis?: string) {
@@ -65,6 +66,13 @@ export default function ListingCard({ listing }: { listing: any }) {
       </div>
 
       <div className="p-4">
+        {isProjectType(listing.land_type) && (
+          <p className="mb-1 flex flex-wrap items-center gap-x-1.5 text-xs">
+            <span className="rounded-full bg-green-100 px-2 py-0.5 font-semibold text-green-800">Project</span>
+            {listing.project_name && <span className="truncate text-gray-600">{listing.project_name}</span>}
+            {listing.plot_count ? <span className="text-gray-400">· {listing.plot_count} plots</span> : null}
+          </p>
+        )}
         <h3 className="line-clamp-2 font-semibold leading-snug text-gray-900 group-hover:text-green-800">
           {listing.title}
         </h3>

@@ -8,6 +8,10 @@ import PhotoUpload from "@/app/components/PhotoUpload";
 import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
 import WantedAreas from "@/app/components/WantedAreas";
+import ProjectFieldsStep from "@/app/components/farm-plots/ProjectFieldsStep";
+import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
+import { isProjectType } from "@/app/lib/farm-plots/types";
+import { collectProjectFields, validateProjectFields, plotRowsForInsert } from "@/app/lib/farm-plots/submit";
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -16,6 +20,8 @@ export default function NewListing() {
   const [error, setError] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
+  const [landType, setLandType] = useState("");
+  const [plots, setPlots] = useState<DraftPlot[]>([]);
   const [step, setStep] = useState(0);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const stepLabels = ["Photos & video", "Basics", "Location & features", "Contact"];
@@ -57,8 +63,8 @@ export default function NewListing() {
       setStep(2);
       return;
     }
-    setSubmitting(true); setError("");
-    const { error: dbError } = await supabase.from("listings").insert({
+    const projectType = isProjectType(landType);
+    const payload: Record<string, unknown> = {
       owner_user_id: user?.id ?? null,
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: Number(f.get("price")), price_basis: f.get("price_basis"),
@@ -70,10 +76,25 @@ export default function NewListing() {
       contact_email: f.get("contact_email"), contact_phone: f.get("contact_phone"), contact_whatsapp: f.get("contact_whatsapp"),
       photos, videos,
       status: "pending",
-    });
+    };
+    // Only project listings carry the new columns (they may not exist in DB until the migration runs).
+    if (projectType) {
+      const project = collectProjectFields(f);
+      const verr = validateProjectFields(project, plots);
+      if (verr) { setError(verr); setStep(1); return; }
+      Object.assign(payload, project);
+    }
+    setSubmitting(true); setError("");
+    // .select() returns the id when readable; pending listings aren't owner-readable
+    // under current RLS, so plot inventory is best saved later via edit (where the id is known).
+    const { data: inserted, error: dbError } = await supabase.from("listings").insert(payload).select("id").maybeSingle();
+    if (dbError) { setSubmitting(false); setError(dbError.message); return; }
+    if (projectType && inserted?.id && plots.length) {
+      const rows = plotRowsForInsert(inserted.id, plots);
+      if (rows.length) { try { await supabase.from("farm_project_plots").insert(rows); } catch { /* best-effort */ } }
+    }
     setSubmitting(false);
-    if (dbError) setError(dbError.message);
-    else { setSuccess(true); setPhotos([]); setVideos([]); e.currentTarget.reset(); }
+    setSuccess(true); setPhotos([]); setVideos([]); setPlots([]); setLandType(""); e.currentTarget.reset();
   }
 
   if (success) {
@@ -135,13 +156,20 @@ export default function NewListing() {
             <div><label className="block text-sm font-medium mb-1">Title *</label>
               <input name="title" required placeholder="2-acre farmhouse plot near Hunsur, Mysuru" className={inp} /></div>
             <div><label className="block text-sm font-medium mb-1">Land type *</label>
-              <select name="land_type" required className={inp}>
+              <select name="land_type" required className={inp} value={landType} onChange={(e) => setLandType(e.target.value)}>
                 <option value="">Select type</option>
                 <option value="agri_land">Agricultural land</option><option value="irrigated_farmland">Irrigated farmland</option>
                 <option value="dryland">Dryland</option><option value="orchard">Orchard</option>
                 <option value="plantation">Plantation</option><option value="farmhouse_land">Farmhouse land</option>
                 <option value="built_farmhouse">Built farmhouse</option><option value="na_converted">NA-converted</option>
                 <option value="developed_rural_plot">Developed rural plot</option><option value="other">Other</option>
+                <optgroup label="Farm plot projects">
+                  <option value="farm_plot_project">Farm plot project</option>
+                  <option value="managed_farmland">Managed farmland</option>
+                  <option value="farmhouse_plot">Farmhouse plot</option>
+                  <option value="gated_farm_plot">Gated farm plot</option>
+                  <option value="plantation_project">Plantation project</option>
+                </optgroup>
               </select></div>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">Price (₹) *</label><input name="price" type="number" min="1" required placeholder="5000000" className={inp} /></div>
@@ -154,6 +182,15 @@ export default function NewListing() {
                 <select name="area_unit" className={inp}><option value="acre">Acres</option><option value="guntha">Gunthas</option><option value="hectare">Hectares</option><option value="sqft">Sq ft</option><option value="cent">Cents</option><option value="bigha">Bighas</option></select></div>
             </div>
           </section>
+
+          {isProjectType(landType) && (
+            <div className="space-y-6">
+              <ProjectFieldsStep />
+              <div className="rounded-2xl border border-gray-200 p-5">
+                <PlotInventoryEditor value={plots} onChange={setPlots} />
+              </div>
+            </div>
+          )}
           </div>
 
           {/* Step 3: location & features */}

@@ -56,3 +56,35 @@ to `app/components/SearchFilters.tsx`.
 app-level only (no DB enum), matching the migration.
 **Verified:** tsc clean for the new/changed files.
 **Open questions:** none.
+
+---
+
+## Phase 3 — Wizard, edit, ListingCard, buyer requirement, validation
+
+**Changed:** create wizard (`app/listing/new/page.tsx`), edit (`app/listing/[id]/edit/page.tsx`),
+`ListingCard`, `/buy` form. **New:** `app/components/farm-plots/ProjectFieldsStep.tsx`,
+`PlotInventoryEditor.tsx`, and `app/lib/farm-plots/submit.ts` (shared `collectProjectFields`,
+`validateProjectFields`, `plotRowsForInsert`).
+- Create + edit: land-type select gains the project optgroup and is now controlled (tracks `landType`);
+  when project-type, `ProjectFieldsStep` (all spec fields) + `PlotInventoryEditor` render. Submit
+  collects project columns **only for project types** and runs defensive validation
+  (distance>0, plot_count>0, plot sizes>0, max≥min, corridor must exist in corridors.ts, plot rows).
+- `ListingCard`: "Project" badge + project_name + plot_count line when `isProjectType`.
+- `/buy`: 5 new land-type checkboxes.
+**Verified:** tsc + `next build` clean.
+
+**Deviations (flagged, not guesses):**
+1. **Project fields render inside the existing Basics step**, not a literal new "Step 2.5" — kept the
+   fixed 4-step structure to avoid reindexing the wizard's step/validation arrays (lower risk; same UX).
+2. **Corridor is a `<select>`** of the 6 corridors, not a free-text autosuggest — safer and it makes the
+   "corridor must exist" validation inherent.
+3. **Create-time plot inventory save is best-effort.** Pending listings aren't owner-readable under
+   current RLS, so `.select("id")` after insert usually returns null → plots can't be attached at create.
+   The editor is shown (spec says optional), but plots are **reliably saved via edit** (where the id is
+   known and the migration's `owner manages plots` policy applies). Matches the spec's
+   "skip and add later via edit."
+4. **Defensive vs unapplied migration:** project columns are only sent for project-type listings; plot
+   reads/writes are wrapped (table-missing tolerated); the build never touches the DB.
+**Open questions:** validation runs client-side in the submit handlers (this branch's create/edit are
+client components, as on `main`); enforcing at a server boundary is the same architecture question
+flagged for listings generally — not changed here.
