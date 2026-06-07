@@ -19,6 +19,9 @@ import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
 import ShareButton from "@/app/components/ShareButton";
 import ReportButton from "@/app/components/ReportButton";
+import PriceInsightPanel from "@/app/components/PriceInsight";
+import { buildPriceInsight } from "@/app/lib/price-insight";
+import { landLabel } from "@/app/lib/land";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 import type { Metadata } from "next";
 
@@ -84,6 +87,22 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   const { count: sellerCount } = listing.owner_user_id
     ? await supabase.from("listings").select("id", { count: "exact", head: true }).eq("owner_user_id", listing.owner_user_id).eq("status", "active")
     : { count: 0 };
+
+  // Comparable active listings (same district or same land type) for price insight.
+  const cmpCols = "price, price_basis, area_value, area_unit, district, land_type";
+  const [{ data: byType }, { data: byDistrict }] = await Promise.all([
+    listing.land_type
+      ? supabase.from("listings").select(cmpCols).eq("status", "active").eq("land_type", listing.land_type).neq("id", listing.id).limit(300)
+      : Promise.resolve({ data: [] as any[] }),
+    listing.district
+      ? supabase.from("listings").select(cmpCols).eq("status", "active").ilike("district", listing.district).neq("id", listing.id).limit(300)
+      : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const comparablesMap = new Map<string, any>();
+  for (const r of [...(byType ?? []), ...(byDistrict ?? [])]) {
+    comparablesMap.set(`${r.district}|${r.land_type}|${r.price}|${r.area_value}|${r.area_unit}|${r.price_basis}`, r);
+  }
+  const priceInsight = buildPriceInsight(listing, [...comparablesMap.values()], landLabel);
 
   const url = `https://bhumi.vercel.app/listing/${listing.id}`;
   const photos: string[] = listing.photos ?? [];
@@ -199,6 +218,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         <p className="mb-8 text-sm">
           <Link href={`/tools/emi-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">💰 Estimate EMI for this land →</Link>
         </p>
+
+        {priceInsight && <PriceInsightPanel insight={priceInsight} />}
 
         <div className="mb-8">
           <TrustScore listing={listing} variant="full" />
