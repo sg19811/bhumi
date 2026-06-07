@@ -82,6 +82,27 @@ export default function MyListings() {
           </div>
         )}
 
+        {user && fetched && listings.length > 0 && (() => {
+          const active = listings.filter((l) => (l.status ?? "active") === "active").length;
+          const totalViews = listings.reduce((s, l) => s + (l.views ?? 0), 0);
+          const totalInquiries = Object.values(inquiriesByListing).reduce((s, arr) => s + (arr?.length ?? 0), 0);
+          const stats = [
+            { n: active, label: "active" },
+            { n: totalViews.toLocaleString("en-IN"), label: "total views" },
+            { n: totalInquiries, label: totalInquiries === 1 ? "inquiry" : "inquiries" },
+          ];
+          return (
+            <div className="mb-6 grid grid-cols-3 gap-3">
+              {stats.map((s) => (
+                <div key={s.label} className="rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm">
+                  <p className="text-2xl font-bold text-green-800">{s.n}</p>
+                  <p className="text-xs uppercase tracking-wide text-gray-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         {user && !fetched && <ListingCardSkeletonGrid />}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {listings.map((l) => (
