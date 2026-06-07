@@ -4,7 +4,7 @@ import { supabase } from "@/app/lib/supabase";
 const BASE = "https://bhumi.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data: listings } = await supabase.from("listings").select("id, updated_at").eq("status", "active");
+  const { data: listings } = await supabase.from("listings").select("id, updated_at, district").eq("status", "active");
 
   const staticPages = ["", "/explore", "/listings", "/buy", "/requirements", "/eligibility", "/about", "/how-it-works", "/faq", "/tools/area-converter", "/privacy", "/terms", "/listing/new"].map((p) => ({
     url: `${BASE}${p}`,
@@ -16,5 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
   }));
 
-  return [...staticPages, ...listingPages];
+  const districts = [...new Set((listings ?? []).map((l) => l.district).filter(Boolean))];
+  const regionPages = districts.map((d) => ({
+    url: `${BASE}/region/${encodeURIComponent(d)}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticPages, ...regionPages, ...listingPages];
 }

@@ -55,6 +55,15 @@ export default async function Home() {
   const { count } = await supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active");
   const { count: buyerCount } = await supabase.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
   const { data: latest } = await supabase.from("listings").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(4);
+  const { data: distRows } = await supabase.from("listings").select("district").eq("status", "active");
+  const regions = (() => {
+    const m = new Map<string, number>();
+    for (const r of distRows ?? []) {
+      const d = (r.district ?? "").trim();
+      if (d) m.set(d, (m.get(d) ?? 0) + 1);
+    }
+    return [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, count]) => ({ name, count }));
+  })();
 
   const siteLd = [
     {
@@ -180,6 +189,26 @@ export default async function Home() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {latest.map((l) => (
               <ListingCard key={l.id} listing={l} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Browse by region */}
+      {regions.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-20">
+          <h2 className="mb-1 text-2xl font-semibold sm:text-3xl">Browse land by region</h2>
+          <p className="mb-6 text-gray-500">Explore agricultural land in these districts.</p>
+          <div className="flex flex-wrap gap-2.5">
+            {regions.map((r) => (
+              <Link
+                key={r.name}
+                href={`/region/${encodeURIComponent(r.name)}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:border-green-600 hover:text-green-800"
+              >
+                <span className="capitalize">{r.name}</span>
+                <span className="text-gray-400">{r.count}</span>
+              </Link>
             ))}
           </div>
         </section>
