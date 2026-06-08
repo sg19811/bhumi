@@ -202,6 +202,14 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           </div>
         )}
 
+        {listing.tour_url && (
+          <a href={listing.tour_url} target="_blank" rel="noopener noreferrer"
+            className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 p-4 text-sm font-medium text-indigo-800 hover:bg-indigo-100">
+            <span>🌐 View virtual tour / 360°</span>
+            <span className="text-indigo-500">Open →</span>
+          </a>
+        )}
+
         {Number.isFinite(listing.latitude) && Number.isFinite(listing.longitude) && (
           <>
             <div className="mb-3 h-[320px] overflow-hidden rounded-2xl border border-gray-200 sm:h-[380px]">

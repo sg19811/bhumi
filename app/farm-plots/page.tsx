@@ -89,9 +89,10 @@ export default async function FarmPlotsHub() {
 
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white p-5">
             <p className="text-sm font-medium text-gray-700">Developer or landowner? List your project and manage your leads.</p>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Link href="/listing/new" className="rounded-full bg-green-700 px-5 py-2 text-sm font-medium text-white hover:bg-green-800">List a project</Link>
               <Link href="/farm-plots/dashboard" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Developer dashboard</Link>
+              <Link href="/farm-plots/resale" className="rounded-full border border-gray-300 px-5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Resale marketplace</Link>
             </div>
           </div>
 

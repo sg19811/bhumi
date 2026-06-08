@@ -8,6 +8,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import { formatINRShort } from "@/app/lib/format";
 import { STATES } from "@/app/lib/legal/options";
+import { PROJECT_LAND_TYPES } from "@/app/lib/farm-plots/types";
 
 // Buyer requirements that match a listing (affordable + right place + right type).
 function matchesFor(listing: any, buyers: any[]) {
@@ -134,6 +135,11 @@ export default function AdminDashboard() {
     setSiteVisits((cur) => cur.map((x) => (x.id === id ? { ...x, status } : x)));
   }
 
+  async function assignSiteVisit(id: string, assigned_to: string) {
+    await supabase.from("site_visit_requests").update({ assigned_to: assigned_to || null }).eq("id", id);
+    setSiteVisits((cur) => cur.map((x) => (x.id === id ? { ...x, assigned_to } : x)));
+  }
+
   function onListingStatusChange(id: string, status: string) {
     setListings((cur) => cur.map((l) => (l.id === id ? { ...l, status } : l)));
   }
@@ -253,10 +259,14 @@ export default function AdminDashboard() {
                     </p>
                     {sv.notes && <p className="mt-1 text-xs text-gray-600">“{sv.notes}”</p>}
                   </div>
-                  <select value={sv.status ?? "new"} onChange={(e) => setSiteVisitStatus(sv.id, e.target.value)}
-                    className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs text-gray-700">
-                    {["new", "contacted", "scheduled", "done", "cancelled"].map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <input defaultValue={sv.assigned_to ?? ""} onBlur={(e) => { if ((e.target.value || "") !== (sv.assigned_to ?? "")) assignSiteVisit(sv.id, e.target.value); }}
+                      placeholder="Assign to…" className="w-28 rounded-full border border-gray-300 px-3 py-1.5 text-xs" title="Assign this lead" />
+                    <select value={sv.status ?? "new"} onChange={(e) => setSiteVisitStatus(sv.id, e.target.value)}
+                      className="rounded-full border border-gray-300 px-3 py-1.5 text-xs text-gray-700">
+                      {["new", "contacted", "scheduled", "done", "cancelled"].map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
                 </div>
               ))}
             </div>
@@ -443,6 +453,22 @@ export default function AdminDashboard() {
             <InsightList title="Top search terms" items={topCounts(searchLogs, "query")} />
           </div>
         </section>
+
+        {/* Corridor intelligence — farm-plot demand by corridor (from search logs). */}
+        {(() => {
+          const fp = searchLogs.filter((l) => l.corridor || (l.land_type && PROJECT_LAND_TYPES.includes(l.land_type)));
+          return (
+            <section className="mt-10">
+              <h2 className="text-lg font-semibold">Corridor intelligence</h2>
+              <p className="mb-4 text-sm text-gray-500">Farm-plot search demand ({fp.length} project-related searches). Seed projects where demand is highest.</p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <InsightList title="Top corridors searched" items={topCounts(fp, "corridor")} />
+                <InsightList title="Top districts (projects)" items={topCounts(fp, "district")} />
+                <InsightList title="Project land types" items={topCounts(fp, "land_type")} />
+              </div>
+            </section>
+          );
+        })()}
 
         {demand.length > 0 && (
           <section className="mt-10">

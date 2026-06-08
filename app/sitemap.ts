@@ -56,6 +56,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const developerNames = await getDeveloperNames();
   const farmPlotPages = [
     "/farm-plots",
+    "/farm-plots/resale",
     ...CITIES.map((c) => `/farm-plots/${c.slug}`),
     ...CORRIDORS.map((c) => `/farm-plots/${c.parent_city}/${c.slug}`),
     ...developerNames.map((n) => `/farm-plots/developer/${slugifyDeveloper(n)}`),

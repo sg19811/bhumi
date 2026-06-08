@@ -39,6 +39,18 @@ export async function getProjectListings(
   return data as Record<string, unknown>[];
 }
 
+/** Active plot resale posts (owners re-listing a bought plot). Empty on error. */
+export async function getResales(limit = 60): Promise<Record<string, unknown>[]> {
+  const { data, error } = await supabase
+    .from("plot_resales")
+    .select("*")
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error || !Array.isArray(data)) return [];
+  return data as Record<string, unknown>[];
+}
+
 /** Other active projects by the same developer (for the developer profile card). */
 export async function getProjectsByDeveloper(
   developerName: string,

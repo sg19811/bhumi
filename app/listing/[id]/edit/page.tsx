@@ -103,6 +103,8 @@ export default function EditListing() {
     setSaving(true); setError("");
     const { error: dbError } = await supabase.from("listings").update(updates).eq("id", id);
     if (dbError) { setSaving(false); setError(dbError.message); return; }
+    // Virtual tour link — separate best-effort update (column may not exist until the migration runs).
+    try { await supabase.from("listings").update({ tour_url: (f.get("tour_url") as string) || null }).eq("id", id); } catch { /* best-effort */ }
     // Sync plot inventory (replace-all). Best-effort: table may not exist until the migration runs.
     if (projectType) {
       try {
@@ -175,6 +177,7 @@ export default function EditListing() {
             <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" defaultValue={listing.contact_whatsapp ?? ""} className={inp} /></div>
           </div>
           <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /><AiListingAssist /></div>
+          <div><label className="block text-sm font-medium mb-1">Virtual tour / 360° link <span className="font-normal text-gray-400">(optional)</span></label><input name="tour_url" type="url" defaultValue={listing.tour_url ?? ""} placeholder="https://… (Matterport, Kuula, YouTube 360, etc.)" className={inp} /></div>
 
           {isProjectType(landType) && (
             <div className="space-y-6">
