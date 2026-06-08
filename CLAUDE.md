@@ -134,8 +134,18 @@ MVP + Stage 2 are live in production:
 - Lib: `app/lib/farm-plots/{types,cities,corridors,amenities,copy,submit,queries,transparency}.ts`.
   All listing-field reads are null-safe.
 
-**Farm Plots — Phase 2** (in progress; DB-backed parts ship behind `supabase-farm-plots-phase2.sql`):
-see `docs/project-tracker.md` for the live status.
+**Farm Plots — Phase 2 & 3 SHIPPED** (see `docs/project-tracker.md` for the itemised list):
+- Phase 2: Total Cost calculator, transparency readout, site-visit requests, tiered verification,
+  per-project document links, WhatsApp brochure, developer profile pages. Needs `supabase-farm-plots-phase2.sql`.
+- Phase 3: developer dashboard (`/farm-plots/dashboard`), farm-plot Risk Score, printable buyer report
+  (`/farm-plots/report/[id]`), **AI buyer report + AI listing assistant** (Claude API via server routes),
+  resale marketplace (`/farm-plots/resale`), corridor intelligence (admin), lead assignment,
+  virtual-tour/360 link. Needs `supabase-farm-plots-phase3.sql`.
+- **Two manual steps to fully activate**: (1) run `supabase-farm-plots-phase2.sql` ✅ and
+  `supabase-farm-plots-phase3.sql` ⏳ in the Supabase SQL Editor; (2) set **`ANTHROPIC_API_KEY`**
+  (server-only, no `NEXT_PUBLIC_`) in `.env.local` + Vercel to enable the AI features.
+- AI: `app/lib/ai/{anthropic,require-user}.ts` (server-only; calls Claude via fetch, no SDK; signed-in
+  users only). Routes: `app/api/farm-plots/{ai-report,ai-listing-assist}/route.ts`.
 
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 

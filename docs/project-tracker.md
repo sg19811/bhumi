@@ -47,12 +47,28 @@ Built per `docs/farm-plots-spec.md`. MVP + PAN-India expansion are live; Phase 2
 - [x] City pages **ProjectsBrowser** (filter corridor/stage, sort price)
 - [x] SEO: per-city/corridor metadata, FAQ + Breadcrumb JSON-LD, sitemap; real copy (`copy.ts`)
 
-**Phase 2 — in progress** (`feature/farm-plots-phase2`; DB-backed parts behind `supabase-farm-plots-phase2.sql`):
-- [ ] Farm-plot **Risk Score** (compute-only)
-- [ ] **WhatsApp brochure** for projects (compute-only)
-- [ ] **Site-visit request** (new `site_visit_requests` table + form + admin view)
-- [ ] **Tiered verification badge** (`listings.verification_tier` column + display + admin set)
-- [ ] **Per-project document links** (`project_documents` table + edit upload + detail display)
+**Phase 2 — ✅ shipped** (needs `supabase-farm-plots-phase2.sql` ✅ applied):
+- [x] Total Cost of Ownership calculator
+- [x] Transparency / disclosure readout
+- [x] Site-visit requests (table + form + admin workflow)
+- [x] Tiered verification badge (`listings.verification_tier`; admin-set)
+- [x] Per-project document links (`project_documents`; owner edit + buyer view)
+- [x] WhatsApp brochure
+- [x] Developer profile pages (`/farm-plots/developer/[slug]`)
+
+**Phase 3 — ✅ shipped** (needs `supabase-farm-plots-phase3.sql` ⏳; AI needs `ANTHROPIC_API_KEY` ⏳):
+- [x] Developer dashboard (`/farm-plots/dashboard`) — projects + leads
+- [x] Farm-plot Risk Score
+- [x] Printable buyer report (`/farm-plots/report/[id]`)
+- [x] **AI buyer report + AI listing assistant** (Claude API, server routes, signed-in only)
+- [x] Resale marketplace (`/farm-plots/resale` + `/resale/new`; `plot_resales` table)
+- [x] Corridor intelligence (admin — search demand by corridor)
+- [x] Lead assignment (`assigned_to` on site_visit_requests + inquiries; admin assign)
+- [x] Virtual tour / 360 link (`listings.tour_url`); drone via existing `videos[]`
+- [ ] Deferred (own scope): resale ownership-transfer flow, native 360 viewer, AI "who to call today"
+
+**Manual steps to fully activate:** (1) run `supabase-farm-plots-phase3.sql`; (2) set `ANTHROPIC_API_KEY`
+(server-only) in `.env.local` + Vercel.
 
 **Founder follow-ups:** seed real projects per corridor before publicising; define the farm-plot
 verification standard; TN lawyer to review Hosur copy + TN legal guidance before Hosur goes public.
