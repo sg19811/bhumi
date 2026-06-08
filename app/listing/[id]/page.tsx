@@ -237,6 +237,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
           <Link href={`/legal/wizard?${new URLSearchParams({ ...(districtToState(listing.district) ? { state: districtToState(listing.district)! } : {}), ...(listing.land_type ? { land_type: String(listing.land_type) } : {}), listing: String(listing.id) }).toString()}`} className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
           <Link href="/legal/checklist" className="font-medium text-green-800 hover:underline">📋 Document checklist →</Link>
           <Link href={`/legal/due-diligence?listing=${listing.id}`} className="font-medium text-green-800 hover:underline">✅ Due-diligence checklist →</Link>
+          <Link href={`/listing/${listing.id}/report`} className="font-medium text-green-800 hover:underline">📄 Buyer report (print / share) →</Link>
           {districtToState(listing.district) && (
             <Link href={`/legal/state/${districtToState(listing.district)}`} className="font-medium text-green-800 hover:underline">📖 Land rules in {stateLabel(districtToState(listing.district)!)} →</Link>
           )}
