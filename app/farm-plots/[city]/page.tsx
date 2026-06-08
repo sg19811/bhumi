@@ -6,8 +6,9 @@ import Footer from "@/app/components/Footer";
 import FarmPlotHero from "@/app/components/farm-plots/FarmPlotHero";
 import CorridorGrid from "@/app/components/farm-plots/CorridorGrid";
 import CitySelector from "@/app/components/farm-plots/CitySelector";
+import ProjectsBrowser from "@/app/components/farm-plots/ProjectsBrowser";
 import { CITIES, getCity } from "@/app/lib/farm-plots/cities";
-import { getCorridor } from "@/app/lib/farm-plots/corridors";
+import { getCorridor, getCorridorsByCity } from "@/app/lib/farm-plots/corridors";
 import { cityCopy } from "@/app/lib/farm-plots/copy";
 import { getCorridorCounts, getProjectListings } from "@/app/lib/farm-plots/queries";
 import { formatINRShort } from "@/app/lib/format";
@@ -119,6 +120,14 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
           <section className="mb-12">
             <h2 className="mb-5 text-2xl font-bold">Corridors</h2>
             <CorridorGrid citySlug={c.slug} counts={counts} />
+          </section>
+
+          <section className="mb-12">
+            <h2 className="mb-5 text-2xl font-bold">Projects in {c.label}</h2>
+            <ProjectsBrowser
+              projects={projects}
+              corridors={getCorridorsByCity(c.slug).map((cr) => ({ slug: cr.slug, label: cr.label }))}
+            />
           </section>
 
           {copy.faqs.length > 0 && (

@@ -39,6 +39,27 @@ export async function getProjectListings(
   return data as Record<string, unknown>[];
 }
 
+/** Other active projects by the same developer (for the developer profile card). */
+export async function getProjectsByDeveloper(
+  developerName: string,
+  excludeId?: string,
+  limit = 6,
+): Promise<Record<string, unknown>[]> {
+  if (!developerName) return [];
+  let q = supabase
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .eq("developer_name", developerName)
+    .in("land_type", PROJECT_LAND_TYPES)
+    .order("created_at", { ascending: false })
+    .limit(limit + 1);
+  if (excludeId) q = q.neq("id", excludeId);
+  const { data, error } = await q;
+  if (error || !Array.isArray(data)) return [];
+  return (data as Record<string, unknown>[]).slice(0, limit);
+}
+
 /** Count of active project listings per city (matched on nearest_city). */
 export async function getCityCounts(): Promise<Record<string, number>> {
   const counts: Record<string, number> = {};
