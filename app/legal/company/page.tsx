@@ -41,8 +41,8 @@ export default function CompanyHub() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Legal", item: "https://bhumi.vercel.app/legal" },
-      { "@type": "ListItem", position: 2, name: "Companies & entities", item: "https://bhumi.vercel.app/legal/company" },
+      { "@type": "ListItem", position: 1, name: "Legal", item: "https://acrehubindia.com/legal" },
+      { "@type": "ListItem", position: 2, name: "Companies & entities", item: "https://acrehubindia.com/legal/company" },
     ],
   };
 

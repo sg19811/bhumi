@@ -91,8 +91,8 @@ export default async function CityPage({ params }: { params: Promise<{ city: str
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Farm plots", item: "https://bhumi.vercel.app/farm-plots" },
-      { "@type": "ListItem", position: 2, name: c.label, item: `https://bhumi.vercel.app/farm-plots/${c.slug}` },
+      { "@type": "ListItem", position: 1, name: "Farm plots", item: "https://acrehubindia.com/farm-plots" },
+      { "@type": "ListItem", position: 2, name: c.label, item: `https://acrehubindia.com/farm-plots/${c.slug}` },
     ],
   };
 

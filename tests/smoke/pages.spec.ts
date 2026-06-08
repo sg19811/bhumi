@@ -15,6 +15,11 @@ const PAGES: { path: string; needle: string }[] = [
   { path: "/region/Mysuru", needle: "Mysuru" },
   { path: "/land/orchard", needle: "Orchards" },
   { path: "/tools", needle: "Land tools" },
+  { path: "/region", needle: "Browse agricultural land by region" },
+  { path: "/tools/stamp-duty-calculator", needle: "Stamp duty" },
+  { path: "/tools/loan-eligibility-calculator", needle: "Land loan eligibility calculator" },
+  { path: "/tools/capital-gains-calculator", needle: "Capital gains tax calculator" },
+  { path: "/tools/price-per-unit", needle: "Price per unit calculator" },
 ];
 
 for (const p of PAGES) {

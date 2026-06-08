@@ -12,6 +12,8 @@ import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
 import TrustScore from "@/app/components/TrustScore";
 import SuitabilityPanel from "@/app/components/SuitabilityPanel";
+import BuyerDecisionPanel from "@/app/components/BuyerDecisionPanel";
+import LandHealthPanel from "@/app/components/LandHealthPanel";
 import VerificationPanel from "@/app/components/VerificationPanel";
 import ListingCard from "@/app/components/ListingCard";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
@@ -53,7 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       title,
       description,
       type: "website",
-      url: `https://bhumi.vercel.app/listing/${id}`,
+      url: `https://acrehubindia.com/listing/${id}`,
       ...(image ? { images: [{ url: image }] } : {}),
     },
     alternates: { canonical: `/listing/${id}` },
@@ -109,7 +111,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   }
   const priceInsight = buildPriceInsight(listing, [...comparablesMap.values()], landLabel);
 
-  const url = `https://bhumi.vercel.app/listing/${listing.id}`;
+  const url = `https://acrehubindia.com/listing/${listing.id}`;
   const photos: string[] = listing.photos ?? [];
   const videos: string[] = listing.videos ?? [];
   const ppa = pricePerAcre(listing);
@@ -134,8 +136,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://bhumi.vercel.app/" },
-      { "@type": "ListItem", position: 2, name: "Explore", item: "https://bhumi.vercel.app/explore" },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://acrehubindia.com/" },
+      { "@type": "ListItem", position: 2, name: "Explore", item: "https://acrehubindia.com/explore" },
       { "@type": "ListItem", position: 3, name: listing.title, item: url },
     ],
   };
@@ -230,6 +232,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div className="mb-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
           <Link href={`/tools/emi-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">💰 Estimate EMI for this land →</Link>
+          <Link href={`/tools/stamp-duty-calculator?amount=${listing.price}`} className="font-medium text-green-800 hover:underline">🧾 Stamp duty & registration →</Link>
+          <Link href={`/tools/loan-eligibility-calculator`} className="font-medium text-green-800 hover:underline">🏦 Loan eligibility →</Link>
           <Link href={`/legal/wizard?${new URLSearchParams({ ...(districtToState(listing.district) ? { state: districtToState(listing.district)! } : {}), ...(listing.land_type ? { land_type: String(listing.land_type) } : {}), listing: String(listing.id) }).toString()}`} className="font-medium text-green-800 hover:underline">⚖️ Check who can buy this land →</Link>
           <Link href="/legal/checklist" className="font-medium text-green-800 hover:underline">📋 Document checklist →</Link>
           <Link href={`/legal/due-diligence?listing=${listing.id}`} className="font-medium text-green-800 hover:underline">✅ Due-diligence checklist →</Link>
@@ -241,6 +245,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         {/* Farm-project sections (renders only for project-type listings; null-safe). */}
         <FarmProjectSections listing={listing} />
 
+        {/* At-a-glance buyer decision summary, above the detailed panels it draws from. */}
+        <BuyerDecisionPanel listing={listing} priceInsight={priceInsight} />
+
         {priceInsight && <PriceInsightPanel insight={priceInsight} />}
 
         <div className="mb-8">
@@ -248,6 +255,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         </div>
 
         <VerificationPanel listingId={listing.id} ownerUserId={listing.owner_user_id} isVerified={!!listing.is_verified} />
+
+        <LandHealthPanel listing={listing} />
 
         <div className="mb-8">
           <SuitabilityPanel listing={listing} />

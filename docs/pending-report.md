@@ -12,10 +12,10 @@
    resale posting, lead assignment, and the virtual-tour field won't persist (they degrade gracefully).
 2. **Add `ANTHROPIC_API_KEY`** (server-only, no `NEXT_PUBLIC_`) in `.env.local` **and** Vercel → activates the
    AI buyer report + AI listing assistant. Everything else works without it.
-3. **Production domain is wrong / unclean.** `bhumi.vercel.app` does **not** serve this project (returns 404);
-   the live site is on the generated `bhumi-…-projects19.vercel.app` URL. Action: assign a **stable public
-   domain** (clean `*.vercel.app` or a custom domain) in Vercel → Settings → Domains. This is also an SEO bug
-   (see P1.3).
+3. ~~**Production domain is wrong / unclean.**~~ ✅ **RESOLVED (2026-06-08).** The live site serves at
+   **`acrehubindia.com`**, and all code (canonicals, sitemap, robots, Open Graph, JSON-LD, API routes) now
+   points there instead of the dead `bhumi.vercel.app` host. Remaining (verify in Vercel): confirm
+   `acrehubindia.com` is set as the **primary/canonical** domain and that the old generated URL 308-redirects to it.
 4. **Confirm Deployment Protection stays off for production** (it was blocking all public visitors earlier).
 5. **Confirm which SQL migrations are applied** *(uncertain)*. Repo has 15 `supabase-*.sql` files. Known:
    `supabase-farm-plots.sql` ✅, `…-phase2.sql` ✅, `…-phase3.sql` ⏳. Verify the legal seeds and fix scripts
@@ -34,9 +34,9 @@
    > Several "Known issues / tech debt" below are **already fixed on the hardening branch** — merging it closes them.
 2. **Listing input validation** — beyond HTML `required`, server-side validation only exists on the unmerged
    hardening branch (zod). On `main`, create/edit largely trust the client.
-3. **SEO canonical/JSON-LD point to a dead domain.** `app/sitemap.ts` `BASE` and the farm-plots Breadcrumb
-   JSON-LD are hardcoded to `https://bhumi.vercel.app` (which 404s). Every canonical URL, sitemap entry, and
-   breadcrumb references a non-working host. Fix once the real domain (P0.3) is decided.
+3. ~~**SEO canonical/JSON-LD point to a dead domain.**~~ ✅ **FIXED (2026-06-08).** All hardcoded
+   `https://bhumi.vercel.app` references across 21 code files (sitemap, robots, layout `metadataBase`, listing
+   detail, region/land/farm-plots/legal pages, API routes) now use `https://acrehubindia.com`. Typecheck green.
 4. **`confirm()` still used** in `AdminListingRow` and `my-listings` (ConfirmModal exists only on the hardening branch).
 5. **Legal pricing is placeholder data.** Lawyer fees, service "from ₹…" prices, and ratings are
    `*_placeholder` fields (illustrative, not real). Needs real data or a clearer "indicative" disclaimer before

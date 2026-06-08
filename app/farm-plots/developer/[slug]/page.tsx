@@ -51,8 +51,8 @@ export default async function DeveloperPage({ params }: { params: Promise<{ slug
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Farm plots", item: "https://bhumi.vercel.app/farm-plots" },
-      { "@type": "ListItem", position: 2, name, item: `https://bhumi.vercel.app/farm-plots/developer/${slug}` },
+      { "@type": "ListItem", position: 1, name: "Farm plots", item: "https://acrehubindia.com/farm-plots" },
+      { "@type": "ListItem", position: 2, name, item: `https://acrehubindia.com/farm-plots/developer/${slug}` },
     ],
   };
 

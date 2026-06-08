@@ -58,17 +58,17 @@ export default async function Home() {
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "AcreHub",
-      url: "https://bhumi.vercel.app",
+      url: "https://acrehubindia.com",
       description: "Trusted agricultural land marketplace — verified listings, legal clarity, and real maps.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "AcreHub",
-      url: "https://bhumi.vercel.app",
+      url: "https://acrehubindia.com",
       potentialAction: {
         "@type": "SearchAction",
-        target: { "@type": "EntryPoint", urlTemplate: "https://bhumi.vercel.app/explore?q={search_term_string}" },
+        target: { "@type": "EntryPoint", urlTemplate: "https://acrehubindia.com/explore?q={search_term_string}" },
         "query-input": "required name=search_term_string",
       },
     },
@@ -192,7 +192,7 @@ export default async function Home() {
         <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-20">
           <h2 className="mb-1 text-2xl font-semibold sm:text-3xl">{t("home.regionsTitle")}</h2>
           <p className="mb-6 text-gray-500">{t("home.regionsSub")}</p>
-          <div className="flex flex-wrap gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             {regions.map((r) => (
               <Link
                 key={r.name}
@@ -203,6 +203,12 @@ export default async function Home() {
                 <span className="text-gray-400">{r.count}</span>
               </Link>
             ))}
+            <Link
+              href="/region"
+              className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:text-green-900 hover:underline"
+            >
+              Browse all regions →
+            </Link>
           </div>
         </section>
       )}

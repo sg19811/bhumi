@@ -45,8 +45,8 @@ export default function NriHub() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Legal", item: "https://bhumi.vercel.app/legal" },
-      { "@type": "ListItem", position: 2, name: "NRI & OCI", item: "https://bhumi.vercel.app/legal/nri" },
+      { "@type": "ListItem", position: 1, name: "Legal", item: "https://acrehubindia.com/legal" },
+      { "@type": "ListItem", position: 2, name: "NRI & OCI", item: "https://acrehubindia.com/legal/nri" },
     ],
   };
 

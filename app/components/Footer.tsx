@@ -11,6 +11,7 @@ export default function Footer() {
         <Logo className="text-xl" />
         <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-gray-600">
           <Link href="/explore" className="hover:text-green-800">{t("nav.explore")}</Link>
+          <Link href="/region" className="hover:text-green-800">Regions</Link>
           <Link href="/farm-plots" className="hover:text-green-800">{t("nav.farmPlots")}</Link>
           <Link href="/buy" className="hover:text-green-800">{t("footer.buy")}</Link>
           <Link href="/sell" className="hover:text-green-800">Sell land</Link>

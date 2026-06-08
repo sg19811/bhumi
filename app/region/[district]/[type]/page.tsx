@@ -46,9 +46,9 @@ export default async function RegionTypePage({ params }: { params: Promise<{ dis
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://bhumi.vercel.app/" },
-      { "@type": "ListItem", position: 2, name, item: `https://bhumi.vercel.app/region/${district}` },
-      { "@type": "ListItem", position: 3, name: label, item: `https://bhumi.vercel.app/region/${district}/${type}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://acrehubindia.com/" },
+      { "@type": "ListItem", position: 2, name, item: `https://acrehubindia.com/region/${district}` },
+      { "@type": "ListItem", position: 3, name: label, item: `https://acrehubindia.com/region/${district}/${type}` },
     ],
   };
 
