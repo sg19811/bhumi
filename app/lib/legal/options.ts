@@ -16,30 +16,30 @@ export const stateLabel = (state: string) =>
   STATES.find((s) => s.value === state)?.label ?? state.replace(/_/g, " ");
 
 export const CITIZENSHIP_OPTIONS: Option<"indian" | "nri" | "oci" | "foreign">[] = [
-  { value: "indian", label: "Indian citizen (resident)" },
-  { value: "nri", label: "NRI (non-resident Indian)" },
-  { value: "oci", label: "OCI / PIO" },
-  { value: "foreign", label: "Foreign national" },
+  { value: "indian", label: "Indian citizen (resident)", hint: "Indian passport, living in India" },
+  { value: "nri", label: "NRI (non-resident Indian)", hint: "Indian passport, but living abroad — RBI/FEMA rules apply" },
+  { value: "oci", label: "OCI / PIO", hint: "Overseas Citizen / Person of Indian Origin — a foreign passport with Indian roots" },
+  { value: "foreign", label: "Foreign national", hint: "Citizen of another country, with no OCI/PIO status" },
 ];
 
 export const BUYER_TYPE_OPTIONS: Option<BuyerType>[] = [
   { value: "farmer_resident", label: "Farmer (resident)", hint: "Holds agricultural land / farmer record" },
   { value: "non_farmer_resident", label: "Non-farmer (resident)", hint: "Salaried / business, no farmer record" },
   { value: "nri", label: "NRI", hint: "Non-resident Indian" },
-  { value: "oci", label: "OCI / PIO" },
+  { value: "oci", label: "OCI / PIO", hint: "Overseas Citizen / Person of Indian Origin" },
   { value: "company", label: "Company (Pvt/Ltd)" },
-  { value: "llp", label: "LLP" },
+  { value: "llp", label: "LLP", hint: "Limited Liability Partnership" },
   { value: "partnership", label: "Partnership firm" },
   { value: "trust", label: "Trust" },
-  { value: "huf", label: "HUF" },
+  { value: "huf", label: "HUF", hint: "Hindu Undivided Family" },
   { value: "developer", label: "Developer" },
   { value: "institutional", label: "Institutional investor" },
 ];
 
 export const FARMER_STATUS_OPTIONS: Option<"farmer" | "non_farmer" | "inherited_farmer">[] = [
-  { value: "farmer", label: "I am a registered farmer" },
-  { value: "non_farmer", label: "I am not a farmer" },
-  { value: "inherited_farmer", label: "Farmer status by inheritance" },
+  { value: "farmer", label: "I am a registered farmer", hint: "Your name is on agricultural land / revenue records" },
+  { value: "non_farmer", label: "I am not a farmer", hint: "Salaried, business, or no farmer record" },
+  { value: "inherited_farmer", label: "Farmer status by inheritance", hint: "Farmer status passed down from family agricultural land" },
 ];
 
 export const LAND_TYPE_OPTIONS: Option<LandType>[] = [
