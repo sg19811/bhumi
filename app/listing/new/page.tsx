@@ -13,6 +13,7 @@ import AiListingAssist from "@/app/components/farm-plots/AiListingAssist";
 import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
 import { isProjectType } from "@/app/lib/farm-plots/types";
 import { collectProjectFields, validateProjectFields, plotRowsForInsert } from "@/app/lib/farm-plots/submit";
+import { validateListingPayload } from "@/app/lib/validation/client";
 
 export default function NewListing() {
   const { user } = useAuth();
@@ -81,11 +82,14 @@ export default function NewListing() {
     // Only project listings carry the new columns (they may not exist in DB until the migration runs).
     if (projectType) {
       const project = collectProjectFields(f);
-      const verr = validateProjectFields(project, plots);
-      if (verr) { setError(verr); setStep(1); return; }
+      const pErr = validateProjectFields(project, plots);
+      if (pErr) { setError(pErr); setStep(1); return; }
       Object.assign(payload, project);
     }
     setSubmitting(true); setError("");
+    // Server-shape validation gate (foundation-hardening) before writing.
+    const verr = await validateListingPayload(payload);
+    if (verr) { setError(verr); setSubmitting(false); return; }
     // .select() returns the id when readable; pending listings aren't owner-readable
     // under current RLS, so plot inventory is best saved later via edit (where the id is known).
     const { data: inserted, error: dbError } = await supabase.from("listings").insert(payload).select("id").maybeSingle();

@@ -5,12 +5,14 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Land tools — AcreHub",
-  description: "Free tools for agricultural land buyers and sellers: area unit converter and land-loan EMI calculator.",
+  description: "Free tools for agricultural land buyers and sellers: area converter, EMI, ROI, and appreciation calculators.",
 };
 
 const tools = [
   { href: "/tools/area-converter", title: "Area converter", desc: "Convert between acres, gunthas, hectares, cents, and sq ft." },
   { href: "/tools/emi-calculator", title: "EMI calculator", desc: "Estimate monthly payment, interest, and total cost of a land loan." },
+  { href: "/tools/roi-calculator", title: "ROI calculator", desc: "Total return and annualised IRR from price growth plus rental/farm income." },
+  { href: "/tools/appreciation-calculator", title: "Appreciation calculator", desc: "Project future land value at a compound annual growth rate, year by year." },
 ];
 
 export default function ToolsHub() {

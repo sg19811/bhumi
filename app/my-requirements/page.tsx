@@ -6,6 +6,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import { useConfirm } from "@/app/components/ConfirmModal";
 import { formatINRShort } from "@/app/lib/format";
 
 const statusStyle: Record<string, string> = {
@@ -28,6 +29,7 @@ export default function MyRequirements() {
   const [reqs, setReqs] = useState<any[]>([]);
   const [fetched, setFetched] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const confirm = useConfirm();
 
   async function load() {
     if (!user) return;
@@ -47,7 +49,7 @@ export default function MyRequirements() {
     setBusyId(null);
   }
   async function remove(id: string) {
-    if (!confirm("Delete this requirement?")) return;
+    if (!(await confirm({ title: "Delete requirement", message: "Delete this requirement?", confirmLabel: "Delete", tone: "danger" }))) return;
     setBusyId(id);
     await supabase.from("buyer_interests").delete().eq("id", id);
     setReqs((cur) => cur.filter((r) => r.id !== id));

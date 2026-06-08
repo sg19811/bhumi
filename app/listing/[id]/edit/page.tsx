@@ -14,6 +14,7 @@ import ProjectDocumentsEditor, { type DraftDoc } from "@/app/components/farm-plo
 import AiListingAssist from "@/app/components/farm-plots/AiListingAssist";
 import { isProjectType } from "@/app/lib/farm-plots/types";
 import { collectProjectFields, validateProjectFields, plotRowsForInsert, docRowsForInsert } from "@/app/lib/farm-plots/submit";
+import { validateListingPayload } from "@/app/lib/validation/client";
 
 export default function EditListing() {
   const { id } = useParams<{ id: string }>();
@@ -23,8 +24,8 @@ export default function EditListing() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-  const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState("");
+  const [notFound, setNotFound] = useState(false);
   const [landType, setLandType] = useState("");
   const [plots, setPlots] = useState<DraftPlot[]>([]);
   const [docs, setDocs] = useState<DraftDoc[]>([]);
@@ -96,23 +97,25 @@ export default function EditListing() {
     const projectType = isProjectType(f.get("land_type") as string);
     if (projectType) {
       const project = collectProjectFields(f);
-      const verr = validateProjectFields(project, plots);
-      if (verr) { setError(verr); return; }
+      const pErr = validateProjectFields(project, plots);
+      if (pErr) { setError(pErr); return; }
       Object.assign(updates, project);
     }
     setSaving(true); setError("");
+    // Server-shape validation (foundation-hardening) before writing.
+    const verr = await validateListingPayload(updates);
+    if (verr) { setError(verr); setSaving(false); return; }
     const { error: dbError } = await supabase.from("listings").update(updates).eq("id", id);
     if (dbError) { setSaving(false); setError(dbError.message); return; }
     // Virtual tour link — separate best-effort update (column may not exist until the migration runs).
     try { await supabase.from("listings").update({ tour_url: (f.get("tour_url") as string) || null }).eq("id", id); } catch { /* best-effort */ }
-    // Sync plot inventory (replace-all). Best-effort: table may not exist until the migration runs.
+    // Sync plot inventory + documents (replace-all). Best-effort: tables may not exist until the migration runs.
     if (projectType) {
       try {
         await supabase.from("farm_project_plots").delete().eq("listing_id", id);
         const rows = plotRowsForInsert(id, plots);
         if (rows.length) await supabase.from("farm_project_plots").insert(rows);
       } catch { /* best-effort */ }
-      // Sync project documents (replace-all). Best-effort: table may not exist until the migration runs.
       try {
         await supabase.from("project_documents").delete().eq("listing_id", id);
         const docRows = docRowsForInsert(id, docs);
