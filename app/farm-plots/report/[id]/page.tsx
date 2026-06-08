@@ -11,6 +11,7 @@ import { projectTransparency } from "@/app/lib/farm-plots/transparency";
 import { getTier } from "@/app/lib/farm-plots/verification";
 import { corridorLabel } from "@/app/lib/farm-plots/corridors";
 import { cityLabel } from "@/app/lib/farm-plots/cities";
+import AiBuyerSummary from "@/app/components/farm-plots/AiBuyerSummary";
 
 const humanize = (s?: string | null) => (s ? String(s).replace(/_/g, " ") : "—");
 
@@ -70,6 +71,8 @@ export default function BuyerReport() {
         <p className="mt-1 text-sm text-gray-500">{place || listing.district || ""}{tier.value !== "unverified" ? ` · ${tier.label}` : ""}</p>
         <p className="mt-2 text-xl font-bold text-green-800">{formatINRShort(listing.price)} <span className="text-sm font-normal text-gray-500" title={formatINR(listing.price)}>({formatINR(listing.price)})</span></p>
       </header>
+
+      <div className="mt-5"><AiBuyerSummary listingId={String(id)} /></div>
 
       <section className="mt-5">
         <h2 className="mb-2 text-sm font-bold uppercase tracking-wide text-gray-700">Project summary</h2>

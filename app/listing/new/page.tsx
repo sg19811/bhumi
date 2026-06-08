@@ -9,6 +9,7 @@ import VideoUpload from "@/app/components/VideoUpload";
 import LocationField from "@/app/components/LocationField";
 import WantedAreas from "@/app/components/WantedAreas";
 import ProjectFieldsStep from "@/app/components/farm-plots/ProjectFieldsStep";
+import AiListingAssist from "@/app/components/farm-plots/AiListingAssist";
 import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
 import { isProjectType } from "@/app/lib/farm-plots/types";
 import { collectProjectFields, validateProjectFields, plotRowsForInsert } from "@/app/lib/farm-plots/submit";
@@ -225,6 +226,7 @@ export default function NewListing() {
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Description</h2>
             <textarea name="description" rows={4} placeholder="Crops grown, soil type, nearby landmarks, why you're selling..." className={inp} />
+            <AiListingAssist />
           </section>
           </div>
 

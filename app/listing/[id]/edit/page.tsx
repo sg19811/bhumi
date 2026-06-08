@@ -11,6 +11,7 @@ import Link from "next/link";
 import ProjectFieldsStep from "@/app/components/farm-plots/ProjectFieldsStep";
 import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
 import ProjectDocumentsEditor, { type DraftDoc } from "@/app/components/farm-plots/ProjectDocumentsEditor";
+import AiListingAssist from "@/app/components/farm-plots/AiListingAssist";
 import { isProjectType } from "@/app/lib/farm-plots/types";
 import { collectProjectFields, validateProjectFields, plotRowsForInsert, docRowsForInsert } from "@/app/lib/farm-plots/submit";
 
@@ -173,7 +174,7 @@ export default function EditListing() {
             <div><label className="block text-sm font-medium mb-1">Phone</label><input name="contact_phone" defaultValue={listing.contact_phone ?? ""} className={inp} /></div>
             <div><label className="block text-sm font-medium mb-1">WhatsApp</label><input name="contact_whatsapp" defaultValue={listing.contact_whatsapp ?? ""} className={inp} /></div>
           </div>
-          <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /></div>
+          <div><label className="block text-sm font-medium mb-1">Description</label><textarea name="description" rows={4} defaultValue={listing.description ?? ""} className={inp} /><AiListingAssist /></div>
 
           {isProjectType(landType) && (
             <div className="space-y-6">
