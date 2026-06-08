@@ -10,9 +10,13 @@ export const metadata: Metadata = {
 
 const tools = [
   { href: "/tools/area-converter", title: "Area converter", desc: "Convert between acres, gunthas, hectares, cents, and sq ft." },
+  { href: "/tools/price-per-unit", title: "Price per unit", desc: "See a price as ₹ per acre, guntha, cent, hectare, and sq ft to compare plots fairly." },
+  { href: "/tools/stamp-duty-calculator", title: "Stamp duty & registration", desc: "Estimate stamp duty, registration, and the total cost to register land by state." },
   { href: "/tools/emi-calculator", title: "EMI calculator", desc: "Estimate monthly payment, interest, and total cost of a land loan." },
+  { href: "/tools/loan-eligibility-calculator", title: "Loan eligibility", desc: "See how much land loan you can borrow from your income, and the budget it supports." },
   { href: "/tools/roi-calculator", title: "ROI calculator", desc: "Total return and annualised IRR from price growth plus rental/farm income." },
   { href: "/tools/appreciation-calculator", title: "Appreciation calculator", desc: "Project future land value at a compound annual growth rate, year by year." },
+  { href: "/tools/capital-gains-calculator", title: "Capital gains tax", desc: "Estimate short- or long-term capital gains tax when you sell land." },
 ];
 
 export default function ToolsHub() {
