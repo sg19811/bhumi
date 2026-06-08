@@ -43,8 +43,8 @@ export default async function StateGuide({ params }: { params: Promise<{ state: 
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Legal", item: "https://bhumi.vercel.app/legal" },
-      { "@type": "ListItem", position: 2, name: label, item: `https://bhumi.vercel.app/legal/state/${state}` },
+      { "@type": "ListItem", position: 1, name: "Legal", item: "https://acrehubindia.com/legal" },
+      { "@type": "ListItem", position: 2, name: label, item: `https://acrehubindia.com/legal/state/${state}` },
     ],
   };
 

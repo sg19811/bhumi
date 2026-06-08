@@ -7,7 +7,7 @@ export default function ResultShareButtons({ resultId, headline }: { resultId: s
   const [copied, setCopied] = useState(false);
   const url = typeof window !== "undefined"
     ? `${window.location.origin}/legal/result/${resultId}`
-    : `https://bhumi.vercel.app/legal/result/${resultId}`;
+    : `https://acrehubindia.com/legal/result/${resultId}`;
 
   async function copy() {
     try {

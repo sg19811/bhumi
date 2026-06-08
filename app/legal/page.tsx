@@ -41,7 +41,7 @@ export default async function LegalHub() {
     name: "AcreHub Land Legal Navigator",
     description: "Informational guidance and lawyer connections for agricultural land purchase in India.",
     areaServed: "IN",
-    url: "https://bhumi.vercel.app/legal",
+    url: "https://acrehubindia.com/legal",
   };
 
   return (

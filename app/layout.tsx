@@ -21,7 +21,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bhumi.vercel.app"),
+  metadataBase: new URL("https://acrehubindia.com"),
   title: "AcreHub — Trusted agricultural land marketplace",
   description: "Find verified agricultural land, farmhouse plots, and orchards with legal clarity and real boundaries.",
   openGraph: {
@@ -47,17 +47,17 @@ const orgLd = {
     {
       "@type": "Organization",
       name: "AcreHub",
-      url: "https://bhumi.vercel.app",
+      url: "https://acrehubindia.com",
       description: "Trusted, parcel-first agricultural land marketplace for India.",
       areaServed: "IN",
     },
     {
       "@type": "WebSite",
       name: "AcreHub",
-      url: "https://bhumi.vercel.app",
+      url: "https://acrehubindia.com",
       potentialAction: {
         "@type": "SearchAction",
-        target: { "@type": "EntryPoint", urlTemplate: "https://bhumi.vercel.app/explore?q={search_term_string}" },
+        target: { "@type": "EntryPoint", urlTemplate: "https://acrehubindia.com/explore?q={search_term_string}" },
         "query-input": "required name=search_term_string",
       },
     },

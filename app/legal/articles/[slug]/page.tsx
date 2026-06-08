@@ -58,9 +58,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Legal", item: "https://bhumi.vercel.app/legal" },
-      { "@type": "ListItem", position: 2, name: "Guides", item: "https://bhumi.vercel.app/legal/articles" },
-      { "@type": "ListItem", position: 3, name: a.title, item: `https://bhumi.vercel.app/legal/articles/${slug}` },
+      { "@type": "ListItem", position: 1, name: "Legal", item: "https://acrehubindia.com/legal" },
+      { "@type": "ListItem", position: 2, name: "Guides", item: "https://acrehubindia.com/legal/articles" },
+      { "@type": "ListItem", position: 3, name: a.title, item: `https://acrehubindia.com/legal/articles/${slug}` },
     ],
   };
   const articleLd = {

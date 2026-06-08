@@ -3,7 +3,7 @@ import { cleanSearchTerm } from "@/app/lib/search";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "https://bhumi.vercel.app";
+const BASE = "https://acrehubindia.com";
 
 function escapeHtml(s: string) {
   return String(s ?? "").replace(/[&<>"']/g, (c) =>
