@@ -2,13 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import ListingCard from "@/app/components/ListingCard";
 import FarmPlotHero from "@/app/components/farm-plots/FarmPlotHero";
 import CityGrid from "@/app/components/farm-plots/CityGrid";
 import CitySelector from "@/app/components/farm-plots/CitySelector";
 import CorridorGrid from "@/app/components/farm-plots/CorridorGrid";
 import { HUB_COPY } from "@/app/lib/farm-plots/copy";
-import { getCorridorCounts, getCityCounts, getProjectListings } from "@/app/lib/farm-plots/queries";
+import { getCorridorCounts, getCityCounts } from "@/app/lib/farm-plots/queries";
 
 export const revalidate = 3600;
 
@@ -19,10 +18,9 @@ export const metadata: Metadata = {
 };
 
 export default async function FarmPlotsHub() {
-  const [cityCounts, corridorCounts, samples] = await Promise.all([
+  const [cityCounts, corridorCounts] = await Promise.all([
     getCityCounts(),
     getCorridorCounts(),
-    getProjectListings({ limit: 3 }),
   ]);
 
   const faqLd = {
@@ -60,19 +58,6 @@ export default async function FarmPlotsHub() {
               <Link href="/farm-plots/bangalore" className="shrink-0 text-sm font-medium text-green-800 hover:underline">All Bangalore →</Link>
             </div>
             <CorridorGrid citySlug="bangalore" counts={corridorCounts} />
-          </section>
-
-          <section className="mb-12">
-            <h2 className="mb-5 text-2xl font-bold">Sample projects</h2>
-            {samples.length > 0 ? (
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {samples.map((l) => <ListingCard key={String(l.id)} listing={l} />)}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-gray-300 py-12 text-center text-gray-500">
-                Projects are being onboarded. <Link href="/buy" className="font-medium text-green-800 hover:underline">Post what you&apos;re looking for →</Link>
-              </div>
-            )}
           </section>
 
           <section className="mb-12">
