@@ -1,4 +1,5 @@
-import { corridorExists } from "@/app/lib/farm-plots/corridors";
+import { corridorExists, getCorridor } from "@/app/lib/farm-plots/corridors";
+import { cityExists } from "@/app/lib/farm-plots/cities";
 
 // Read project columns from a FormData into a DB payload. Only call when the
 // land_type is a project type (so non-project listings never send these columns —
@@ -11,7 +12,7 @@ export function collectProjectFields(f: FormData): Record<string, unknown> {
     developer_name: str("developer_name"),
     project_stage: str("project_stage"),
     corridor: str("corridor"),
-    nearest_city: "bangalore", // MVP corridors are all Bangalore-region
+    nearest_city: str("nearest_city") ?? "bangalore", // chosen in the city picker; defaults to focus city
     distance_from_city_km: num("distance_from_city_km"),
     travel_time_minutes: num("travel_time_minutes"),
     total_project_acres: num("total_project_acres"),
@@ -43,7 +44,13 @@ export function validateProjectFields(
   if (smin != null && !(smin > 0)) return "Minimum plot size must be greater than 0.";
   if (smax != null && !(smax > 0)) return "Maximum plot size must be greater than 0.";
   if (smin != null && smax != null && smax < smin) return "Maximum plot size can't be less than the minimum.";
+  if (p.nearest_city && !cityExists(String(p.nearest_city))) return "Please pick a city from the list.";
   if (p.corridor && !corridorExists(String(p.corridor))) return "Please pick a corridor from the list.";
+  // Corridor must belong to the chosen city.
+  if (p.corridor && p.nearest_city) {
+    const corr = getCorridor(String(p.corridor));
+    if (corr && corr.parent_city !== String(p.nearest_city)) return "That corridor isn't in the selected city.";
+  }
   for (const pl of plots) {
     if (pl.size_value !== "" && !(Number(pl.size_value) > 0)) return "Each plot's size must be greater than 0.";
     if (pl.price !== "" && Number(pl.price) < 0) return "Plot price can't be negative.";

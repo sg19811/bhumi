@@ -1,15 +1,28 @@
 "use client";
 
+import { useState } from "react";
 import { AMENITIES } from "@/app/lib/farm-plots/amenities";
-import { CORRIDORS } from "@/app/lib/farm-plots/corridors";
+import { getCorridorsByCity } from "@/app/lib/farm-plots/corridors";
+import { CITIES } from "@/app/lib/farm-plots/cities";
 
 const inp = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
 
-// Conditional project fields. Uncontrolled (name= read via FormData on submit).
+// Conditional project fields. Mostly uncontrolled (name= read via FormData on submit);
+// city + corridor are controlled so the corridor list filters to the chosen city.
 // `d` is the existing listing for edit prefill; undefined for create.
 export default function ProjectFieldsStep({ d }: { d?: Record<string, unknown> }) {
   const v = (k: string) => (d?.[k] ?? "") as string | number;
   const selectedAmenities: string[] = Array.isArray(d?.amenities) ? (d!.amenities as string[]) : [];
+
+  const [city, setCity] = useState<string>((d?.nearest_city as string) || "bangalore");
+  const [corridor, setCorridor] = useState<string>((d?.corridor as string) || "");
+  const cityCorridors = getCorridorsByCity(city);
+
+  const onCityChange = (next: string) => {
+    setCity(next);
+    // Reset corridor if it no longer belongs to the newly-chosen city.
+    if (!getCorridorsByCity(next).some((c) => c.slug === corridor)) setCorridor("");
+  };
 
   return (
     <section className="space-y-4 rounded-2xl border border-green-200 bg-green-50/40 p-5">
@@ -25,11 +38,19 @@ export default function ProjectFieldsStep({ d }: { d?: Record<string, unknown> }
           <select name="project_stage" defaultValue={v("project_stage")} className={inp}>
             <option value="">Select</option><option value="pre_launch">Pre-launch</option><option value="launched">Launched</option><option value="partial_inventory">Partial inventory</option><option value="completed">Completed</option>
           </select></div>
-        <div><label className="block text-sm font-medium mb-1">Corridor</label>
-          <select name="corridor" defaultValue={v("corridor")} className={inp}>
-            <option value="">Select corridor</option>
-            {CORRIDORS.map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
+        <div><label className="block text-sm font-medium mb-1">City</label>
+          <select name="nearest_city" value={city} onChange={(e) => onCityChange(e.target.value)} className={inp}>
+            {CITIES.map((c) => (
+              <option key={c.slug} value={c.slug}>{c.label}{c.status === "coming_soon" ? " (expanding)" : ""}</option>
+            ))}
           </select></div>
+        <div><label className="block text-sm font-medium mb-1">Corridor</label>
+          <select name="corridor" value={corridor} onChange={(e) => setCorridor(e.target.value)} className={inp} disabled={cityCorridors.length === 0}>
+            <option value="">{cityCorridors.length ? "Select corridor" : "No corridors yet — leave blank"}</option>
+            {cityCorridors.map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
+          </select>
+          {cityCorridors.length === 0 && <p className="mt-1 text-xs text-gray-400">We&apos;ll add corridors for {city.replace(/-/g, " ")} as projects come in.</p>}
+        </div>
         <div><label className="block text-sm font-medium mb-1">Distance from city (km)</label>
           <input name="distance_from_city_km" type="number" min="0" step="0.1" defaultValue={v("distance_from_city_km")} className={inp} /></div>
         <div><label className="block text-sm font-medium mb-1">Travel time (minutes)</label>
