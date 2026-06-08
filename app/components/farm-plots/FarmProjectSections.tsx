@@ -1,6 +1,8 @@
 import { isProjectType } from "@/app/lib/farm-plots/types";
 import ProjectOverviewCard from "@/app/components/farm-plots/ProjectOverviewCard";
+import ProjectRiskPanel from "@/app/components/farm-plots/ProjectRiskPanel";
 import ProjectTransparency from "@/app/components/farm-plots/ProjectTransparency";
+import ProjectWhatsAppBrochure from "@/app/components/farm-plots/ProjectWhatsAppBrochure";
 import PlotInventoryTable from "@/app/components/farm-plots/PlotInventoryTable";
 import AmenitiesGrid from "@/app/components/farm-plots/AmenitiesGrid";
 import DeveloperProfileCard from "@/app/components/farm-plots/DeveloperProfileCard";
@@ -23,7 +25,9 @@ export default async function FarmProjectSections({ listing }: { listing: Record
   return (
     <div>
       <ProjectOverviewCard listing={listing} />
+      <ProjectRiskPanel listing={listing} />
       <ProjectTransparency listing={listing} />
+      <div className="mb-8"><ProjectWhatsAppBrochure listing={listing} /></div>
       <PlotInventoryTable listingId={String(listing.id)} />
       <AmenitiesGrid amenities={amenities} />
       <TotalCostCalculator

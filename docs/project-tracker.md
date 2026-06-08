@@ -31,26 +31,31 @@
 
 ---
 
-## Farm Plot Projects MVP ✅ (branch `overnight/farm-plots-mvp` — not merged)
+## Farm Plot Projects ✅ LIVE on `main` (`supabase-farm-plots.sql` applied)
 
-Built per `docs/farm-plots-spec.md`. **Requires `supabase-farm-plots.sql` to be run in the Supabase
-SQL Editor before merge** (additive columns + `farm_project_plots` table + RLS; nothing else changes).
+Built per `docs/farm-plots-spec.md`. MVP + PAN-India expansion are live; Phase 2 is in progress.
 
-- [x] 5 new `land_type` values (farm_plot_project, managed_farmland, farmhouse_plot, gated_farm_plot,
-  plantation_project) in `app/lib/land.ts`; surfaced in explore filter, create wizard, edit, `/buy`
-- [x] Migration file `supabase-farm-plots.sql` (17 nullable `listings` columns + `farm_project_plots` + `search_logs.corridor`)
-- [x] `app/lib/farm-plots/` — types, corridors (6), amenities catalog, real per-corridor SEO copy, submit + queries helpers
-- [x] Conditional project fields + optional plot-inventory editor on create + edit
-- [x] Conditional listing-detail sections (overview, plot table, amenities, developer placeholder, corridor badge)
-- [x] ListingCard "Project" badge + name + plot count
-- [x] SEO surfaces: `/farm-plots` hub, `/farm-plots/bangalore`, `/farm-plots/[corridor]` (6), legal-checklist redirect; sitemap + FAQ/Breadcrumb JSON-LD
-- [x] Defensive coding so the build/runtime is safe before the migration is applied
+**Shipped & live:**
+- [x] 5 project `land_type` values in `app/lib/land.ts`; in explore filter, create wizard, edit, `/buy`
+- [x] Migration applied (17 `listings` columns + `farm_project_plots` + `search_logs.corridor`)
+- [x] **PAN-India hierarchy**: `/farm-plots` → `/farm-plots/[city]` → `/farm-plots/[city]/[corridor]`;
+  data-driven city registry (`cities.ts`, Bangalore live + 9 metros coming-soon); old flat URLs 307-redirect
+- [x] **City menu** (`CitySelector`) on every page + `CityGrid` hub; **Farm Plots in main nav** (header+footer)
+- [x] Create/edit **city picker** (corridors filter to chosen city); submit validates city↔corridor
+- [x] Listing detail: overview, **transparency/disclosure readout**, plot table, amenities,
+  **Total Cost calculator**, **developer profile** (other projects by developer), corridor badge
+- [x] City pages **ProjectsBrowser** (filter corridor/stage, sort price)
+- [x] SEO: per-city/corridor metadata, FAQ + Breadcrumb JSON-LD, sitemap; real copy (`copy.ts`)
 
-**Deferred to Phase 2** (per spec §2/§10 — gated on real activity, not time): Total Cost Calculator,
-site-visit booking, developer dashboard/profiles, document upload tied to project, tiered verification
-badges, farm-plot Risk Score, WhatsApp brochure. **Founder follow-ups:** seed 3–5 real projects per
-corridor before publicising, define farm-plot verification standard, and have a Tamil Nadu lawyer review
-the Hosur copy + the TN legal guidance before the Hosur corridor goes public (the copy already flags this).
+**Phase 2 — in progress** (`feature/farm-plots-phase2`; DB-backed parts behind `supabase-farm-plots-phase2.sql`):
+- [ ] Farm-plot **Risk Score** (compute-only)
+- [ ] **WhatsApp brochure** for projects (compute-only)
+- [ ] **Site-visit request** (new `site_visit_requests` table + form + admin view)
+- [ ] **Tiered verification badge** (`listings.verification_tier` column + display + admin set)
+- [ ] **Per-project document links** (`project_documents` table + edit upload + detail display)
+
+**Founder follow-ups:** seed real projects per corridor before publicising; define the farm-plot
+verification standard; TN lawyer to review Hosur copy + TN legal guidance before Hosur goes public.
 
 ---
 
