@@ -20,7 +20,7 @@ export default function LandHealthPanel({ listing }: { listing: Parameters<typeo
         <h2 className="text-lg font-semibold">Land Health Score</h2>
         <div className="flex items-baseline gap-1.5">
           <span className="text-2xl font-bold text-green-800">{score}</span>
-          <span className="text-sm text-gray-400">/ 100 · {tierLabel(score)}</span>
+          <span className="text-sm text-gray-500">/ 100 · {tierLabel(score)}</span>
         </div>
       </div>
       <p className="mb-4 mt-0.5 text-sm text-gray-500">
@@ -32,7 +32,7 @@ export default function LandHealthPanel({ listing }: { listing: Parameters<typeo
           <div key={d.key}>
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-gray-700">{d.label}</span>
-              <span className="text-gray-400">{d.score}</span>
+              <span className="text-gray-500">{d.score}</span>
             </div>
             <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
               <div className={`h-full rounded-full ${barColor(d.score)}`} style={{ width: `${d.score}%` }} />

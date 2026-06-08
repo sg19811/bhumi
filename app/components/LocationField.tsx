@@ -2,10 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import MapSpinner from "./MapSpinner";
 
 const PickerMap = dynamic(() => import("./PickerMap"), {
   ssr: false,
-  loading: () => <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-400">Loading map…</div>,
+  loading: () => <MapSpinner />,
 });
 
 const fieldCls = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";

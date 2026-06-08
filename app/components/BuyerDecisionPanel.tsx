@@ -35,7 +35,7 @@ export default function BuyerDecisionPanel({
             <ul className="space-y-2">
               {strengths.map((s) => (
                 <li key={s} className="flex gap-2 text-sm leading-snug text-gray-700">
-                  <span aria-hidden="true" className="mt-0.5 select-none text-green-600">✓</span>
+                  <span aria-hidden="true" className="mt-0.5 select-none text-green-700">✓</span>
                   <span>{s}</span>
                 </li>
               ))}
@@ -57,7 +57,7 @@ export default function BuyerDecisionPanel({
           <ul className="space-y-2">
             {risks.map((r) => (
               <li key={r} className="flex gap-2 text-sm leading-snug text-gray-700">
-                <span aria-hidden="true" className="mt-0.5 select-none text-amber-500">!</span>
+                <span aria-hidden="true" className="mt-0.5 select-none font-bold text-amber-600">!</span>
                 <span>{r}</span>
               </li>
             ))}
