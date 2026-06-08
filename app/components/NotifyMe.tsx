@@ -27,6 +27,7 @@ export default function NotifyMe({ district, landType, prompt }: { district?: st
           value={contact}
           onChange={(e) => setContact(e.target.value)}
           required
+          aria-label="Your phone or email"
           placeholder="Phone or email"
           className="min-w-0 flex-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm outline-none focus:border-green-600"
         />

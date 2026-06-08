@@ -71,6 +71,7 @@ export default function InquiryButton({ listingId }: { listingId: string }) {
             inputMode="numeric"
             pattern="[0-9]{10}"
             title="Enter a 10-digit phone number"
+            aria-label="Your phone number"
             placeholder="Your phone *"
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-green-600"
           />
@@ -78,6 +79,7 @@ export default function InquiryButton({ listingId }: { listingId: string }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={2}
+            aria-label="Message to the seller (optional)"
             placeholder="Message (optional)"
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-green-600"
           />

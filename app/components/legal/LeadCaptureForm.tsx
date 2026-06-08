@@ -102,17 +102,17 @@ export default function LeadCaptureForm({
       <input type="text" name="company" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
       <div className={`mt-4 grid gap-3 ${compact ? "" : "sm:grid-cols-2"}`}>
-        <input name="name" required placeholder="Your name" className={inp} />
-        <input name="phone" required inputMode="tel" placeholder="Phone number" className={inp} />
-        {!compact && <input name="whatsapp" inputMode="tel" placeholder="WhatsApp (optional)" className={inp} />}
-        {!compact && <input name="email" type="email" placeholder="Email (optional)" className={inp} />}
+        <input name="name" required aria-label="Your name" placeholder="Your name" className={inp} />
+        <input name="phone" required inputMode="tel" aria-label="Phone number" placeholder="Phone number" className={inp} />
+        {!compact && <input name="whatsapp" inputMode="tel" aria-label="WhatsApp number (optional)" placeholder="WhatsApp (optional)" className={inp} />}
+        {!compact && <input name="email" type="email" aria-label="Email (optional)" placeholder="Email (optional)" className={inp} />}
         {!defaults.state && (
           <select name="state" defaultValue="" className={inp} aria-label="State">
             <option value="">State (optional)</option>
             {STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         )}
-        <textarea name="legal_concern" rows={compact ? 2 : 3} placeholder="What do you need help with? (optional)" className={`${inp} ${compact ? "" : "sm:col-span-2"}`} />
+        <textarea name="legal_concern" rows={compact ? 2 : 3} aria-label="What do you need help with? (optional)" placeholder="What do you need help with? (optional)" className={`${inp} ${compact ? "" : "sm:col-span-2"}`} />
       </div>
 
       <label className="mt-3 flex items-start gap-2 text-xs text-gray-500">

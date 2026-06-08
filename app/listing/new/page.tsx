@@ -239,7 +239,7 @@ export default function NewListing() {
           </section>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Description</h2>
-            <textarea name="description" rows={4} placeholder="Crops grown, soil type, nearby landmarks, why you're selling..." className={inp} />
+            <textarea name="description" rows={4} aria-label="Description" placeholder="Crops grown, soil type, nearby landmarks, why you're selling..." className={inp} />
             <AiListingAssist />
           </section>
           </div>
