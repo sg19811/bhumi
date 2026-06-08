@@ -29,9 +29,9 @@ export type CorridorCopy = {
 };
 
 export const HUB_COPY: HubCopy = {
-  heroTitle: "Farm plot projects near Bangalore",
+  heroTitle: "Farm plot projects across India",
   heroSubtitle:
-    "Managed, gated and plantation farm plots across Bangalore's growth corridors — shown with real map boundaries, plot inventory, trust scores, and a clear legal checklist.",
+    "Managed, gated and plantation farmland — shown with real map boundaries, plot inventory, trust scores, and a clear legal checklist. We're live in Bangalore first and expanding city by city.",
   intro:
     "A farm plot project is agricultural or converted land sold as a planned, plotted development — often with internal roads, fencing, water, security, and sometimes plantation or farm-management services. People buy them for a weekend farm, a long-term land holding, plantation income, or eventually a farmhouse.\n\nThe category attracts both genuine developers and aggressive marketing, so the same checks matter as for any land: who really owns it, whether the layout is approved, whether the land is converted or still agricultural, and what the title and encumbrance records say. AcreHub shows the boundary on a real map, lists the actual plot inventory where the developer provides it, computes a trust score from the available signals, and links you to a state-specific legal checklist — instead of a glossy brochure. Always verify documents and, for anything consequential, consult a lawyer.",
   faqs: [
@@ -48,35 +48,52 @@ export const HUB_COPY: HubCopy = {
       a: "At minimum: the seller's title and the mother-deed chain, the latest revenue records (RTC/Pahani in Karnataka), mutation, an Encumbrance Certificate, the conversion order if non-agricultural use is intended, and any layout / planning approval. Our document checklist walks through it.",
     },
     {
-      q: "Can NRIs buy farm plots near Bangalore?",
+      q: "Can NRIs buy farm plots in India?",
       a: "Generally NRIs and OCIs cannot directly purchase agricultural, plantation, or farmhouse land in India under FEMA — converted (NA) land is treated differently. Get a FEMA plus state-law review before committing. See the NRI guidance in the Legal Navigator.",
     },
   ],
 };
 
-export const CITY_COPY: CityCopy = {
-  heroTitle: "Farm plot projects in Bangalore",
-  heroSubtitle:
-    "Browse projects by corridor — from Devanahalli and Nandi Hills in the north to Kanakapura Road and Sarjapur–Anekal in the south.",
-  intro:
-    "Bangalore has one of India's most active weekend-farm and managed-farmland markets, driven by a large professional population, a strong plantation belt around the city, and fast-growing corridors in every direction. Each corridor has a different character — airport-led growth in the north, plantation and greenbelt land in the south, hill country toward Nandi, and the Tamil Nadu uplands around Hosur.\n\nWe organise projects by corridor so you can compare like with like: distance from the city, typical plot sizes, the kind of land, and the legal checks specific to the state. Counts below reflect live listings on AcreHub today.",
-  priceNote:
-    "Prices vary widely by corridor, distance from the city, plot size, amenities, and whether the land is converted — so treat any single figure with care. The range shown above is computed from current live listings only and will shift as more projects are added.",
-  faqs: [
-    {
-      q: "Which Bangalore corridor is best for farm plots?",
-      a: "There's no single best — it depends on your purpose. Devanahalli suits infrastructure-led holding, Nandi Hills suits scenic weekend farms and plantations, Kanakapura Road suits greenbelt and Cauvery-belt land, Mysore Road tends to be more affordable, and Sarjapur–Anekal is closest to the IT corridor. Compare distance, land type, and price for your goal.",
-    },
-    {
-      q: "How far are these projects from the city?",
-      a: "Most sit roughly 30–90 minutes from central Bangalore depending on the corridor and traffic. The corridor pages show the average distance computed from live listings.",
-    },
-    {
-      q: "Do farm plots near Bangalore need conversion?",
-      a: "It depends on the land and your intended use. Some plots are still classified agricultural; building a farmhouse or non-farm structure usually needs land-use conversion (NA) plus plan approval. Always check the conversion order and the Karnataka rules before assuming you can build.",
-    },
-  ],
+// City copy keyed by city slug. Only fully-populated ("live") cities need an entry;
+// coming-soon cities render a coming-soon page and use cityCopy()'s fallback.
+export const CITY_COPY: Record<string, CityCopy> = {
+  bangalore: {
+    heroTitle: "Farm plot projects in Bangalore",
+    heroSubtitle:
+      "Browse projects by corridor — from Devanahalli and Nandi Hills in the north to Kanakapura Road and Sarjapur–Anekal in the south.",
+    intro:
+      "Bangalore has one of India's most active weekend-farm and managed-farmland markets, driven by a large professional population, a strong plantation belt around the city, and fast-growing corridors in every direction. Each corridor has a different character — airport-led growth in the north, plantation and greenbelt land in the south, hill country toward Nandi, and the Tamil Nadu uplands around Hosur.\n\nWe organise projects by corridor so you can compare like with like: distance from the city, typical plot sizes, the kind of land, and the legal checks specific to the state. Counts below reflect live listings on AcreHub today.",
+    priceNote:
+      "Prices vary widely by corridor, distance from the city, plot size, amenities, and whether the land is converted — so treat any single figure with care. The range shown above is computed from current live listings only and will shift as more projects are added.",
+    faqs: [
+      {
+        q: "Which Bangalore corridor is best for farm plots?",
+        a: "There's no single best — it depends on your purpose. Devanahalli suits infrastructure-led holding, Nandi Hills suits scenic weekend farms and plantations, Kanakapura Road suits greenbelt and Cauvery-belt land, Mysore Road tends to be more affordable, and Sarjapur–Anekal is closest to the IT corridor. Compare distance, land type, and price for your goal.",
+      },
+      {
+        q: "How far are these projects from the city?",
+        a: "Most sit roughly 30–90 minutes from central Bangalore depending on the corridor and traffic. The corridor pages show the average distance computed from live listings.",
+      },
+      {
+        q: "Do farm plots near Bangalore need conversion?",
+        a: "It depends on the land and your intended use. Some plots are still classified agricultural; building a farmhouse or non-farm structure usually needs land-use conversion (NA) plus plan approval. Always check the conversion order and the Karnataka rules before assuming you can build.",
+      },
+    ],
+  },
 };
+
+/** City copy with a safe generic fallback for cities that don't have bespoke copy yet. */
+export function cityCopy(slug: string, label: string): CityCopy {
+  return (
+    CITY_COPY[slug] ?? {
+      heroTitle: `Farm plot projects in ${label}`,
+      heroSubtitle: `Managed and gated farmland around ${label}.`,
+      intro: `We're mapping farm-plot projects around ${label}. Listings and corridor guides are being onboarded.`,
+      priceNote: "Prices are shown from live listings only as projects are added.",
+      faqs: [],
+    }
+  );
+}
 
 export const CORRIDOR_COPY: Record<string, CorridorCopy> = {
   "kanakapura-road": {

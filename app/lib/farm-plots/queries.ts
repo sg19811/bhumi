@@ -21,7 +21,10 @@ export async function getCorridorCounts(): Promise<Record<string, number>> {
   return counts;
 }
 
-export async function getProjectListings(corridor?: string, limit = 24): Promise<Record<string, unknown>[]> {
+export async function getProjectListings(
+  opts: { city?: string; corridor?: string; limit?: number } = {},
+): Promise<Record<string, unknown>[]> {
+  const { city, corridor, limit = 24 } = opts;
   let q = supabase
     .from("listings")
     .select("*")
@@ -30,7 +33,24 @@ export async function getProjectListings(corridor?: string, limit = 24): Promise
     .order("created_at", { ascending: false })
     .limit(limit);
   if (corridor) q = q.eq("corridor", corridor);
+  if (city) q = q.eq("nearest_city", city);
   const { data, error } = await q;
   if (error || !Array.isArray(data)) return [];
   return data as Record<string, unknown>[];
+}
+
+/** Count of active project listings per city (matched on nearest_city). */
+export async function getCityCounts(): Promise<Record<string, number>> {
+  const counts: Record<string, number> = {};
+  const { data, error } = await supabase
+    .from("listings")
+    .select("nearest_city")
+    .eq("status", "active")
+    .in("land_type", PROJECT_LAND_TYPES);
+  if (error || !Array.isArray(data)) return counts;
+  for (const row of data) {
+    const c = (row as { nearest_city?: string }).nearest_city;
+    if (c) counts[c] = (counts[c] ?? 0) + 1;
+  }
+  return counts;
 }

@@ -4,20 +4,26 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import ListingCard from "@/app/components/ListingCard";
 import FarmPlotHero from "@/app/components/farm-plots/FarmPlotHero";
+import CityGrid from "@/app/components/farm-plots/CityGrid";
+import CitySelector from "@/app/components/farm-plots/CitySelector";
 import CorridorGrid from "@/app/components/farm-plots/CorridorGrid";
 import { HUB_COPY } from "@/app/lib/farm-plots/copy";
-import { getCorridorCounts, getProjectListings } from "@/app/lib/farm-plots/queries";
+import { getCorridorCounts, getCityCounts, getProjectListings } from "@/app/lib/farm-plots/queries";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Farm plot projects near Bangalore — managed & gated farmland | AcreHub",
-  description: "Compare managed, gated and plantation farm plot projects across Bangalore's corridors — real boundaries, plot inventory, trust scores, and legal clarity. Not hype.",
+  title: "Farm plot projects across India — managed & gated farmland | AcreHub",
+  description: "Compare managed, gated and plantation farm plot projects across India — real boundaries, plot inventory, trust scores, and legal clarity. Live in Bangalore, expanding city by city.",
   alternates: { canonical: "/farm-plots" },
 };
 
 export default async function FarmPlotsHub() {
-  const [counts, samples] = await Promise.all([getCorridorCounts(), getProjectListings(undefined, 3)]);
+  const [cityCounts, corridorCounts, samples] = await Promise.all([
+    getCityCounts(),
+    getCorridorCounts(),
+    getProjectListings({ limit: 3 }),
+  ]);
 
   const faqLd = {
     "@context": "https://schema.org",
@@ -33,14 +39,27 @@ export default async function FarmPlotsHub() {
         <FarmPlotHero title={HUB_COPY.heroTitle} subtitle={HUB_COPY.heroSubtitle} />
 
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6">
-          <p className="mb-10 max-w-2xl whitespace-pre-line text-gray-600">{HUB_COPY.intro}</p>
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-2xl whitespace-pre-line text-gray-600">{HUB_COPY.intro}</p>
+            <div className="shrink-0"><CitySelector /></div>
+          </div>
 
-          <section className="mb-12">
+          {/* PAN-India: choose a city */}
+          <section className="mb-14">
+            <h2 className="mb-5 text-2xl font-bold">Choose your city</h2>
+            <CityGrid counts={cityCounts} />
+          </section>
+
+          {/* Featured market: Bangalore (our focus city) */}
+          <section className="mb-14">
             <div className="mb-5 flex items-end justify-between gap-3">
-              <h2 className="text-2xl font-bold">Browse by corridor</h2>
+              <div>
+                <span className="text-xs font-semibold uppercase tracking-wide text-green-700">Featured city</span>
+                <h2 className="text-2xl font-bold">Bangalore — browse by corridor</h2>
+              </div>
               <Link href="/farm-plots/bangalore" className="shrink-0 text-sm font-medium text-green-800 hover:underline">All Bangalore →</Link>
             </div>
-            <CorridorGrid counts={counts} />
+            <CorridorGrid citySlug="bangalore" counts={corridorCounts} />
           </section>
 
           <section className="mb-12">

@@ -1,39 +1,44 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import ListingCard from "@/app/components/ListingCard";
 import FarmPlotHero from "@/app/components/farm-plots/FarmPlotHero";
+import CitySelector from "@/app/components/farm-plots/CitySelector";
 import { CORRIDORS, getCorridor } from "@/app/lib/farm-plots/corridors";
+import { getCity, cityLabel } from "@/app/lib/farm-plots/cities";
 import { corridorCopy } from "@/app/lib/farm-plots/copy";
 import { getProjectListings } from "@/app/lib/farm-plots/queries";
 
 export const revalidate = 3600;
 
 export function generateStaticParams() {
-  return CORRIDORS.map((c) => ({ corridor: c.slug }));
+  return CORRIDORS.map((c) => ({ city: c.parent_city, corridor: c.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ corridor: string }> }): Promise<Metadata> {
-  const { corridor } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ city: string; corridor: string }> }): Promise<Metadata> {
+  const { city, corridor } = await params;
   const c = getCorridor(corridor);
   if (!c) return { title: "Farm plot projects | AcreHub" };
   return {
-    title: `Farm plot projects in ${c.label} — near Bangalore | AcreHub`,
+    title: `Farm plot projects in ${c.label} — near ${cityLabel(city)} | AcreHub`,
     description: `Managed and gated farm plot projects in ${c.label}. Plot sizes, prices, amenities, and the legal checks that matter — with real inventory on AcreHub.`,
-    alternates: { canonical: `/farm-plots/${c.slug}` },
+    alternates: { canonical: `/farm-plots/${c.parent_city}/${c.slug}` },
   };
 }
 
-export default async function CorridorPage({ params }: { params: Promise<{ corridor: string }> }) {
-  const { corridor } = await params;
+export default async function CorridorPage({ params }: { params: Promise<{ city: string; corridor: string }> }) {
+  const { city, corridor } = await params;
   const c = getCorridor(corridor);
   if (!c) notFound();
+  // If the corridor is reached under the wrong city slug, redirect to the canonical city.
+  if (c.parent_city !== city) redirect(`/farm-plots/${c.parent_city}/${c.slug}`);
 
+  const cityInfo = getCity(c.parent_city);
   const copy = corridorCopy(c.slug);
-  const projects = await getProjectListings(c.slug, 24);
-  const stateLabel = c.state === "tamil_nadu" ? "Tamil Nadu" : "Karnataka";
+  const projects = await getProjectListings({ corridor: c.slug, limit: 24 });
+  const stateLabel = cityInfo?.stateLabel ?? (c.state === "tamil_nadu" ? "Tamil Nadu" : "Karnataka");
 
   const distances = projects.map((p) => Number(p.distance_from_city_km)).filter((n) => Number.isFinite(n) && n > 0);
   const avgDistance = distances.length ? Math.round(distances.reduce((a, b) => a + b, 0) / distances.length) : null;
@@ -48,8 +53,8 @@ export default async function CorridorPage({ params }: { params: Promise<{ corri
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Farm plots", item: "https://bhumi.vercel.app/farm-plots" },
-      { "@type": "ListItem", position: 2, name: "Bangalore", item: "https://bhumi.vercel.app/farm-plots/bangalore" },
-      { "@type": "ListItem", position: 3, name: c.label, item: `https://bhumi.vercel.app/farm-plots/${c.slug}` },
+      { "@type": "ListItem", position: 2, name: cityLabel(c.parent_city), item: `https://bhumi.vercel.app/farm-plots/${c.parent_city}` },
+      { "@type": "ListItem", position: 3, name: c.label, item: `https://bhumi.vercel.app/farm-plots/${c.parent_city}/${c.slug}` },
     ],
   };
 
@@ -62,13 +67,16 @@ export default async function CorridorPage({ params }: { params: Promise<{ corri
         <FarmPlotHero title={`Farm plots in ${c.label}`} subtitle={copy.positioning} />
 
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6">
-          <nav className="mb-4 flex flex-wrap items-center gap-1.5 text-sm text-gray-500" aria-label="Breadcrumb">
-            <Link href="/farm-plots" className="hover:text-green-800">Farm plots</Link>
-            <span aria-hidden="true" className="text-gray-300">/</span>
-            <Link href="/farm-plots/bangalore" className="hover:text-green-800">Bangalore</Link>
-            <span aria-hidden="true" className="text-gray-300">/</span>
-            <span className="text-gray-400">{c.label}</span>
-          </nav>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <nav className="flex flex-wrap items-center gap-1.5 text-sm text-gray-500" aria-label="Breadcrumb">
+              <Link href="/farm-plots" className="hover:text-green-800">Farm plots</Link>
+              <span aria-hidden="true" className="text-gray-300">/</span>
+              <Link href={`/farm-plots/${c.parent_city}`} className="hover:text-green-800">{cityLabel(c.parent_city)}</Link>
+              <span aria-hidden="true" className="text-gray-300">/</span>
+              <span className="text-gray-400">{c.label}</span>
+            </nav>
+            <CitySelector current={c.parent_city} />
+          </div>
 
           {c.state === "tamil_nadu" && (
             <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
@@ -83,7 +91,7 @@ export default async function CorridorPage({ params }: { params: Promise<{ corri
             <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800">{projects.length}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">projects</p></div>
             <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800">{avgDistance ? `${avgDistance} km` : "—"}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">avg from city</p></div>
             <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold text-green-800">{stateLabel}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">state</p></div>
-            <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800">{c.parent_city}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">near</p></div>
+            <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-base font-bold capitalize text-green-800">{cityLabel(c.parent_city)}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">near</p></div>
           </div>
 
           <section className="mb-12">
@@ -123,7 +131,7 @@ export default async function CorridorPage({ params }: { params: Promise<{ corri
           )}
 
           <div className="flex flex-wrap gap-3 text-sm">
-            <Link href="/farm-plots/bangalore" className="font-medium text-green-800 hover:underline">← All Bangalore corridors</Link>
+            <Link href={`/farm-plots/${c.parent_city}`} className="font-medium text-green-800 hover:underline">← All {cityLabel(c.parent_city)} corridors</Link>
             <Link href="/explore?land_type=farm_plot_project" className="font-medium text-green-800 hover:underline">Browse all farm plot projects →</Link>
           </div>
         </div>
