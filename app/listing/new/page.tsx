@@ -146,7 +146,17 @@ export default function NewListing() {
           <div ref={(el) => { stepRefs.current[0] = el; }} className={step === 0 ? "space-y-8" : "hidden"}>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Photos</h2>
+            <div className="flex items-start gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900">
+              <span aria-hidden="true">📸</span>
+              <p>
+                <span className="font-semibold">Add at least 3 photos</span> — a wide view of the land, the approach road, and the water source.
+                Listings with photos get far more inquiries and a higher Trust Score. No photos shows buyers a &ldquo;Photo coming soon&rdquo; placeholder, which they tend to skip.
+              </p>
+            </div>
             <PhotoUpload value={photos} onChange={setPhotos} />
+            {photos.length === 0 && (
+              <p className="text-xs text-amber-600">No photos added yet — your listing will show a &ldquo;Photo coming soon&rdquo; placeholder until you add some.</p>
+            )}
           </section>
           <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Videos</h2>
