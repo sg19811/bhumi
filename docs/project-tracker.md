@@ -39,7 +39,7 @@ SQL Editor before merge** (additive columns + `farm_project_plots` table + RLS; 
 - [x] 5 new `land_type` values (farm_plot_project, managed_farmland, farmhouse_plot, gated_farm_plot,
   plantation_project) in `app/lib/land.ts`; surfaced in explore filter, create wizard, edit, `/buy`
 - [x] Migration file `supabase-farm-plots.sql` (17 nullable `listings` columns + `farm_project_plots` + `search_logs.corridor`)
-- [x] `app/lib/farm-plots/` — types, corridors (6), amenities catalog, typed copy (placeholders), submit + queries helpers
+- [x] `app/lib/farm-plots/` — types, corridors (6), amenities catalog, real per-corridor SEO copy, submit + queries helpers
 - [x] Conditional project fields + optional plot-inventory editor on create + edit
 - [x] Conditional listing-detail sections (overview, plot table, amenities, developer placeholder, corridor badge)
 - [x] ListingCard "Project" badge + name + plot count
@@ -49,8 +49,8 @@ SQL Editor before merge** (additive columns + `farm_project_plots` table + RLS; 
 **Deferred to Phase 2** (per spec §2/§10 — gated on real activity, not time): Total Cost Calculator,
 site-visit booking, developer dashboard/profiles, document upload tied to project, tiered verification
 badges, farm-plot Risk Score, WhatsApp brochure. **Founder follow-ups:** seed 3–5 real projects per
-corridor before publicising, define farm-plot verification standard, lawyer-review TN disclaimer before
-TN corridors go live, edit the placeholder copy in `app/lib/farm-plots/copy.ts`.
+corridor before publicising, define farm-plot verification standard, and have a Tamil Nadu lawyer review
+the Hosur copy + the TN legal guidance before the Hosur corridor goes public (the copy already flags this).
 
 ---
 
