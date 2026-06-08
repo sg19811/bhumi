@@ -29,9 +29,12 @@ export default async function FarmProjectSections({ listing }: { listing: Record
       <ProjectOverviewCard listing={listing} />
       <ProjectRiskPanel listing={listing} />
       <ProjectTransparency listing={listing} />
-      <div className="mb-8 flex flex-wrap gap-3">
+      <div className="mb-8 flex flex-wrap items-center gap-3">
         <SiteVisitButton listingId={String(listing.id)} />
         <ProjectWhatsAppBrochure listing={listing} />
+        <a href={`/farm-plots/report/${String(listing.id)}`} className="inline-flex items-center gap-2 rounded-full border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50">
+          🖨 Buyer report (PDF)
+        </a>
       </div>
       <PlotInventoryTable listingId={String(listing.id)} />
       <ProjectDocuments listingId={String(listing.id)} />
