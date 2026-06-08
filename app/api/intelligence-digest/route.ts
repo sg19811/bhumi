@@ -1,8 +1,9 @@
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
+import { sendEmail, founderRecipient } from "@/app/lib/email";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "https://bhumi.vercel.app";
+const BASE = "https://acrehubindia.com";
 const norm = (s: unknown) => (s ?? "").toString().trim().toLowerCase();
 const cap = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -45,12 +46,10 @@ export async function GET(request: Request) {
     top_land_types: types.map((x) => ({ land_type: x.k, demand: x.dem })),
   };
 
-  const to = process.env.FOUNDER_EMAIL;
-  const resendKey = process.env.RESEND_API_KEY;
-  const from = process.env.ALERT_FROM_EMAIL || "AcreHub <onboarding@resend.dev>";
+  const to = founderRecipient();
 
   let emailed = false;
-  if (to && resendKey && (districts.length || types.length)) {
+  if (districts.length || types.length) {
     const rows = districts
       .map((x) => `<li style="margin-bottom:6px"><strong>${cap(x.k)}</strong> — demand ${x.dem}, ${x.sup} active listing${x.sup === 1 ? "" : "s"}${x.sup === 0 ? " <span style=\"color:#b45309\">(source!)</span>" : ""}</li>`)
       .join("");
@@ -63,12 +62,7 @@ export async function GET(request: Request) {
       <p><a href="${BASE}/admin/intelligence" style="color:#445626;font-weight:600">Open Founder Intelligence →</a></p>
       <p style="color:#8a8473;font-size:12px;margin-top:24px">Weighted demand: requirement ×3, notify-me ×2, search ×1.</p>
     </div>`;
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to, subject: "Source here — your weekly AcreHub intelligence", html }),
-    });
-    emailed = true;
+    emailed = await sendEmail({ to, subject: "Source here — your weekly AcreHub intelligence", html });
   }
 
   return Response.json({ ok: true, emailed, digest });
