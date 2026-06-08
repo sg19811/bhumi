@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { supabase } from "@/app/lib/supabase";
 import { CORRIDORS } from "@/app/lib/farm-plots/corridors";
 import { CITIES } from "@/app/lib/farm-plots/cities";
+import { getDeveloperNames, slugifyDeveloper } from "@/app/lib/farm-plots/developers";
 
 const BASE = "https://bhumi.vercel.app";
 
@@ -51,11 +52,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return { url: `${BASE}/region/${encodeURIComponent(d)}/${encodeURIComponent(t)}`, lastModified: new Date() };
   });
 
-  // Farm plot project surfaces (hub → city → corridor).
+  // Farm plot project surfaces (hub → city → corridor → developer).
+  const developerNames = await getDeveloperNames();
   const farmPlotPages = [
     "/farm-plots",
     ...CITIES.map((c) => `/farm-plots/${c.slug}`),
     ...CORRIDORS.map((c) => `/farm-plots/${c.parent_city}/${c.slug}`),
+    ...developerNames.map((n) => `/farm-plots/developer/${slugifyDeveloper(n)}`),
   ].map((p) => ({
     url: `${BASE}${p}`,
     lastModified: new Date(),

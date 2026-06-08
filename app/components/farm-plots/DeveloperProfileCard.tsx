@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { slugifyDeveloper } from "@/app/lib/farm-plots/developers";
 
 // Developer card. Shows the developer's other active projects on AcreHub so a
 // buyer can see their footprint. Verified developer profiles are still Phase 2.
@@ -18,7 +19,9 @@ export default function DeveloperProfileCard({
     <section className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold">Developer</h2>
       <div className="mt-1 flex flex-wrap items-center gap-2">
-        <p className="font-medium text-gray-900">{developerName}</p>
+        <Link href={`/farm-plots/developer/${slugifyDeveloper(developerName)}`} className="font-medium text-gray-900 hover:text-green-800 hover:underline">
+          {developerName}
+        </Link>
         {count > 0 && (
           <span className="rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-800">
             {count} other project{count === 1 ? "" : "s"} on AcreHub
