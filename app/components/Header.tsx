@@ -14,6 +14,7 @@ export default function Header() {
   const pathname = usePathname();
   const links = [
     { href: "/explore", key: "nav.explore" },
+    { href: "/farm-plots", key: "nav.farmPlots" },
     { href: "/listing/new", key: "nav.list" },
     { href: "/buy", key: "nav.buy" },
     { href: "/requirements", key: "nav.requirements" },

@@ -8,6 +8,7 @@ type Entry = Record<Locale, string>;
 
 const dict: Record<string, Entry> = {
   "nav.explore": { en: "Explore", hi: "एक्सप्लोर", kn: "ಅನ್ವೇಷಿಸಿ" },
+  "nav.farmPlots": { en: "Farm Plots", hi: "फार्म प्लॉट", kn: "ಫಾರ್ಮ್ ಪ್ಲಾಟ್‌ಗಳು" },
   "nav.list": { en: "List your land", hi: "अपनी ज़मीन सूचीबद्ध करें", kn: "ನಿಮ್ಮ ಭೂಮಿ ಪಟ್ಟಿ ಮಾಡಿ" },
   "nav.buy": { en: "I want to buy", hi: "मुझे खरीदना है", kn: "ಖರೀದಿಸಲು ಬಯಸುತ್ತೇನೆ" },
   "nav.requirements": { en: "Requirements", hi: "आवश्यकताएँ", kn: "ಅಗತ್ಯಗಳು" },
