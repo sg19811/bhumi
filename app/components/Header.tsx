@@ -15,7 +15,7 @@ export default function Header() {
   const links = [
     { href: "/explore", key: "nav.explore" },
     { href: "/farm-plots", key: "nav.farmPlots" },
-    { href: "/listing/new", key: "nav.list" },
+    { href: "/sell", key: "nav.sell" },
     { href: "/buy", key: "nav.buy" },
     { href: "/requirements", key: "nav.requirements" },
     { href: "/legal", key: "nav.legal" },

@@ -10,6 +10,7 @@ const dict: Record<string, Entry> = {
   "nav.explore": { en: "Explore", hi: "एक्सप्लोर", kn: "ಅನ್ವೇಷಿಸಿ" },
   "nav.farmPlots": { en: "Farm Plots", hi: "फार्म प्लॉट", kn: "ಫಾರ್ಮ್ ಪ್ಲಾಟ್‌ಗಳು" },
   "nav.list": { en: "List your land", hi: "अपनी ज़मीन सूचीबद्ध करें", kn: "ನಿಮ್ಮ ಭೂಮಿ ಪಟ್ಟಿ ಮಾಡಿ" },
+  "nav.sell": { en: "Sell land", hi: "ज़मीन बेचें", kn: "ಭೂಮಿ ಮಾರಿ" },
   "nav.buy": { en: "I want to buy", hi: "मुझे खरीदना है", kn: "ಖರೀದಿಸಲು ಬಯಸುತ್ತೇನೆ" },
   "nav.requirements": { en: "Requirements", hi: "आवश्यकताएँ", kn: "ಅಗತ್ಯಗಳು" },
   "nav.legal": { en: "Legal", hi: "कानूनी", kn: "ಕಾನೂನು" },
@@ -75,7 +76,7 @@ const dict: Record<string, Entry> = {
   "home.pillar.boundaries": { en: "Real boundaries", hi: "वास्तविक सीमाएँ", kn: "ನೈಜ ಗಡಿಗಳು" },
   "home.pillar.boundariesBody": { en: "See actual land on satellite maps, not just address pins.", hi: "सिर्फ़ पते के पिन नहीं, सैटेलाइट मानचित्र पर वास्तविक ज़मीन देखें।", kn: "ಕೇವಲ ವಿಳಾಸ ಪಿನ್‌ಗಳಲ್ಲ, ಉಪಗ್ರಹ ನಕ್ಷೆಗಳಲ್ಲಿ ನೈಜ ಭೂಮಿಯನ್ನು ನೋಡಿ." },
 
-  "footer.buy": { en: "Buy land", hi: "ज़मीन खरीदें", kn: "ಭೂಮಿ ಖರೀದಿಸಿ" },
+  "footer.buy": { en: "I want to buy", hi: "मुझे खरीदना है", kn: "ಖರೀದಿಸಲು ಬಯಸುತ್ತೇನೆ" },
   "footer.howItWorks": { en: "How it works", hi: "यह कैसे काम करता है", kn: "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ" },
   "footer.tools": { en: "Tools", hi: "उपकरण", kn: "ಉಪಕರಣಗಳು" },
   "footer.faq": { en: "FAQ", hi: "सामान्य प्रश्न", kn: "ಪದೇಪದೇ ಕೇಳುವ ಪ್ರಶ್ನೆಗಳು" },

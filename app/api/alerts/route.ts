@@ -15,7 +15,7 @@ function escapeHtml(s: string) {
 function applyFilters(query: any, params: URLSearchParams) {
   const g = (k: string) => params.get(k);
   const term = cleanSearchTerm(g("q"));
-  if (term) query = query.or(`title.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
+  if (term) query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
   if (g("land_type")) query = query.eq("land_type", g("land_type"));
   if (g("min_price")) query = query.gte("price", Number(g("min_price")));
   if (g("max_price")) query = query.lte("price", Number(g("max_price")));

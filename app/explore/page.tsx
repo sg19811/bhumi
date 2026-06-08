@@ -30,7 +30,7 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
 
   let query = supabase.from("listings").select("*").eq("status", "active");
   const term = cleanSearchTerm(sp.q);
-  if (term) query = query.or(`title.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
+  if (term) query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,district.ilike.%${term}%,taluka.ilike.%${term}%,village.ilike.%${term}%`);
   if (sp.land_type) query = query.eq("land_type", sp.land_type);
   if (sp.min_price) query = query.gte("price", Number(sp.min_price));
   if (sp.max_price) query = query.lte("price", Number(sp.max_price));
