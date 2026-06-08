@@ -58,6 +58,18 @@ export function validateProjectFields(
   return null;
 }
 
+// Map draft document rows → project_documents insert rows for a listing.
+export function docRowsForInsert(listingId: string, docs: { label: string; url: string; doc_type: string }[]) {
+  return docs
+    .filter((d) => d.url.trim() !== "" && d.label.trim() !== "")
+    .map((d) => ({
+      listing_id: listingId,
+      label: d.label.trim(),
+      url: d.url.trim(),
+      doc_type: d.doc_type || "other",
+    }));
+}
+
 // Map draft plot rows → farm_project_plots insert rows for a listing.
 export function plotRowsForInsert(listingId: string, plots: { plot_label: string; size_value: string; size_unit: string; price: string; status: string }[]) {
   return plots

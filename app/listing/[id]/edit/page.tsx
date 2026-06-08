@@ -10,8 +10,9 @@ import LocationField from "@/app/components/LocationField";
 import Link from "next/link";
 import ProjectFieldsStep from "@/app/components/farm-plots/ProjectFieldsStep";
 import PlotInventoryEditor, { type DraftPlot } from "@/app/components/farm-plots/PlotInventoryEditor";
+import ProjectDocumentsEditor, { type DraftDoc } from "@/app/components/farm-plots/ProjectDocumentsEditor";
 import { isProjectType } from "@/app/lib/farm-plots/types";
-import { collectProjectFields, validateProjectFields, plotRowsForInsert } from "@/app/lib/farm-plots/submit";
+import { collectProjectFields, validateProjectFields, plotRowsForInsert, docRowsForInsert } from "@/app/lib/farm-plots/submit";
 
 export default function EditListing() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,7 @@ export default function EditListing() {
   const [error, setError] = useState("");
   const [landType, setLandType] = useState("");
   const [plots, setPlots] = useState<DraftPlot[]>([]);
+  const [docs, setDocs] = useState<DraftDoc[]>([]);
 
   useEffect(() => {
     supabase.from("listings").select("*").eq("id", id).single().then(({ data }) => {
@@ -42,6 +44,14 @@ export default function EditListing() {
         size_unit: ((p.size_unit as string) ?? "sqft") as DraftPlot["size_unit"],
         price: p.price != null ? String(p.price) : "",
         status: ((p.status as string) ?? "available") as DraftPlot["status"],
+      })));
+    });
+    // Existing project documents (table may not exist until the migration runs — handled gracefully).
+    supabase.from("project_documents").select("*").eq("listing_id", id).order("created_at", { ascending: true }).then(({ data }) => {
+      if (data?.length) setDocs(data.map((d: Record<string, unknown>) => ({
+        label: (d.label as string) ?? "",
+        url: (d.url as string) ?? "",
+        doc_type: (d.doc_type as string) ?? "other",
       })));
     });
   }, [id]);
@@ -98,6 +108,12 @@ export default function EditListing() {
         await supabase.from("farm_project_plots").delete().eq("listing_id", id);
         const rows = plotRowsForInsert(id, plots);
         if (rows.length) await supabase.from("farm_project_plots").insert(rows);
+      } catch { /* best-effort */ }
+      // Sync project documents (replace-all). Best-effort: table may not exist until the migration runs.
+      try {
+        await supabase.from("project_documents").delete().eq("listing_id", id);
+        const docRows = docRowsForInsert(id, docs);
+        if (docRows.length) await supabase.from("project_documents").insert(docRows);
       } catch { /* best-effort */ }
     }
     setSaving(false);
@@ -165,6 +181,7 @@ export default function EditListing() {
               <div className="rounded-2xl border border-gray-200 p-5">
                 <PlotInventoryEditor value={plots} onChange={setPlots} />
               </div>
+              <ProjectDocumentsEditor value={docs} onChange={setDocs} />
             </div>
           )}
 

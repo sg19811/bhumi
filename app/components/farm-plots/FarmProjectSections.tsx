@@ -3,6 +3,8 @@ import ProjectOverviewCard from "@/app/components/farm-plots/ProjectOverviewCard
 import ProjectRiskPanel from "@/app/components/farm-plots/ProjectRiskPanel";
 import ProjectTransparency from "@/app/components/farm-plots/ProjectTransparency";
 import ProjectWhatsAppBrochure from "@/app/components/farm-plots/ProjectWhatsAppBrochure";
+import SiteVisitButton from "@/app/components/farm-plots/SiteVisitButton";
+import ProjectDocuments from "@/app/components/farm-plots/ProjectDocuments";
 import PlotInventoryTable from "@/app/components/farm-plots/PlotInventoryTable";
 import AmenitiesGrid from "@/app/components/farm-plots/AmenitiesGrid";
 import DeveloperProfileCard from "@/app/components/farm-plots/DeveloperProfileCard";
@@ -27,8 +29,12 @@ export default async function FarmProjectSections({ listing }: { listing: Record
       <ProjectOverviewCard listing={listing} />
       <ProjectRiskPanel listing={listing} />
       <ProjectTransparency listing={listing} />
-      <div className="mb-8"><ProjectWhatsAppBrochure listing={listing} /></div>
+      <div className="mb-8 flex flex-wrap gap-3">
+        <SiteVisitButton listingId={String(listing.id)} />
+        <ProjectWhatsAppBrochure listing={listing} />
+      </div>
       <PlotInventoryTable listingId={String(listing.id)} />
+      <ProjectDocuments listingId={String(listing.id)} />
       <AmenitiesGrid amenities={amenities} />
       <TotalCostCalculator
         plotPrice={typeof listing?.price === "number" ? listing.price : undefined}

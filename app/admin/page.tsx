@@ -89,6 +89,7 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState<any[]>([]);
   const [demand, setDemand] = useState<any[]>([]);
   const [legalLeads, setLegalLeads] = useState<any[]>([]);
+  const [siteVisits, setSiteVisits] = useState<any[]>([]);
   const [liveStates, setLiveStates] = useState<string[]>([]);
   const [listingQuery, setListingQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -97,7 +98,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [l, i, b, s, v, r, d, g, ls] = await Promise.all([
+      const [l, i, b, s, v, r, d, g, ls, sv] = await Promise.all([
         supabase.from("listings").select("*").order("created_at", { ascending: false }),
         supabase.from("inquiries").select("*, listings(title)").order("created_at", { ascending: false }),
         supabase.from("buyer_interests").select("*").order("created_at", { ascending: false }),
@@ -107,6 +108,8 @@ export default function AdminDashboard() {
         supabase.from("demand_signals").select("*").order("created_at", { ascending: false }).limit(1000),
         supabase.from("legal_inquiries").select("*").order("created_at", { ascending: false }).limit(200),
         supabase.from("legal_state_rules").select("state").eq("published", true),
+        // Phase 2 (table may not exist yet → handled defensively below).
+        supabase.from("site_visit_requests").select("*, listings(title)").order("created_at", { ascending: false }).limit(200),
       ]);
       setListings(l.data ?? []);
       setInquiries(i.data ?? []);
@@ -117,12 +120,18 @@ export default function AdminDashboard() {
       setDemand(d.data ?? []);
       setLegalLeads(g.data ?? []);
       setLiveStates((ls.data ?? []).map((x: any) => x.state));
+      setSiteVisits(sv.data ?? []);
     })();
   }, [isAdmin]);
 
   async function resolveReport(reportId: string) {
     await supabase.from("reports").update({ resolved: true }).eq("id", reportId);
     setReports((cur) => cur.filter((x) => x.id !== reportId));
+  }
+
+  async function setSiteVisitStatus(id: string, status: string) {
+    await supabase.from("site_visit_requests").update({ status }).eq("id", id);
+    setSiteVisits((cur) => cur.map((x) => (x.id === id ? { ...x, status } : x)));
   }
 
   function onListingStatusChange(id: string, status: string) {
@@ -221,6 +230,33 @@ export default function AdminDashboard() {
                     <p className="text-xs text-gray-500">on <Link href={`/listing/${r.listing_id}`} className="text-green-700 hover:underline">{r.listings?.title ?? "a listing"}</Link> · {new Date(r.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
                   </div>
                   <button onClick={() => resolveReport(r.id)} className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50">Dismiss</button>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {siteVisits.length > 0 && (
+          <section className="mb-10">
+            <h2 className="mb-4 text-lg font-semibold">Site-visit requests ({siteVisits.length})</h2>
+            <div className="divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white shadow-sm">
+              {siteVisits.map((sv) => (
+                <div key={sv.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-gray-900">
+                      {sv.name || "Someone"} · <a href={`tel:${sv.contact_phone}`} className="text-green-700 hover:underline">{sv.contact_phone}</a>
+                    </p>
+                    <p className="mt-0.5 text-xs text-gray-500">
+                      for <Link href={`/listing/${sv.listing_id}`} className="text-green-700 hover:underline">{sv.listings?.title ?? "a listing"}</Link>
+                      {sv.preferred_date ? ` · prefers ${new Date(sv.preferred_date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}` : ""}
+                      {` · ${new Date(sv.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`}
+                    </p>
+                    {sv.notes && <p className="mt-1 text-xs text-gray-600">“{sv.notes}”</p>}
+                  </div>
+                  <select value={sv.status ?? "new"} onChange={(e) => setSiteVisitStatus(sv.id, e.target.value)}
+                    className="shrink-0 rounded-full border border-gray-300 px-3 py-1.5 text-xs text-gray-700">
+                    {["new", "contacted", "scheduled", "done", "cancelled"].map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </div>
               ))}
             </div>

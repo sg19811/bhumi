@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import Link from "next/link";
+import { VERIFICATION_TIERS } from "@/app/lib/farm-plots/verification";
 
 const statusStyle: Record<string, string> = {
   active: "bg-green-100 text-green-800",
@@ -13,8 +14,16 @@ const statusStyle: Record<string, string> = {
 export default function AdminListingRow({ listing, onStatusChange }: { listing: any; onStatusChange?: (id: string, status: string) => void }) {
   const [verified, setVerified] = useState(listing.is_verified);
   const [status, setStatus] = useState<string>(listing.status ?? "active");
+  const [tier, setTier] = useState<string>(listing.verification_tier ?? "unverified");
   const [deleted, setDeleted] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  async function changeTier(next: string) {
+    setBusy(true);
+    const { error } = await supabase.from("listings").update({ verification_tier: next }).eq("id", listing.id);
+    if (!error) setTier(next);
+    setBusy(false);
+  }
 
   async function toggleVerify() {
     setBusy(true);
@@ -57,6 +66,10 @@ export default function AdminListingRow({ listing, onStatusChange }: { listing: 
           className={`rounded-full px-2 py-1 text-xs ${verified ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500 hover:bg-green-50"}`}>
           {verified ? "✓ Verified" : "Mark verified"}
         </button>
+        <select value={tier} onChange={(e) => changeTier(e.target.value)} disabled={busy} title="Verification tier"
+          className="rounded-full border border-gray-200 bg-white px-2 py-1 text-xs text-gray-600">
+          {VERIFICATION_TIERS.map((t) => <option key={t.value} value={t.value}>{t.short}</option>)}
+        </select>
         <button onClick={remove} disabled={busy} className="rounded px-2 py-1 text-xs text-red-600 hover:bg-red-50">Delete</button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { formatINRShort } from "@/app/lib/format";
 import CorridorBadge from "@/app/components/farm-plots/CorridorBadge";
+import VerificationBadge from "@/app/components/farm-plots/VerificationBadge";
 
 const humanize = (s?: string | null) => (s ? s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null);
 
@@ -45,7 +46,10 @@ export default function ProjectOverviewCard({ listing }: { listing: Record<strin
     <section className="mb-8 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">{projectName ? projectName : "Project overview"}</h2>
-        {corridor && <CorridorBadge slug={corridor} />}
+        <div className="flex flex-wrap items-center gap-2">
+          <VerificationBadge tier={str("verification_tier")} />
+          {corridor && <CorridorBadge slug={corridor} />}
+        </div>
       </div>
       {stats.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
