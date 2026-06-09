@@ -215,28 +215,34 @@ export default async function Home() {
 
       {/* Plan your purchase — tools */}
       <section className="mx-auto max-w-5xl px-6 pt-16 sm:pt-20">
-        <h2 className="mb-1 text-2xl font-semibold sm:text-3xl">Plan your purchase</h2>
-        <p className="mb-6 text-gray-500">Free calculators for buying and selling agricultural land.</p>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="mb-6 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-semibold sm:text-3xl">Plan your purchase</h2>
+            <p className="mt-0.5 text-gray-500">Free calculators for buying and selling agricultural land.</p>
+          </div>
+          <Link href="/tools" className="shrink-0 text-sm font-medium text-green-800 hover:underline">All tools →</Link>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: "/tools/stamp-duty-calculator", label: "Stamp duty & registration" },
-            { href: "/tools/emi-calculator", label: "EMI calculator" },
-            { href: "/tools/loan-eligibility-calculator", label: "Loan eligibility" },
-            { href: "/tools/price-per-unit", label: "Price per unit" },
-            { href: "/tools/roi-calculator", label: "ROI calculator" },
-            { href: "/tools/area-converter", label: "Area converter" },
+            { href: "/tools/stamp-duty-calculator", icon: "🧾", label: "Stamp duty & registration", desc: "Total cost to register land, by state." },
+            { href: "/tools/emi-calculator", icon: "💰", label: "EMI calculator", desc: "Monthly payment on a land loan." },
+            { href: "/tools/loan-eligibility-calculator", icon: "🏦", label: "Loan eligibility", desc: "How much you can borrow." },
+            { href: "/tools/price-per-unit", icon: "⚖️", label: "Price per unit", desc: "₹ per acre, guntha, cent, sq ft." },
+            { href: "/tools/capital-gains-calculator", icon: "📈", label: "Capital gains tax", desc: "Tax estimate when you sell." },
+            { href: "/tools/roi-calculator", icon: "📊", label: "ROI calculator", desc: "Returns from growth + income." },
+            { href: "/tools/appreciation-calculator", icon: "🌱", label: "Appreciation", desc: "Project future land value." },
+            { href: "/tools/area-converter", icon: "📐", label: "Area converter", desc: "Acres, gunthas, hectares, cents." },
           ].map((tool) => (
             <Link
               key={tool.href}
               href={tool.href}
-              className="inline-flex items-center rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 transition-colors hover:border-green-600 hover:text-green-800"
+              className="group rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-green-300 hover:shadow-md"
             >
-              {tool.label}
+              <span className="text-xl" aria-hidden="true">{tool.icon}</span>
+              <h3 className="mt-1.5 font-semibold leading-tight text-gray-900 group-hover:text-green-800">{tool.label}</h3>
+              <p className="mt-0.5 text-sm text-gray-500">{tool.desc}</p>
             </Link>
           ))}
-          <Link href="/tools" className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:text-green-900 hover:underline">
-            All tools →
-          </Link>
         </div>
       </section>
 
