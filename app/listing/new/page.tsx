@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import { trackEvent } from "@/app/lib/analytics";
 import Link from "next/link";
 import Header from "@/app/components/Header";
 import PhotoUpload from "@/app/components/PhotoUpload";
@@ -99,6 +100,7 @@ export default function NewListing() {
       if (rows.length) { try { await supabase.from("farm_project_plots").insert(rows); } catch { /* best-effort */ } }
     }
     setSubmitting(false);
+    trackEvent("listing_posted", { land_type: landType || null, has_photos: photos.length > 0 });
     setSuccess(true); setPhotos([]); setVideos([]); setPlots([]); setLandType(""); e.currentTarget.reset();
   }
 

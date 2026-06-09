@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
+import { trackEvent } from "@/app/lib/analytics";
 import Link from "next/link";
 import Logo from "@/app/components/Logo";
 
@@ -11,6 +12,7 @@ export default function BuyLand() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const field = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,6 +46,7 @@ export default function BuyLand() {
     if (dbError) {
       setError(dbError.message);
     } else {
+      trackEvent("requirement_posted", { intent: f.get("intent"), signed_in: !!user });
       setSuccess(true);
     }
   }
@@ -151,123 +154,75 @@ export default function BuyLand() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-green-800">Where?</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Preferred district</label>
-                <input
-                  name="preferred_district"
-                  placeholder="e.g. Mysuru"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Preferred taluka</label>
-                <input
-                  name="preferred_taluka"
-                  placeholder="e.g. Hunsur"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-lg font-semibold text-green-800">Budget and size</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Min budget (₹)</label>
-                <input
-                  name="budget_min"
-                  type="number"
-                  placeholder="e.g. 2000000"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Max budget (₹)</label>
-                <input
-                  name="budget_max"
-                  type="number"
-                  placeholder="e.g. 10000000"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Min area (acres)</label>
-                <input
-                  name="acreage_min"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g. 1"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Max area (acres)</label>
-                <input
-                  name="acreage_max"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g. 5"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Irrigation preference</label>
-              <select
-                name="irrigation_pref"
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-              >
-                <option value="">No preference</option>
-                <option value="borewell">Borewell</option>
-                <option value="canal">Canal</option>
-                <option value="river">River</option>
-                <option value="any">Any irrigation</option>
-              </select>
-            </div>
-          </section>
-
-          <section className="space-y-4">
             <h2 className="text-lg font-semibold text-green-800">Your contact</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone *</label>
+              <input
+                name="contact_phone"
+                required
+                inputMode="numeric"
+                pattern="[0-9]{10}"
+                title="Enter a 10-digit phone number"
+                placeholder="e.g. 9876543210"
+                className={field}
+              />
+              <p className="mt-1 text-xs text-gray-400">That&apos;s all we need to get started. Add details below only if you want better-matched results.</p>
+            </div>
+          </section>
+
+          <details className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <summary className="cursor-pointer select-none text-sm font-medium text-green-800">Add location, budget &amp; size (optional)</summary>
+            <div className="mt-5 space-y-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Preferred district</label>
+                  <input name="preferred_district" placeholder="e.g. Mysuru" className={field} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Preferred taluka</label>
+                  <input name="preferred_taluka" placeholder="e.g. Hunsur" className={field} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Min budget (₹)</label>
+                  <input name="budget_min" type="number" placeholder="e.g. 2000000" className={field} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Max budget (₹)</label>
+                  <input name="budget_max" type="number" placeholder="e.g. 10000000" className={field} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Min area (acres)</label>
+                  <input name="acreage_min" type="number" step="0.1" placeholder="e.g. 1" className={field} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Max area (acres)</label>
+                  <input name="acreage_max" type="number" step="0.1" placeholder="e.g. 5" className={field} />
+                </div>
+              </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Phone *</label>
-                <input
-                  name="contact_phone"
-                  required
-                  inputMode="numeric"
-                  pattern="[0-9]{10}"
-                  title="Enter a 10-digit phone number"
-                  placeholder="e.g. 9876543210"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
+                <label className="block text-sm font-medium mb-1">Irrigation preference</label>
+                <select name="irrigation_pref" className={field}>
+                  <option value="">No preference</option>
+                  <option value="borewell">Borewell</option>
+                  <option value="canal">Canal</option>
+                  <option value="river">River</option>
+                  <option value="any">Any irrigation</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">WhatsApp</label>
-                <input
-                  name="contact_whatsapp"
-                  inputMode="numeric"
-                  pattern="[0-9]{10}"
-                  title="Enter a 10-digit WhatsApp number"
-                  placeholder="Same as phone if blank"
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-                />
+                <input name="contact_whatsapp" inputMode="numeric" pattern="[0-9]{10}" title="Enter a 10-digit WhatsApp number" placeholder="Same as phone if blank" className={field} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Anything else?</label>
+                <textarea name="notes" rows={3} placeholder="Any specific requirements — soil type, nearby town, timeline..." className={field} />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Anything else?</label>
-              <textarea
-                name="notes"
-                rows={3}
-                placeholder="Any specific requirements — soil type, nearby town, timeline..."
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15"
-              />
-            </div>
-          </section>
+          </details>
 
           <button
             type="submit"
