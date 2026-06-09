@@ -35,17 +35,22 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const { data: l } = await supabase
     .from("listings")
-    .select("title, description, price, area_value, area_unit, village, taluka, district, photos")
+    .select("title, description, price, price_basis, area_value, area_unit, land_type, village, taluka, district, photos")
     .eq("id", id)
     .single();
 
   if (!l) return { title: "Listing not found — AcreHub" };
 
   const location = [l.village, l.taluka, l.district].filter(Boolean).join(", ");
-  const title = `${l.title} — ${formatINR(l.price)} · AcreHub`;
+  const district = l.district || l.taluka || l.village || "";
+  const typeWord = l.land_type ? landLabel(l.land_type).toLowerCase() : "land";
+  const basis = l.price_basis === "per_acre" ? "/acre" : l.price_basis === "per_guntha" ? "/guntha" : l.price_basis === "per_sqft" ? "/sq ft" : "";
+  const areaPhrase = l.area_value ? `${l.area_value} ${l.area_unit} ${typeWord}` : typeWord;
+  // Richer, keyword-led title: "<title> — 2 acre farmhouse land in Mysuru (₹3 Cr) | AcreHub"
+  const title = `${l.title} — ${areaPhrase}${district ? ` in ${district}` : ""} (${formatINRShort(l.price)}${basis}) | AcreHub`;
   const description =
     (l.description?.trim()?.slice(0, 155)) ||
-    `${l.area_value} ${l.area_unit} of land${location ? ` in ${location}` : ""} for ${formatINR(l.price)} on AcreHub.`;
+    `${areaPhrase}${location ? ` in ${location}` : ""} for ${formatINR(l.price)}${basis} on AcreHub — verified, with real map boundaries, a trust score, and legal clarity.`;
   const image = l.photos?.[0];
 
   return {
