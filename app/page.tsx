@@ -3,6 +3,7 @@ import Header from "@/app/components/Header";
 import SearchBar from "@/app/components/SearchBar";
 import RecentlyViewed from "@/app/components/RecentlyViewed";
 import WantedAreas from "@/app/components/WantedAreas";
+import NotifyMe from "@/app/components/NotifyMe";
 import ListingCard from "@/app/components/ListingCard";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
@@ -260,6 +261,15 @@ export default async function Home() {
               <p className="text-sm leading-relaxed text-gray-600">{t(p.bodyKey)}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Get notified about new land */}
+      <section className="mx-auto max-w-3xl px-6 pb-4 pt-4">
+        <div className="rounded-2xl border border-green-200 bg-green-50 p-6 text-center sm:p-8">
+          <h2 className="text-xl font-semibold text-green-900 sm:text-2xl">Be first to know about new land</h2>
+          <p className="mx-auto mt-1 max-w-md text-sm text-green-800">Get an alert when verified land that fits is listed. No spam — leave anytime.</p>
+          <NotifyMe />
         </div>
       </section>
 

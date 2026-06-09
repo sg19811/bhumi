@@ -7,6 +7,7 @@ import VerifyChecklist from "@/app/components/VerifyChecklist";
 import MapActions from "@/app/components/MapActions";
 import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
+import WhatsAppContactButton from "@/app/components/WhatsAppContactButton";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
 import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
@@ -286,7 +287,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div id="contact" className="scroll-mt-20 rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
-          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
+          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><WhatsAppContactButton whatsapp={listing.contact_whatsapp} phone={listing.contact_phone} title={listing.title} price={listing.price} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
           {(listing.contact_phone || listing.contact_email) && (
             <p className="mt-4 text-sm text-gray-500">
               {listing.contact_phone && (
