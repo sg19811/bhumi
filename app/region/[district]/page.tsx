@@ -6,6 +6,7 @@ import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
 import NotifyMe from "@/app/components/NotifyMe";
 import MarketStats from "@/app/components/MarketStats";
+import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
 import { marketSummary } from "@/app/lib/price-insight";
 import { districtToState } from "@/app/lib/legal/districts";
 import { stateLabel } from "@/app/lib/legal/options";
@@ -28,12 +29,10 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
   const { district } = await params;
   const name = decodeURIComponent(district);
 
-  const { data: listings } = await supabase
-    .from("listings")
-    .select("*")
-    .eq("status", "active")
-    .ilike("district", name)
-    .order("created_at", { ascending: false });
+  const [{ data: listings }, { count: buyersLooking }] = await Promise.all([
+    supabase.from("listings").select("*").eq("status", "active").ilike("district", name).order("created_at", { ascending: false }),
+    supabase.from("buyer_interests").select("id", { count: "exact", head: true }).ilike("preferred_district", name),
+  ]);
 
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
   const types = [...new Set((listings ?? []).map((l) => l.land_type).filter(Boolean))];
@@ -76,6 +75,9 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
             </div>
           )}
           {market && <MarketStats summary={market} scopeLabel={`Land in ${name}`} />}
+          <div className="mt-4 empty:hidden">
+            <BuyersLookingBanner count={buyersLooking ?? 0} district={name} />
+          </div>
           {districtToState(name) && (
             <p className="mt-4 text-sm">
               <Link href={`/legal/state/${districtToState(name)}`} className="font-medium text-green-800 hover:underline">⚖️ Land-buying rules in {stateLabel(districtToState(name)!)} →</Link>

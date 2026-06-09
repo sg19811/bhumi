@@ -8,6 +8,7 @@ import MapActions from "@/app/components/MapActions";
 import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
 import WhatsAppContactButton from "@/app/components/WhatsAppContactButton";
+import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
 import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
@@ -116,6 +117,11 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
     comparablesMap.set(`${r.district}|${r.land_type}|${r.price}|${r.area_value}|${r.area_unit}|${r.price_basis}`, r);
   }
   const priceInsight = buildPriceInsight(listing, [...comparablesMap.values()], landLabel);
+
+  // Honest social proof: how many buyers are actively looking in this district.
+  const { count: buyersLooking } = listing.district
+    ? await supabase.from("buyer_interests").select("id", { count: "exact", head: true }).ilike("preferred_district", listing.district)
+    : { count: 0 };
 
   const url = `https://acrehubindia.com/listing/${listing.id}`;
   const photos: string[] = listing.photos ?? [];
@@ -228,6 +234,10 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             </div>
           </>
         )}
+
+        <div className="mb-6 empty:hidden">
+          <BuyersLookingBanner count={buyersLooking ?? 0} district={listing.district} />
+        </div>
 
         <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
           <div className="rounded-xl border border-gray-200 bg-green-50 p-4 text-center"><p className="text-xl font-bold text-green-800 sm:text-2xl">₹{Number(listing.price).toLocaleString("en-IN")}</p><p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{listing.price_basis === "per_acre" ? "per acre" : listing.price_basis === "per_guntha" ? "per guntha" : listing.price_basis === "per_sqft" ? "per sq ft" : "total"}</p>{ppa && listing.price_basis !== "per_acre" && <p className="mt-1 text-xs text-gray-400">≈ {formatINRShort(ppa)}/acre</p>}{listing.previous_price && Number(listing.previous_price) > Number(listing.price) && <p className="mt-1 text-xs"><span className="font-medium text-red-600">↓ Reduced</span> <span className="text-gray-400 line-through">{formatINRShort(listing.previous_price)}</span></p>}</div>
