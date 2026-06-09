@@ -37,11 +37,18 @@ export default function Privacy() {
             <p>You can edit or remove your listings, and request deletion of your account data by contacting us. Removing a listing removes it from public view.</p>
           </section>
           <section>
-            <h2 className="mb-1 font-semibold text-gray-900">Contact</h2>
-            <p>Questions about privacy? Reach us through the contact details on the site.</p>
+            <h2 className="mb-1 font-semibold text-gray-900">Legal compliance &amp; your rights</h2>
+            <p>AcreHub is an India-first service and aims to handle personal data consistent with India&apos;s <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>. We process your data only for the purposes described above, on the basis of your use of the service and the consent you give when you submit information.</p>
+            <p className="mt-2">Under applicable data-protection law you may have the right to: access the personal data we hold about you, ask us to correct or update it, request its deletion, and withdraw consent. To exercise these rights, contact us using the details below; we&apos;ll respond within a reasonable time.</p>
+            <p className="mt-2"><strong>Visitors from the EU/EEA or UK:</strong> where the GDPR (or UK GDPR) applies to you, you additionally have rights of access, rectification, erasure, restriction of processing, data portability, and the right to lodge a complaint with your local supervisory authority.</p>
+            <p className="mt-2"><strong>Cross-border storage:</strong> our infrastructure provider (Supabase) may store and process data on servers located outside India. By using AcreHub you consent to this transfer and storage. We are reviewing applicable data-localisation requirements as the DPDP rules are finalised.</p>
+          </section>
+          <section>
+            <h2 className="mb-1 font-semibold text-gray-900">Contact &amp; grievances</h2>
+            <p>For privacy questions or to exercise your data rights — or to raise a grievance about how your data is handled — reach us through the contact details on the site. We&apos;ll appoint and publish a dedicated grievance/data-protection contact as required before scaling.</p>
           </section>
           <p className="rounded-xl bg-gray-50 p-4 text-xs text-gray-500">
-            This is a plain-language summary, not legal advice. Have a lawyer review and tailor it before relying on it for a production business.
+            This is a plain-language summary, <strong>not legal advice and not yet reviewed by a lawyer</strong>. The compliance statements above (including DPDP Act, GDPR, and data-localisation references) are indicative and must be reviewed and tailored by a qualified lawyer before you rely on them for a production business.
           </p>
         </div>
       </main>
