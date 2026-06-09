@@ -4,7 +4,9 @@ const nextConfig: NextConfig = {
   images: {
     // Supabase Storage public URLs:
     // https://<project>.supabase.co/storage/v1/object/public/<bucket>/<path>
-    // Optimized by Next's built-in optimizer (WebP + responsive sizes) — no paid CDN.
+    // Optimized by Next's built-in optimizer (responsive sizes) — no paid CDN.
+    // AVIF first (smaller than WebP → faster LCP), WebP fallback for older browsers.
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
