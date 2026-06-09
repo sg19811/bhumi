@@ -3,13 +3,14 @@ import { supabase } from "@/app/lib/supabase";
 import { CORRIDORS } from "@/app/lib/farm-plots/corridors";
 import { CITIES } from "@/app/lib/farm-plots/cities";
 import { getDeveloperNames, slugifyDeveloper } from "@/app/lib/farm-plots/developers";
+import { GUIDES } from "@/app/lib/guides";
 
 const BASE = "https://acrehubindia.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: listings } = await supabase.from("listings").select("id, updated_at, district, land_type").eq("status", "active");
 
-  const staticPages = ["", "/explore", "/listings", "/buy", "/sell", "/requirements", "/legal", "/legal/wizard", "/legal/checklist", "/legal/due-diligence", "/legal/lawyers", "/legal/services", "/legal/articles", "/legal/compare", "/legal/nri", "/legal/company", "/legal/talk-to-lawyer", "/about", "/how-it-works", "/faq", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/tools/roi-calculator", "/tools/appreciation-calculator", "/tools/stamp-duty-calculator", "/tools/loan-eligibility-calculator", "/tools/capital-gains-calculator", "/tools/price-per-unit", "/privacy", "/terms", "/listing/new"].map((p) => ({
+  const staticPages = ["", "/explore", "/listings", "/buy", "/sell", "/requirements", "/legal", "/legal/wizard", "/legal/checklist", "/legal/due-diligence", "/legal/lawyers", "/legal/services", "/legal/articles", "/legal/compare", "/legal/nri", "/legal/company", "/legal/talk-to-lawyer", "/about", "/how-it-works", "/faq", "/guides", "/tools", "/tools/area-converter", "/tools/emi-calculator", "/tools/roi-calculator", "/tools/appreciation-calculator", "/tools/stamp-duty-calculator", "/tools/loan-eligibility-calculator", "/tools/capital-gains-calculator", "/tools/price-per-unit", "/privacy", "/terms", "/listing/new"].map((p) => ({
     url: `${BASE}${p}`,
     lastModified: new Date(),
   }));
@@ -67,5 +68,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...farmPlotPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
+  const guidePages = GUIDES.map((g) => ({
+    url: `${BASE}/guides/${g.slug}`,
+    lastModified: new Date(g.updated),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...farmPlotPages, ...guidePages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
 }
