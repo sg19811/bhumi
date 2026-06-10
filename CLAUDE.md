@@ -201,7 +201,17 @@ MVP + Stage 2 are live in production:
   shown as a sorted badge on `/admin/co-buy/leads`. **Intelligence** dashboard `/admin/co-buy/intelligence`.
   **Templates** `/admin/templates`, **Team roles** `/admin/team`, **Audit** `/admin/audit`. Members can propose a
   service (`/co-buy/circles/[id]/services/request`, `initiator_type='member'`). Audit helper `app/lib/co-buy/audit.ts`.
-- Phase 5 (post-purchase governance) spec in `docs/buying-circles-phase-5-spec.md` — gated on a completed circle.
+**Buying Circles — Phase 5 BUILT** (post-purchase governance; spec `docs/buying-circles-phase-5-spec.md`):
+- Migration **`supabase-co-buy-phase-5.sql`**: post-purchase columns on circles + 7 tables (`co_buy_expenses`,
+  `_member_dues`, `_proposals`, `_votes`, `_exit_interests`, `_annual_reviews`, `_usage_zones`).
+- Admin: post-purchase transition + exit queue on the circle page; `/admin/co-buy/circles/[id]/expenses`
+  (entry + allocation: equal/by-share/specific → rolls up member dues), `/proposals` (create + close + decision),
+  `/admin/co-buy/maintenance` (subscriptions + dormant-circle detection).
+- Member: `/co-buy/circles/[id]/expenses` (ledger + my dues), `/proposals` + `[pid]` (advisory voting),
+  `/exit` (register exit intent). Post-purchase links appear on the circle dashboard once `post_purchase_at` is set.
+- Lib `app/lib/co-buy/post-purchase/` (pure allocation + voting tally, actions, constants). **Advisory only** —
+  votes don't enforce, expenses move no money, exits record intent; legal authority is the co-ownership agreement.
+- **All 5 phases now built.** Anything beyond (public vendor directory, resale marketplace) is a fresh product decision.
 
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 
