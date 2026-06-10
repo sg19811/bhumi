@@ -74,7 +74,10 @@ export default function MemberCircle() {
         <span className="inline-flex rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800">{CIRCLE_STATUS_LABELS[circle?.status as keyof typeof CIRCLE_STATUS_LABELS] ?? (circle?.status as string)}</span>
         <h1 className="mt-2 text-3xl font-bold sm:text-4xl">{circle?.name as string}</h1>
         {circle?.private_summary ? <p className="mt-2 text-gray-600">{circle.private_summary as string}</p> : <p className="mt-2 text-sm text-gray-500">We&apos;re progressing this circle. AcrehubIndia will contact you before each milestone.</p>}
-        {circle?.whatsapp_group_link ? <a href={circle.whatsapp_group_link as string} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2 text-sm font-medium text-white">💬 Join the WhatsApp group</a> : null}
+        <div className="mt-4 flex flex-wrap gap-3">
+          {circle?.whatsapp_group_link ? <a href={circle.whatsapp_group_link as string} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2 text-sm font-medium text-white">💬 Join the WhatsApp group</a> : null}
+          <Link href={`/co-buy/circles/${id}/services`} className="inline-flex items-center rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View services</Link>
+        </div>
 
         {/* Milestones */}
         <section className={`${card} mt-6`}>
