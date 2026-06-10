@@ -192,7 +192,16 @@ MVP + Stage 2 are live in production:
   visibility-filtered updates, compliance disclaimers). "View services" on the circle dashboard.
 - Lib `app/lib/co-buy/services/` (catalog with 13 service + 22 vendor categories + compliance copy, service-actions).
   No money flows through the platform; "approved" = circle agreed to pay offline. **Lawyer-review the copy before public use.**
-- Phase 4 (scoring/roles), Phase 5 (governance) specs in `docs/buying-circles-phase-{4,5}-spec.md` — gated on real activity.
+**Buying Circles — Phase 4 BUILT** (scoring, team, templates, intelligence, audit; spec `docs/buying-circles-phase-4-spec.md`):
+- Migration **`supabase-co-buy-phase-4.sql`**: `acrehub_team_roles`, `acrehub_message_templates`, `acrehub_audit_log`,
+  lead-score columns on `co_buy_interests`, multi-owner columns on circles/service-requests, 4 reporting views
+  (corridor demand, funnel, service revenue, vendor performance), `is_team_member()`/`has_team_role()` helpers.
+  (Also adds nullable `corridor`/`state` to `co_buy_opportunities` so the corridor view is valid.)
+- **Lead scoring** (`app/lib/co-buy/lead-scoring.ts`, pure) computed + stored on interest submit (`/api/co-buy/interest`);
+  shown as a sorted badge on `/admin/co-buy/leads`. **Intelligence** dashboard `/admin/co-buy/intelligence`.
+  **Templates** `/admin/templates`, **Team roles** `/admin/team`, **Audit** `/admin/audit`. Members can propose a
+  service (`/co-buy/circles/[id]/services/request`, `initiator_type='member'`). Audit helper `app/lib/co-buy/audit.ts`.
+- Phase 5 (post-purchase governance) spec in `docs/buying-circles-phase-5-spec.md` — gated on a completed circle.
 
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 

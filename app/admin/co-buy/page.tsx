@@ -66,6 +66,10 @@ export default function AdminCoBuy() {
           <Link href="/admin/co-buy/circles" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Circles →</Link>
           <Link href="/admin/co-buy/services" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Services →</Link>
           <Link href="/admin/vendors" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Vendors →</Link>
+          <Link href="/admin/co-buy/intelligence" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Intelligence →</Link>
+          <Link href="/admin/templates" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Templates →</Link>
+          <Link href="/admin/team" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Team →</Link>
+          <Link href="/admin/audit" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Audit →</Link>
         </div>
 
         <h2 className="mb-3 text-lg font-semibold">Opportunities</h2>

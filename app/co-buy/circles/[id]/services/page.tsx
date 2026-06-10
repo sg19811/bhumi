@@ -27,7 +27,10 @@ export default function MemberServices() {
       <Header />
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8 sm:px-6">
         <nav className="mb-3 text-sm text-gray-500"><Link href={`/co-buy/circles/${id}`} className="hover:text-green-800">Circle</Link> / Services</nav>
-        <h1 className="text-3xl font-bold sm:text-4xl">Services</h1>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-3xl font-bold sm:text-4xl">Services</h1>
+          <Link href={`/co-buy/circles/${id}/services/request`} className="mt-1 shrink-0 rounded-full border border-green-700 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Request a service</Link>
+        </div>
         <p className="mt-2 text-sm text-gray-500">Services AcrehubIndia is coordinating for your circle. Costs are always shown broken out; no money is collected through this platform.</p>
         <div className="mt-6 space-y-3">
           {reqs.map((r) => (
