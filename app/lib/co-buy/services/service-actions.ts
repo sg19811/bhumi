@@ -3,6 +3,7 @@
 // No money flows here — these track scope, cost estimates, approval, and progress.
 import { supabase } from "@/app/lib/supabase";
 import { logCircleEvent } from "@/app/lib/co-buy/circles/circle-actions";
+import { recordAudit } from "@/app/lib/co-buy/audit";
 import { serviceCategoryLabel } from "./catalog";
 
 export async function createServiceRequest(input: {
@@ -29,6 +30,7 @@ export async function recordApproval(reqId: string, circleId: string, summary: s
   }).eq("id", reqId);
   if (error) return { ok: false, error: error.message };
   await logCircleEvent(circleId, { event_type: "service_update_posted", title: "A service was approved by the circle" });
+  await recordAudit({ entity_type: "service_request", entity_id: reqId, action: "approved", after: { approved_by_summary: summary }, notes: "Service approved by circle" });
   return { ok: true };
 }
 

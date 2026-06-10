@@ -1,5 +1,6 @@
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
 import { CO_BUY_ACK_KEYS } from "@/app/lib/co-buy/disclaimers";
+import { computeLeadScore } from "@/app/lib/co-buy/lead-scoring";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
   const opportunityId = String(body.opportunity_id ?? "");
   const { data: opp } = await db
     .from("co_buy_opportunities")
-    .select("id, status, current_interest_count")
+    .select("id, status, current_interest_count, min_contribution")
     .eq("id", opportunityId)
     .maybeSingle();
   if (!opp || !["open_for_interest", "forming_circle"].includes(opp.status)) {
@@ -57,9 +58,24 @@ export async function POST(request: Request) {
 
   const acks = Object.fromEntries(CO_BUY_ACK_KEYS.map((k) => [k, true]));
 
+  // Phase 4: compute + store the lead score from the submitted fields.
+  const scored = computeLeadScore(
+    {
+      budget_max: toNum(body.budget_max), timeline: body.timeline ? String(body.timeline) : null,
+      phone, whatsapp: body.whatsapp ? String(body.whatsapp) : null,
+      desired_share_label: body.desired_share_label ? String(body.desired_share_label) : null,
+      site_visit_interest: body.site_visit_interest === true, buyer_type: buyerType,
+      coownership_comfort: body.coownership_comfort ? String(body.coownership_comfort) : null,
+      service_interests: toArr(body.service_interests), preferred_call_time: body.preferred_call_time ? String(body.preferred_call_time) : null,
+      notes: body.notes ? String(body.notes) : null,
+    },
+    { min_contribution: opp.min_contribution }
+  );
+
   const { data: inserted, error } = await db
     .from("co_buy_interests")
     .insert({
+      lead_score: scored.score, lead_score_label: scored.label, lead_score_breakdown: { factors: scored.factors }, lead_score_updated_at: new Date().toISOString(),
       opportunity_id: opportunityId,
       user_id: null,
       buyer_type: buyerType,

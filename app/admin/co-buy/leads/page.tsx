@@ -7,6 +7,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import AdminCoBuyLeadDrawer from "@/app/components/co-buy/AdminCoBuyLeadDrawer";
 import { CO_BUY_INTEREST_STATUS_LABELS } from "@/app/lib/co-buy/types";
+import { LEAD_SCORE_BADGE, LEAD_SCORE_LABEL_TEXT, type LeadScoreLabel } from "@/app/lib/co-buy/lead-scoring";
 
 type Lead = Record<string, unknown> & { id: string; status: string };
 
@@ -23,7 +24,7 @@ export default function AdminCoBuyLeads() {
       const { data } = await supabase
         .from("co_buy_interests")
         .select("*, co_buy_opportunities(title)")
-        .order("created_at", { ascending: false })
+        .order("lead_score", { ascending: false, nullsFirst: false })
         .limit(500);
       setLeads((data as Lead[]) ?? []);
     })();
@@ -57,14 +58,14 @@ export default function AdminCoBuyLeads() {
 
         <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white">
           <table className="w-full text-sm">
-            <thead><tr className="border-b border-gray-200 text-left text-xs text-gray-500"><th className="p-3">Name</th><th className="p-3">Phone</th><th className="p-3">Opportunity</th><th className="p-3">Type</th><th className="p-3">Timeline</th><th className="p-3">Status</th><th className="p-3">When</th></tr></thead>
+            <thead><tr className="border-b border-gray-200 text-left text-xs text-gray-500"><th className="p-3">Score</th><th className="p-3">Name</th><th className="p-3">Phone</th><th className="p-3">Opportunity</th><th className="p-3">Timeline</th><th className="p-3">Status</th><th className="p-3">When</th></tr></thead>
             <tbody>
               {shown.map((l) => (
                 <tr key={l.id} onClick={() => setSelected(l)} className="cursor-pointer border-b border-gray-100 hover:bg-green-50/40">
+                  <td className="p-3">{l.lead_score_label ? <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${LEAD_SCORE_BADGE[l.lead_score_label as LeadScoreLabel] ?? "bg-gray-100 text-gray-500"}`}>{(l.lead_score as number) ?? ""} · {LEAD_SCORE_LABEL_TEXT[l.lead_score_label as LeadScoreLabel] ?? ""}</span> : <span className="text-xs text-gray-300">—</span>}</td>
                   <td className="p-3 font-medium">{String(l.name)}</td>
                   <td className="p-3 text-gray-600">{String(l.phone)}</td>
                   <td className="p-3 text-gray-600">{(l.co_buy_opportunities as { title?: string })?.title ?? "—"}</td>
-                  <td className="p-3 text-gray-600">{String(l.buyer_type ?? "—")}</td>
                   <td className="p-3 text-gray-600">{String(l.timeline ?? "—")}</td>
                   <td className="p-3">{CO_BUY_INTEREST_STATUS_LABELS[l.status as keyof typeof CO_BUY_INTEREST_STATUS_LABELS] ?? l.status}</td>
                   <td className="p-3 text-gray-400">{l.created_at ? new Date(l.created_at as string).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : ""}</td>
