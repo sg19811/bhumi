@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/app/lib/supabase";
 import { CO_BUY_INTEREST_STATUS_LABELS, type CoBuyInterestStatus } from "@/app/lib/co-buy/types";
 import { formatINRShort } from "@/app/lib/format";
 import { serviceCategoryLabel } from "@/app/lib/co-buy/service-categories";
+import { addMemberFromInterest } from "@/app/lib/co-buy/circles/circle-actions";
 
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return v ? (
@@ -28,6 +30,23 @@ export default function AdminCoBuyLeadDrawer({
   const [status, setStatus] = useState<CoBuyInterestStatus>((lead.status as CoBuyInterestStatus) ?? "new");
   const [notes, setNotes] = useState((lead.qualification_notes as string) ?? "");
   const [busy, setBusy] = useState(false);
+  const [circles, setCircles] = useState<{ id: string; name: string }[]>([]);
+  const [circleMsg, setCircleMsg] = useState("");
+
+  const oppId = lead.opportunity_id as string | undefined;
+  useEffect(() => {
+    if (!oppId) return;
+    supabase.from("co_buy_circles").select("id, name").eq("opportunity_id", oppId).in("status", ["forming", "threshold_pending"])
+      .then(({ data }) => setCircles((data as { id: string; name: string }[]) ?? []));
+  }, [oppId]);
+
+  const memberPayload = { interest_id: lead.id, display_name: lead.city ? `${lead.name}, ${lead.city}` : String(lead.name), desired_share_label: (lead.desired_share_label as string) ?? null, soft_commitment_amount: (lead.desired_contribution as number) ?? null, user_id: (lead.user_id as string) ?? null };
+  async function addToCircle(circleId: string) {
+    setBusy(true);
+    const res = await addMemberFromInterest(circleId, memberPayload);
+    setBusy(false);
+    if (res.ok) { setCircleMsg("✓ Added to circle."); onSaved(lead.id, "added_to_circle", notes); } else { setCircleMsg(res.error ?? "Failed."); }
+  }
 
   const digits = String(lead.phone ?? "").replace(/\D/g, "");
   const wa = digits.length >= 10 ? `91${digits.slice(-10)}` : digits;
@@ -71,6 +90,19 @@ export default function AdminCoBuyLeadDrawer({
           <Row k="Call time" v={lead.preferred_call_time as string} />
           <Row k="Notes (buyer)" v={lead.notes as string} />
         </div>
+
+        {oppId && (
+          <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-3">
+            <p className="mb-2 text-sm font-semibold text-green-900">Add to a circle</p>
+            <div className="flex flex-wrap gap-2">
+              {circles.map((c) => (
+                <button key={c.id} onClick={() => addToCircle(c.id)} disabled={busy} className="rounded-full bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-800 disabled:opacity-50">+ {c.name}</button>
+              ))}
+              <Link href={`/admin/co-buy/circles/new?opportunity_id=${oppId}&interest_id=${lead.id}`} className="rounded-full border border-green-700 px-3 py-1.5 text-xs font-medium text-green-800 hover:bg-green-100">+ New circle</Link>
+            </div>
+            {circleMsg && <p className="mt-2 text-xs text-green-800">{circleMsg}</p>}
+          </div>
+        )}
 
         <label className="mb-3 block text-sm font-medium text-gray-700">Status
           <select value={status} onChange={(e) => setStatus(e.target.value as CoBuyInterestStatus)} className="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 text-sm">

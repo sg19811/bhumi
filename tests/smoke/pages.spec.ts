@@ -17,6 +17,7 @@ const PAGES: { path: string; needle: string }[] = [
   { path: "/tools", needle: "Land tools" },
   { path: "/region", needle: "Browse agricultural land by region" },
   { path: "/co-buy", needle: "Buy large agricultural land together" },
+  { path: "/co-buy/circles", needle: "My buying circles" },
   { path: "/explore?co_buy=1", needle: "agricultural land" },
   { path: "/tools/stamp-duty-calculator", needle: "Stamp duty" },
   { path: "/tools/loan-eligibility-calculator", needle: "Land loan eligibility calculator" },

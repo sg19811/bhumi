@@ -13,16 +13,19 @@ export default function AdminCoBuy() {
   const isAdmin = role === "admin";
   const [opps, setOpps] = useState<Record<string, unknown>[]>([]);
   const [leadStatuses, setLeadStatuses] = useState<string[]>([]);
+  const [circleStatuses, setCircleStatuses] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [o, l] = await Promise.all([
+      const [o, l, c] = await Promise.all([
         supabase.from("co_buy_opportunities").select("*").order("created_at", { ascending: false }),
         supabase.from("co_buy_interests").select("status"),
+        supabase.from("co_buy_circles").select("status"),
       ]);
       setOpps(o.data ?? []);
       setLeadStatuses((l.data ?? []).map((r: { status: string }) => r.status));
+      setCircleStatuses((c.data ?? []).map((r: { status: string }) => r.status));
     })();
   }, [isAdmin]);
 
@@ -38,7 +41,7 @@ export default function AdminCoBuy() {
   const openCount = opps.filter((o) => CO_BUY_PUBLIC_STATUSES.includes(o.status as never)).length;
   const newLeads = leadStatuses.filter((s) => s === "new").length;
   const qualified = leadStatuses.filter((s) => s === "qualified").length;
-  const nriReview = leadStatuses.filter((s) => s === "nri_legal_review").length;
+  const activeCircles = circleStatuses.filter((s) => !["completed", "cancelled", "archived"].includes(s)).length;
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -50,7 +53,7 @@ export default function AdminCoBuy() {
         </div>
 
         <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[["Open opportunities", openCount], ["New leads", newLeads], ["Qualified", qualified], ["NRI review", nriReview]].map(([k, v]) => (
+          {[["Open opportunities", openCount], ["New leads", newLeads], ["Qualified", qualified], ["Active circles", activeCircles]].map(([k, v]) => (
             <div key={k as string} className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
               <p className="text-2xl font-bold text-green-800">{v as number}</p>
               <p className="mt-0.5 text-xs uppercase tracking-wide text-gray-500">{k as string}</p>
@@ -60,7 +63,7 @@ export default function AdminCoBuy() {
 
         <div className="mb-6 flex flex-wrap gap-3">
           <Link href="/admin/co-buy/leads" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View all leads →</Link>
-          <span className="rounded-full border border-dashed border-gray-300 px-5 py-2 text-sm text-gray-400">Circles (Phase 2)</span>
+          <Link href="/admin/co-buy/circles" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View circles →</Link>
         </div>
 
         <h2 className="mb-3 text-lg font-semibold">Opportunities</h2>
