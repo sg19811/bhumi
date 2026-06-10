@@ -48,6 +48,17 @@ export default function AdminCircleDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [role, id]);
 
+  const [exits, setExits] = useState<Row[]>([]);
+  const [pp, setPp] = useState({ reg: "", amt: "" });
+  useEffect(() => {
+    if (role !== "admin" || !id) return;
+    supabase.from("co_buy_exit_interests").select("*").eq("circle_id", id).then(({ data }) => setExits((data as Row[]) ?? []));
+  }, [role, id]);
+  const moveToPostPurchase = async () => {
+    await saveCircle({ status: "completed", post_purchase_at: new Date().toISOString(), registration_date: pp.reg || null, final_purchase_amount: pp.amt ? Number(pp.amt) : null });
+  };
+  const setExitStatus = async (e: Row, status: string) => { await supabase.from("co_buy_exit_interests").update({ status }).eq("id", e.id); setExits((xs) => xs.map((x) => x.id === e.id ? { ...x, status } : x)); };
+
   if (loading) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;
   if (!user || role !== "admin") return <div className="min-h-screen bg-white"><Header /><main className="mx-auto max-w-md px-6 py-24 text-center"><h1 className="mb-2 text-2xl font-bold">Admins only</h1><Link href="/" className="text-green-700 hover:underline">Go home</Link></main></div>;
   if (fetched && !circle) return <div className="min-h-screen bg-white"><Header /><main className="mx-auto max-w-md px-6 py-24 text-center"><p className="text-gray-500">Circle not found.</p></main></div>;
@@ -82,6 +93,37 @@ export default function AdminCircleDetail() {
           </div>
           <label className="mt-3 block text-sm">Member-visible summary<textarea defaultValue={(circle?.private_summary as string) ?? ""} onBlur={(e) => saveCircle({ private_summary: e.target.value || null })} rows={2} className={`mt-1 ${inp}`} /></label>
           <label className="mt-3 block text-sm">Admin notes (internal)<textarea defaultValue={(circle?.admin_notes as string) ?? ""} onBlur={(e) => saveCircle({ admin_notes: e.target.value || null })} rows={2} className={`mt-1 ${inp}`} /></label>
+        </section>
+
+        {/* Post-purchase */}
+        <section className={Section}>
+          <h2 className="mb-3 font-semibold">Post-purchase</h2>
+          {circle?.post_purchase_at ? (
+            <div>
+              <p className="text-sm text-green-800">✓ Post-purchase active{circle.registration_date ? ` · registered ${circle.registration_date as string}` : ""}.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link href={`/admin/co-buy/circles/${id}/expenses`} className="rounded-full border border-green-700 px-4 py-1.5 text-sm font-medium text-green-800 hover:bg-green-50">Expenses</Link>
+                <Link href={`/admin/co-buy/circles/${id}/proposals`} className="rounded-full border border-green-700 px-4 py-1.5 text-sm font-medium text-green-800 hover:bg-green-50">Proposals</Link>
+              </div>
+              {exits.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-1 text-sm font-medium text-gray-700">Exit interests</p>
+                  {exits.map((e) => (
+                    <div key={e.id} className="flex items-center justify-between gap-2 border-b border-gray-100 py-1.5 text-sm"><span>{e.exit_type as string} · {(e.status as string)}</span><select value={e.status as string} onChange={(ev) => setExitStatus(e, ev.target.value)} className="rounded-lg border border-gray-300 px-2 py-1 text-xs">{["registered", "lawyer_engaged", "buyer_identified", "in_negotiation", "completed", "withdrawn"].map((s) => <option key={s} value={s}>{s}</option>)}</select></div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <p className="mb-2 text-sm text-gray-500">Once registration is complete, move this circle to ongoing stewardship.</p>
+              <div className="flex flex-wrap items-end gap-2">
+                <label className="text-sm">Registration date<input type="date" value={pp.reg} onChange={(e) => setPp({ ...pp, reg: e.target.value })} className={`mt-1 ${inp}`} /></label>
+                <label className="text-sm">Final amount (₹)<input type="number" value={pp.amt} onChange={(e) => setPp({ ...pp, amt: e.target.value })} className={`mt-1 ${inp}`} /></label>
+                <button onClick={moveToPostPurchase} className="rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800">Move to post-purchase</button>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Members */}

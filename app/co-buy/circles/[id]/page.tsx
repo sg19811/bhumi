@@ -77,6 +77,13 @@ export default function MemberCircle() {
         <div className="mt-4 flex flex-wrap gap-3">
           {circle?.whatsapp_group_link ? <a href={circle.whatsapp_group_link as string} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2 text-sm font-medium text-white">💬 Join the WhatsApp group</a> : null}
           <Link href={`/co-buy/circles/${id}/services`} className="inline-flex items-center rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View services</Link>
+          {circle?.post_purchase_at ? (
+            <>
+              <Link href={`/co-buy/circles/${id}/expenses`} className="inline-flex items-center rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Expenses</Link>
+              <Link href={`/co-buy/circles/${id}/proposals`} className="inline-flex items-center rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Decisions</Link>
+              <Link href={`/co-buy/circles/${id}/exit`} className="inline-flex items-center rounded-full px-5 py-2 text-sm font-medium text-gray-500 hover:text-gray-800">Register exit</Link>
+            </>
+          ) : null}
         </div>
 
         {/* Milestones */}

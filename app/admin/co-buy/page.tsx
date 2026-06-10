@@ -70,6 +70,7 @@ export default function AdminCoBuy() {
           <Link href="/admin/templates" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Templates →</Link>
           <Link href="/admin/team" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Team →</Link>
           <Link href="/admin/audit" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Audit →</Link>
+          <Link href="/admin/co-buy/maintenance" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Maintenance →</Link>
         </div>
 
         <h2 className="mb-3 text-lg font-semibold">Opportunities</h2>
