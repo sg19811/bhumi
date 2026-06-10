@@ -73,6 +73,9 @@ export default function ListingCard({ listing }: { listing: any }) {
             {listing.plot_count ? <span className="text-gray-400">· {listing.plot_count} plots</span> : null}
           </p>
         )}
+        {listing.is_co_buy_eligible && (
+          <p className="mb-1"><span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">👥 Buying Circle</span></p>
+        )}
         <h3 className="line-clamp-2 font-semibold leading-snug text-gray-900 group-hover:text-green-800">
           {listing.title}
         </h3>

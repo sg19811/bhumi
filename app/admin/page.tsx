@@ -205,7 +205,10 @@ export default function AdminDashboard() {
       <main className="mx-auto max-w-5xl px-6 py-8">
         <div className="mb-6 flex items-center justify-between gap-3">
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <Link href="/admin/intelligence" className="shrink-0 rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">📊 Founder Intelligence</Link>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            <Link href="/admin/co-buy" className="rounded-full border border-green-700 px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">👥 Buying Circles</Link>
+            <Link href="/admin/intelligence" className="rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">📊 Founder Intelligence</Link>
+          </div>
         </div>
         <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-5">
           <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm"><p className="text-3xl font-bold text-green-800">{listings.length}</p><p className="text-sm text-gray-500">Listings</p></div>

@@ -162,6 +162,18 @@ MVP + Stage 2 are live in production:
 - AI: `app/lib/ai/{anthropic,require-user}.ts` (server-only; calls Claude via fetch, no SDK; signed-in
   users only). Routes: `app/api/farm-plots/{ai-report,ai-listing-assist}/route.ts`.
 
+**Buying Circles — Phase 1 LIVE** (joint land purchase; spec in `docs/buying-circles-spec.md`):
+- Public: `/co-buy` hub, `/co-buy/[slug]` opportunity, `/co-buy/[slug]/express-interest` (8-ack form,
+  client+server validated, NRI → `nri_legal_review`), `/co-buy/[slug]/thanks`. Conditional
+  `CoBuyListingCTA` on listing detail; "Co-Buy Eligible" pill + `/explore?co_buy=1` filter.
+- Admin: `/admin/co-buy` (overview + opportunity CRUD + leads), lead drawer with status/WhatsApp/call.
+  Admin toggles `listings.is_co_buy_eligible` on the listing edit page.
+- Server-only insert route `app/api/co-buy/interest` (`supabaseAdmin`, validates the 8 acknowledgements).
+  Lib in `app/lib/co-buy/`; components in `app/components/co-buy/`. Compliance copy verbatim in `disclaimers.ts`.
+- **Manual step**: run `supabase-co-buy.sql` in the Supabase SQL Editor (2 tables + `is_co_buy_eligible`).
+- **Deliberately deferred** to Phase 2+: circle rooms, documents, voting, service/vendor workflow, lead scoring.
+  WhatsApp call templates in `docs/whatsapp-templates.md`. Phase gates: see spec §10/§15 (lawyer review + SLA).
+
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 
 1. **v1.x — refine current**: composite Trust Score, compare properties, more
