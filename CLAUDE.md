@@ -182,7 +182,17 @@ MVP + Stage 2 are live in production:
   `/circles/[id]` (manage members/docs/milestones/site-visits/tasks inline). "Add to circle" on the lead drawer.
 - Lib in `app/lib/co-buy/circles/` (types, state-document-templates, milestone-templates, privacy, circle-actions).
   Cross-circle isolation via `is_circle_member()`. Note: many spec sub-routes are consolidated into the two dashboards.
-- Phase 3 (services/vendors), Phase 4 (scoring/roles), Phase 5 (governance) specs in `docs/buying-circles-phase-{3,4,5}-spec.md` — gated on real activity.
+**Buying Circles — Phase 3 BUILT** (services + vendor CRM; spec `docs/buying-circles-phase-3-spec.md`):
+- 5 tables (`acrehub_vendors`, `co_buy_service_requests`, `_vendor_quotes`, `_service_tasks`, `_service_updates`).
+  Migration: **run `supabase-co-buy-phase-3.sql`**. Service requests carry **three separate cost columns**
+  (official / vendor / AcrehubIndia) — never shown as a lone total (regulatory positioning made structural).
+- Admin: vendor CRM (`/admin/vendors`), service requests (`/admin/co-buy/services` list + create + detail with
+  cost editor, quotes, tasks, updates poster, buyer-approval entry). "Add service" on the admin circle page.
+- Member: `/co-buy/circles/[id]/services` + `[reqId]` (three-column cost, approval state, buyer-visible quotes,
+  visibility-filtered updates, compliance disclaimers). "View services" on the circle dashboard.
+- Lib `app/lib/co-buy/services/` (catalog with 13 service + 22 vendor categories + compliance copy, service-actions).
+  No money flows through the platform; "approved" = circle agreed to pay offline. **Lawyer-review the copy before public use.**
+- Phase 4 (scoring/roles), Phase 5 (governance) specs in `docs/buying-circles-phase-{4,5}-spec.md` — gated on real activity.
 
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 

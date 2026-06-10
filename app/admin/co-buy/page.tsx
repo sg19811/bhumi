@@ -62,8 +62,10 @@ export default function AdminCoBuy() {
         </div>
 
         <div className="mb-6 flex flex-wrap gap-3">
-          <Link href="/admin/co-buy/leads" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View all leads →</Link>
-          <Link href="/admin/co-buy/circles" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">View circles →</Link>
+          <Link href="/admin/co-buy/leads" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Leads →</Link>
+          <Link href="/admin/co-buy/circles" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Circles →</Link>
+          <Link href="/admin/co-buy/services" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Services →</Link>
+          <Link href="/admin/vendors" className="rounded-full border border-green-700 px-5 py-2 text-sm font-medium text-green-800 hover:bg-green-50">Vendors →</Link>
         </div>
 
         <h2 className="mb-3 text-lg font-semibold">Opportunities</h2>

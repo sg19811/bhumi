@@ -68,7 +68,8 @@ export default function AdminCircleDetail() {
       <main className="mx-auto max-w-4xl px-6 py-8">
         <nav className="mb-3 text-sm text-gray-500"><Link href="/admin/co-buy/circles" className="hover:text-green-800">Circles</Link> / {(circle?.name as string) ?? "…"}</nav>
         <h1 className="mb-1 text-3xl font-bold">{circle?.name as string}</h1>
-        <p className="mb-6 text-sm text-gray-500">Status: {CIRCLE_STATUS_LABELS[circle?.status as keyof typeof CIRCLE_STATUS_LABELS] ?? (circle?.status as string)}</p>
+        <p className="mb-3 text-sm text-gray-500">Status: {CIRCLE_STATUS_LABELS[circle?.status as keyof typeof CIRCLE_STATUS_LABELS] ?? (circle?.status as string)}</p>
+        <Link href={`/admin/co-buy/services/new?circle_id=${id}`} className="mb-6 inline-flex rounded-full border border-green-700 px-4 py-1.5 text-sm font-medium text-green-800 hover:bg-green-50">+ Add service request</Link>
 
         {/* Circle settings */}
         <section className={Section}>
