@@ -9,6 +9,7 @@ import MapLoader from "@/app/components/MapLoader";
 import WhatsAppShare from "@/app/components/WhatsAppShare";
 import WhatsAppContactButton from "@/app/components/WhatsAppContactButton";
 import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
+import CoBuyListingCTA from "@/app/components/co-buy/CoBuyListingCTA";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
 import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
@@ -286,6 +287,9 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
             {listing.fencing && <span className="rounded-full bg-gray-100 px-3 py-1.5 text-sm text-gray-700">🔒 Fenced</span>}
           </div>
         )}
+
+        {/* Buying Circle CTA — renders only when eligible AND a public opportunity exists. */}
+        <CoBuyListingCTA listingId={listing.id} isEligible={listing.is_co_buy_eligible} />
 
         {listing.description && (
           <div className="mb-8"><h2 className="mb-2 text-lg font-semibold">Description</h2><p className="whitespace-pre-line leading-relaxed text-gray-600">{listing.description}</p></div>

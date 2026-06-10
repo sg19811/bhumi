@@ -38,6 +38,7 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
   if (sp.water_source) query = query.eq("water_source", sp.water_source);
   if (sp.road_access) query = query.eq("road_access", sp.road_access);
   if (sp.verified === "true") query = query.eq("is_verified", true);
+  if (sp.co_buy === "1") query = query.eq("is_co_buy_eligible", true);
   query = query.order(sort.col, { ascending: sort.asc });
   const { data: listings } = await query;
 

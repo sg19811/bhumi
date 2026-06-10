@@ -19,8 +19,9 @@ import { validateListingPayload } from "@/app/lib/validation/client";
 export default function EditListing() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, role, loading } = useAuth();
   const [listing, setListing] = useState<any>(null);
+  const [coBuyEligible, setCoBuyEligible] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
@@ -37,6 +38,7 @@ export default function EditListing() {
       setPhotos(data.photos ?? []);
       setVideos(data.videos ?? []);
       setLandType(data.land_type ?? "");
+      setCoBuyEligible(!!data.is_co_buy_eligible);
     });
     // Existing plot inventory (table may not exist until the migration runs — handled gracefully).
     supabase.from("farm_project_plots").select("*").eq("listing_id", id).order("created_at", { ascending: true }).then(({ data }) => {
@@ -109,6 +111,8 @@ export default function EditListing() {
     if (dbError) { setSaving(false); setError(dbError.message); return; }
     // Virtual tour link — separate best-effort update (column may not exist until the migration runs).
     try { await supabase.from("listings").update({ tour_url: (f.get("tour_url") as string) || null }).eq("id", id); } catch { /* best-effort */ }
+    // Co-buy eligibility (admin-only; column may not exist until the migration runs).
+    if (role === "admin") { try { await supabase.from("listings").update({ is_co_buy_eligible: coBuyEligible }).eq("id", id); } catch { /* best-effort */ } }
     // Sync plot inventory + documents (replace-all). Best-effort: tables may not exist until the migration runs.
     if (projectType) {
       try {
@@ -132,6 +136,22 @@ export default function EditListing() {
       <Header />
       <main className="mx-auto max-w-2xl px-6 py-10">
         <h1 className="mb-8 text-3xl font-bold">Edit listing</h1>
+
+        {role === "admin" && (
+          <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-4">
+            <label className="flex items-center gap-2 text-sm font-medium text-green-900">
+              <input type="checkbox" checked={coBuyEligible} onChange={(e) => setCoBuyEligible(e.target.checked)} className="h-4 w-4 accent-green-700" />
+              👥 Mark this listing as Buying Circle eligible
+            </label>
+            {coBuyEligible && (
+              <p className="mt-2 text-xs text-green-800">
+                Save, then{" "}
+                <Link href={`/admin/co-buy/opportunities/new?listing_id=${id}`} className="font-medium underline">create a Buying Circle opportunity</Link>{" "}
+                for this listing so the CTA appears publicly.
+              </p>
+            )}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div><label className="mb-1 block text-sm font-medium">Photos</label><PhotoUpload value={photos} onChange={setPhotos} /></div>
           <div><label className="mb-1 block text-sm font-medium">Videos</label><VideoUpload value={videos} onChange={setVideos} /></div>

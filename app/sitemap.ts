@@ -28,6 +28,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
   }));
 
+  // Buying Circles: hub + open opportunity pages (draft/closed excluded by RLS).
+  const { data: coBuyOpps } = await supabase
+    .from("co_buy_opportunities")
+    .select("slug, updated_at")
+    .in("status", ["open_for_interest", "forming_circle"]);
+  const coBuyPages = [
+    { url: `${BASE}/co-buy`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    ...(coBuyOpps ?? []).map((o) => ({
+      url: `${BASE}/co-buy/${o.slug}`,
+      lastModified: o.updated_at ? new Date(o.updated_at) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+  ];
+
   const listingPages = (listings ?? []).map((l) => ({
     url: `${BASE}/listing/${l.id}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
@@ -67,5 +82,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...farmPlotPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
+  return [...staticPages, ...farmPlotPages, ...coBuyPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
 }
