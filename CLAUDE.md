@@ -171,8 +171,18 @@ MVP + Stage 2 are live in production:
 - Server-only insert route `app/api/co-buy/interest` (`supabaseAdmin`, validates the 8 acknowledgements).
   Lib in `app/lib/co-buy/`; components in `app/components/co-buy/`. Compliance copy verbatim in `disclaimers.ts`.
 - **Manual step**: run `supabase-co-buy.sql` in the Supabase SQL Editor (2 tables + `is_co_buy_eligible`).
-- **Deliberately deferred** to Phase 2+: circle rooms, documents, voting, service/vendor workflow, lead scoring.
-  WhatsApp call templates in `docs/whatsapp-templates.md`. Phase gates: see spec §10/§15 (lawyer review + SLA).
+- **Deliberately deferred** to Phase 3+: service/vendor workflow, voting, lead scoring (spec §10/§15: lawyer review + SLA).
+
+**Buying Circles — Phase 2 BUILT** (private circle rooms; spec `docs/buying-circles-phase-2-spec.md`):
+- 8 tables (`co_buy_circles`, `_circle_members`, `_documents`, `_milestones`, `_site_visits`, `_site_visit_rsvps`,
+  `_events`, `_tasks`) + `is_circle_member()` RLS helper. Migration: **run `supabase-co-buy-phase-2.sql`**.
+- Member: `/co-buy/circles` (your circles), `/co-buy/circles/[id]` (dashboard — milestones, site-visit RSVP,
+  documents, privacy-masked members, costs, activity). "Circles" in header nav for signed-in users.
+- Admin: `/admin/co-buy/circles` (list), `/circles/new` (auto-seeds milestones + state doc checklist + first member),
+  `/circles/[id]` (manage members/docs/milestones/site-visits/tasks inline). "Add to circle" on the lead drawer.
+- Lib in `app/lib/co-buy/circles/` (types, state-document-templates, milestone-templates, privacy, circle-actions).
+  Cross-circle isolation via `is_circle_member()`. Note: many spec sub-routes are consolidated into the two dashboards.
+- Phase 3 (services/vendors), Phase 4 (scoring/roles), Phase 5 (governance) specs in `docs/buying-circles-phase-{3,4,5}-spec.md` — gated on real activity.
 
 ## What's next (high level — see `docs/project-tracker.md` for full backlog)
 

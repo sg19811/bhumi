@@ -55,6 +55,7 @@ export default function Header() {
               <Link href="/my-requirements" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.myRequirements")}</Link>
               <Link href="/saved" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.saved")}</Link>
               <Link href="/collections" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.collections")}</Link>
+              <Link href="/co-buy/circles" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">Circles</Link>
               {(role === "agent" || role === "admin") && (
                 <Link href="/agent" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.agent")}</Link>
               )}
@@ -93,6 +94,7 @@ export default function Header() {
               <Link href="/my-requirements" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.myRequirements")}</Link>
               <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.saved")}</Link>
               <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.collections")}</Link>
+              <Link href="/co-buy/circles" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">Circles</Link>
               {(role === "agent" || role === "admin") && (
                 <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.agent")}</Link>
               )}
