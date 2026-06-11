@@ -21,7 +21,11 @@ export default function SignIn() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError(error.message);
+      setError(
+        /email not confirmed/i.test(error.message)
+          ? "Please check your email and click the confirmation link to verify your account, then sign in."
+          : error.message
+      );
       setLoading(false);
     } else {
       router.push("/");
