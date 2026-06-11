@@ -14,28 +14,35 @@ const OPTIONS = [
   { key: "other", role: "user", icon: "✨", title: "Something else", desc: "I'm selling my own land, just exploring, or here for another reason." },
 ];
 
+const field = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
+
 export default function Onboarding() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     if (loading) return;
     if (!user) { router.replace("/auth/signin"); return; }
-    // Skip if they've already chosen, or if they're an established agent/admin.
-    supabase.from("profiles").select("user_type, role").eq("user_id", user.id).maybeSingle().then(({ data }) => {
-      if (data && (data.user_type || (data.role && data.role !== "user"))) router.replace("/");
-      else setReady(true);
+    supabase.from("profiles").select("user_type, role, full_name, phone").eq("user_id", user.id).maybeSingle().then(({ data }) => {
+      if (data && (data.user_type || (data.role && data.role !== "user"))) { router.replace("/"); return; }
+      // Pre-fill from the profile, falling back to whatever was captured at signup.
+      const meta = (user.user_metadata ?? {}) as { full_name?: string; phone?: string };
+      setName((data?.full_name as string) || meta.full_name || "");
+      setPhone((data?.phone as string) || meta.phone || "");
+      setReady(true);
     });
   }, [user, loading, router]);
 
   async function choose(opt: typeof OPTIONS[number]) {
     if (!user) return;
     setBusy(true);
-    const patch: Record<string, string> = { user_type: opt.key };
+    const patch: Record<string, string> = { user_type: opt.key, full_name: name.trim(), phone: phone.trim() };
     if (opt.role === "agent") patch.role = "agent";
-    try { await supabase.from("profiles").update(patch).eq("user_id", user.id); } catch { /* column may not exist until migration runs */ }
+    try { await supabase.from("profiles").update(patch).eq("user_id", user.id); } catch { /* columns may not exist until migration runs */ }
     router.push("/");
     router.refresh();
   }
@@ -47,9 +54,20 @@ export default function Onboarding() {
       <div className="w-full max-w-lg">
         <div className="mb-6 flex justify-center"><Logo /></div>
         <div className="rounded-2xl border border-gray-200 bg-white p-7 shadow-md">
-          <h1 className="text-center text-2xl font-bold">Welcome! Who are you?</h1>
-          <p className="mt-1 text-center text-sm text-gray-500">This helps us tailor your experience. You can change it later.</p>
-          <div className="mt-6 space-y-3">
+          <h1 className="text-center text-2xl font-bold">Welcome! A couple of quick things</h1>
+          <p className="mt-1 text-center text-sm text-gray-500">Confirm your details and tell us who you are. You can change these later.</p>
+
+          <div className="mt-6 grid grid-cols-1 gap-3">
+            <label className="text-sm font-medium text-gray-700">Your name
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" className={`mt-1 ${field}`} />
+            </label>
+            <label className="text-sm font-medium text-gray-700">Phone
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" placeholder="Phone number" className={`mt-1 ${field}`} />
+            </label>
+          </div>
+
+          <p className="mb-2 mt-6 text-sm font-medium text-gray-700">Which best describes you?</p>
+          <div className="space-y-3">
             {OPTIONS.map((o) => (
               <button
                 key={o.key}
@@ -66,6 +84,7 @@ export default function Onboarding() {
               </button>
             ))}
           </div>
+          <p className="mt-4 text-center text-xs text-gray-400">Pick one to finish — your name &amp; phone are saved with it.</p>
         </div>
       </div>
     </div>
