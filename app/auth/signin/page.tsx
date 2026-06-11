@@ -30,15 +30,22 @@ export default function SignIn() {
       return;
     }
 
-    // First-timers (plain users who haven't picked an identity) go to onboarding.
     let dest = "/";
     try {
       const uid = data.user?.id;
       if (uid) {
-        const { data: prof } = await supabase.from("profiles").select("user_type, role").eq("user_id", uid).maybeSingle();
+        const meta = (data.user?.user_metadata ?? {}) as { full_name?: string; phone?: string };
+        const { data: prof } = await supabase.from("profiles").select("user_type, role, full_name, phone").eq("user_id", uid).maybeSingle();
+        // Self-heal: if name/phone never made it into profiles but we have them from
+        // signup (stored on the account), copy them over now. So even if the DB
+        // trigger isn't set up, the profile fills in on first sign-in.
+        if (prof && !prof.full_name && (meta.full_name || meta.phone)) {
+          await supabase.from("profiles").update({ full_name: meta.full_name ?? prof.full_name ?? null, phone: meta.phone ?? prof.phone ?? null }).eq("user_id", uid);
+        }
+        // First-timers (plain users who haven't picked an identity) go to onboarding.
         if (prof && !prof.user_type && (!prof.role || prof.role === "user")) dest = "/onboarding";
       }
-    } catch { /* user_type column may not exist until the migration runs */ }
+    } catch { /* profiles columns may not exist until the migration runs */ }
     router.push(dest);
     router.refresh();
   }
