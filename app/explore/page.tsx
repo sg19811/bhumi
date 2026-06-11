@@ -8,6 +8,7 @@ import ActiveFilters from "@/app/components/ActiveFilters";
 import ExploreSplit from "@/app/components/ExploreSplit";
 import NotifyMe from "@/app/components/NotifyMe";
 import { cleanSearchTerm } from "@/app/lib/search";
+import { districtsForState } from "@/app/lib/legal/districts";
 import { getLocale } from "@/app/lib/i18n-server";
 import { t as translate } from "@/app/lib/i18n";
 import type { Metadata } from "next";
@@ -39,6 +40,15 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
   if (sp.road_access) query = query.eq("road_access", sp.road_access);
   if (sp.verified === "true") query = query.eq("is_verified", true);
   if (sp.co_buy === "1") query = query.eq("is_co_buy_eligible", true);
+  // Location: state (maps to its districts), district, taluka.
+  if (sp.state) {
+    const ds = districtsForState(sp.state);
+    if (ds.length) query = query.or(ds.map((d) => `district.ilike.${d}`).join(","));
+  }
+  const districtTerm = cleanSearchTerm(sp.district);
+  if (districtTerm) query = query.ilike("district", `%${districtTerm}%`);
+  const talukaTerm = cleanSearchTerm(sp.taluka);
+  if (talukaTerm) query = query.ilike("taluka", `%${talukaTerm}%`);
   query = query.order(sort.col, { ascending: sort.asc });
   const { data: listings } = await query;
 

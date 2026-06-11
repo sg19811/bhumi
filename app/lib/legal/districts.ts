@@ -41,3 +41,9 @@ export function districtToState(district?: string | null): string | null {
   if (!district) return null;
   return LOOKUP[district.trim().toLowerCase()] ?? null;
 }
+
+// All known district names for a state (lowercase), for state-scoped filtering.
+export function districtsForState(state?: string | null): string[] {
+  if (!state) return [];
+  return DISTRICTS_BY_STATE[state] ?? [];
+}

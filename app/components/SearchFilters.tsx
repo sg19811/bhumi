@@ -2,6 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 import { useLang } from "@/app/lib/i18n-client";
+import { STATES } from "@/app/lib/legal/options";
 
 export default function SearchFilters() {
   const router = useRouter();
@@ -14,8 +15,29 @@ export default function SearchFilters() {
   }, [params, router]);
 
   const sel = "shrink-0 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-green-600 focus:border-green-600";
+  const inp = "w-32 shrink-0 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition-colors focus:border-green-600";
   return (
     <div className="flex items-center gap-2.5 overflow-x-auto border-b border-gray-200 bg-gray-50 px-5 py-3 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <select defaultValue={params.get("state") ?? ""} onChange={(e) => set("state", e.target.value)} className={sel} aria-label="State">
+        <option value="">All states</option>
+        {STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+      </select>
+      <input
+        defaultValue={params.get("district") ?? ""}
+        placeholder="District"
+        aria-label="District"
+        onKeyDown={(e) => { if (e.key === "Enter") set("district", e.currentTarget.value.trim()); }}
+        onBlur={(e) => set("district", e.target.value.trim())}
+        className={inp}
+      />
+      <input
+        defaultValue={params.get("taluka") ?? ""}
+        placeholder="Taluka"
+        aria-label="Taluka"
+        onKeyDown={(e) => { if (e.key === "Enter") set("taluka", e.currentTarget.value.trim()); }}
+        onBlur={(e) => set("taluka", e.target.value.trim())}
+        className={inp}
+      />
       <select defaultValue={params.get("land_type") ?? ""} onChange={(e) => set("land_type", e.target.value)} className={sel}>
         <option value="">{t("f.allTypes")}</option>
         <option value="agri_land">{t("f.t.agri")}</option><option value="irrigated_farmland">{t("f.t.irrigated")}</option>
