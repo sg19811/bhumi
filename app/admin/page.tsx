@@ -92,8 +92,15 @@ export default function AdminDashboard() {
   const [legalLeads, setLegalLeads] = useState<any[]>([]);
   const [siteVisits, setSiteVisits] = useState<any[]>([]);
   const [liveStates, setLiveStates] = useState<string[]>([]);
+  const [profiles, setProfiles] = useState<any[]>([]);
   const [listingQuery, setListingQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+
+  // Users (needs the "admins read all profiles" RLS policy — supabase-profiles-admin-read.sql).
+  useEffect(() => {
+    if (!isAdmin) return;
+    supabase.from("profiles").select("user_id, full_name, phone, role, user_type, created_at").order("created_at", { ascending: false }).then(({ data }) => setProfiles(data ?? []));
+  }, [isAdmin]);
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
   useEffect(() => {
@@ -217,6 +224,35 @@ export default function AdminDashboard() {
           <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm"><p className="text-3xl font-bold text-blue-700">{inquiries.length}</p><p className="text-sm text-gray-500">Inquiries</p></div>
           <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm"><p className="text-3xl font-bold text-amber-700">{buyers.length}</p><p className="text-sm text-gray-500">Buyer reqs</p></div>
         </div>
+
+        {/* Users by type */}
+        <section className="mb-10">
+          <h2 className="mb-1 text-lg font-semibold">Users ({profiles.length})</h2>
+          <div className="mb-3 flex flex-wrap gap-2 text-sm">
+            {([["agent", "Agents"], ["buyer", "Buyers"], ["other", "Other"], [null, "Not chosen yet"]] as [string | null, string][]).map(([k, label]) => {
+              const n = profiles.filter((p) => (k === null ? !p.user_type : p.user_type === k)).length;
+              return <span key={label} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-gray-700">{label}: <strong>{n}</strong></span>;
+            })}
+          </div>
+          <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-gray-200 text-left text-xs text-gray-500"><th className="p-3">Name</th><th className="p-3">Phone</th><th className="p-3">Role</th><th className="p-3">Type</th><th className="p-3">Joined</th></tr></thead>
+              <tbody>
+                {profiles.map((p) => (
+                  <tr key={p.user_id} className="border-b border-gray-100">
+                    <td className="p-3 font-medium">{p.full_name || <span className="text-gray-300">—</span>}</td>
+                    <td className="p-3 text-gray-600">{p.phone || "—"}</td>
+                    <td className="p-3 text-gray-600">{p.role}</td>
+                    <td className="p-3"><span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-800">{p.user_type || "—"}</span></td>
+                    <td className="p-3 text-gray-400">{p.created_at ? new Date(p.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : ""}</td>
+                  </tr>
+                ))}
+                {profiles.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-gray-400">No users yet — or the &ldquo;admins read all profiles&rdquo; policy hasn&apos;t been applied (run supabase-profiles-admin-read.sql).</td></tr>}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-gray-400">Email isn&apos;t shown here (it lives in Supabase Auth → Users). Match by name/phone, or use the users_overview SQL view.</p>
+        </section>
 
         {pending > 0 && (
           <section className="mb-10">
