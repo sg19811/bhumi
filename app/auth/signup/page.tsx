@@ -49,7 +49,7 @@ export default function SignUp() {
       await supabase.from("profiles").update({ name: fullName, phone }).eq("user_id", data.user.id);
     }
 
-    router.push("/");
+    router.push("/onboarding");
     router.refresh();
   }
 

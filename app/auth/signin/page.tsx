@@ -18,7 +18,7 @@ export default function SignIn() {
     setLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       setError(
@@ -27,10 +27,20 @@ export default function SignIn() {
           : error.message
       );
       setLoading(false);
-    } else {
-      router.push("/");
-      router.refresh();
+      return;
     }
+
+    // First-timers (plain users who haven't picked an identity) go to onboarding.
+    let dest = "/";
+    try {
+      const uid = data.user?.id;
+      if (uid) {
+        const { data: prof } = await supabase.from("profiles").select("user_type, role").eq("user_id", uid).maybeSingle();
+        if (prof && !prof.user_type && (!prof.role || prof.role === "user")) dest = "/onboarding";
+      }
+    } catch { /* user_type column may not exist until the migration runs */ }
+    router.push(dest);
+    router.refresh();
   }
 
   return (
