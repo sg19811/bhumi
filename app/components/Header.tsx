@@ -65,7 +65,10 @@ export default function Header() {
               <button onClick={signOut} className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600">{t("nav.signout")}</button>
             </>
           ) : (
-            <Link href="/auth/signin" className="rounded-full bg-green-700 px-5 py-2 font-medium text-white shadow-sm transition-colors hover:bg-green-800">{t("nav.signin")}</Link>
+            <>
+              <Link href="/auth/signin" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.signin")}</Link>
+              <Link href="/auth/signup" className="rounded-full bg-green-700 px-5 py-2 font-medium text-white shadow-sm transition-colors hover:bg-green-800">Sign up</Link>
+            </>
           )}
           <span className="mx-1 h-5 w-px bg-gray-200" />
           <LanguageSwitcher />
@@ -104,7 +107,10 @@ export default function Header() {
               <button onClick={() => { signOut(); setOpen(false); }} className="rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50">{t("nav.signout")}</button>
             </>
           ) : (
-            <Link href="/auth/signin" onClick={() => setOpen(false)} className="mt-1 rounded-full bg-green-700 px-3 py-2.5 text-center font-medium text-white">{t("nav.signin")}</Link>
+            <>
+              <Link href="/auth/signup" onClick={() => setOpen(false)} className="mt-1 rounded-full bg-green-700 px-3 py-2.5 text-center font-medium text-white">Sign up</Link>
+              <Link href="/auth/signin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-center text-gray-700 hover:bg-gray-100">{t("nav.signin")}</Link>
+            </>
           )}
           <div className="mt-2 px-3"><LanguageSwitcher /></div>
         </nav>
