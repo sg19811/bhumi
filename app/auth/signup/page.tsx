@@ -46,7 +46,7 @@ export default function SignUp() {
     if (data.user) {
       // Confirmation OFF → we have a session; fill in name/phone (the DB trigger
       // already created the profile row, so update avoids a duplicate).
-      await supabase.from("profiles").update({ name: fullName, phone }).eq("user_id", data.user.id);
+      await supabase.from("profiles").update({ full_name: fullName, phone }).eq("user_id", data.user.id);
     }
 
     router.push("/onboarding");
