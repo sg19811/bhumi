@@ -10,8 +10,9 @@ import Logo from "@/app/components/Logo";
 // users — admins/agents never reach this screen, so they can't be downgraded).
 const OPTIONS = [
   { key: "agent", role: "agent", icon: "🏢", title: "Agent or company", desc: "I list or source land — a broker, real-estate or land company, or firm." },
+  { key: "seller", role: "user", icon: "🚜", title: "Seller", desc: "I'm selling my own land." },
   { key: "buyer", role: "user", icon: "🌾", title: "Buyer", desc: "I'm looking to buy land — including first-time buyers." },
-  { key: "other", role: "user", icon: "✨", title: "Something else", desc: "I'm selling my own land, just exploring, or here for another reason." },
+  { key: "other", role: "user", icon: "✨", title: "Something else", desc: "I'm just exploring, or here for another reason." },
 ];
 
 const field = "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-600/15";
@@ -43,8 +44,10 @@ export default function Onboarding() {
     const patch: Record<string, string> = { user_type: opt.key, full_name: name.trim(), phone: phone.trim() };
     if (opt.role === "agent") patch.role = "agent";
     try { await supabase.from("profiles").update(patch).eq("user_id", user.id); } catch { /* columns may not exist until migration runs */ }
-    router.push("/");
-    router.refresh();
+    // Hard reload so AuthProvider re-reads the fresh role/user_type (it only
+    // refetches when the user changes, not after this in-place update) — otherwise
+    // an agent's dashboard link wouldn't appear until the next full page load.
+    window.location.assign("/");
   }
 
   if (loading || !ready) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;

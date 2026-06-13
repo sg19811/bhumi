@@ -9,7 +9,9 @@ import LanguageSwitcher from "@/app/components/LanguageSwitcher";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { user, role, signOut } = useAuth();
+  const { user, role, userType, signOut } = useAuth();
+  // Agent dashboard is open to the agent/admin roles and anyone who picked "Agent".
+  const isAgent = role === "agent" || role === "admin" || userType === "agent";
   const { t } = useLang();
   const pathname = usePathname();
   const links = [
@@ -56,7 +58,7 @@ export default function Header() {
               <Link href="/saved" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.saved")}</Link>
               <Link href="/collections" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.collections")}</Link>
               <Link href="/co-buy/circles" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">Circles</Link>
-              {(role === "agent" || role === "admin") && (
+              {isAgent && (
                 <Link href="/agent" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (
@@ -98,7 +100,7 @@ export default function Header() {
               <Link href="/saved" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.saved")}</Link>
               <Link href="/collections" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.collections")}</Link>
               <Link href="/co-buy/circles" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">Circles</Link>
-              {(role === "agent" || role === "admin") && (
+              {isAgent && (
                 <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (

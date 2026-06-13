@@ -229,7 +229,7 @@ export default function AdminDashboard() {
         <section className="mb-10">
           <h2 className="mb-1 text-lg font-semibold">Users ({profiles.length})</h2>
           <div className="mb-3 flex flex-wrap gap-2 text-sm">
-            {([["agent", "Agents"], ["buyer", "Buyers"], ["other", "Other"], [null, "Not chosen yet"]] as [string | null, string][]).map(([k, label]) => {
+            {([["agent", "Agents"], ["seller", "Sellers"], ["buyer", "Buyers"], ["other", "Other"], [null, "Not chosen yet"]] as [string | null, string][]).map(([k, label]) => {
               const n = profiles.filter((p) => (k === null ? !p.user_type : p.user_type === k)).length;
               return <span key={label} className="rounded-full border border-gray-200 bg-white px-3 py-1 text-gray-700">{label}: <strong>{n}</strong></span>;
             })}

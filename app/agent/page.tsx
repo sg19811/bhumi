@@ -43,8 +43,10 @@ function Stat({ value, label, color = "text-green-800" }: { value: number; label
 }
 
 export default function AgentDashboard() {
-  const { user, role, loading } = useAuth();
-  const allowed = role === "agent" || role === "admin";
+  const { user, role, userType, loading } = useAuth();
+  // Anyone who selected "Agent" at onboarding (user_type) gets the dashboard,
+  // alongside the agent/admin permission roles.
+  const allowed = role === "agent" || role === "admin" || userType === "agent";
 
   const [listings, setListings] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
