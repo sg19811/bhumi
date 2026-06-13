@@ -21,17 +21,53 @@ export default function SignUp() {
     setLoading(true);
     setError("");
 
+    // Store digits only so the same number can't slip in under a different format.
+    const normalizedPhone = phone.replace(/\D/g, "");
+
+    // One phone per account: pre-check server-side (anon users can't read other
+    // people's profiles), so we can warn before creating the account.
+    if (normalizedPhone) {
+      try {
+        const res = await fetch("/api/auth/check-phone", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: normalizedPhone }),
+        });
+        const j = await res.json().catch(() => null);
+        if (j && j.available === false) {
+          setError("This phone number is already in use. Please use another phone number.");
+          setLoading(false);
+          return;
+        }
+      } catch { /* check outage — fall through (best effort; only gates new signups) */ }
+    }
+
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
       // Confirmation links + post-confirm redirect use the CURRENT origin (so it's
       // acrehubindia.com in production, not localhost). The same URL must be in
       // Supabase → Auth → URL Configuration → Redirect URLs.
-      options: { emailRedirectTo: `${window.location.origin}/auth/signin`, data: { full_name: fullName, phone } },
+      options: { emailRedirectTo: `${window.location.origin}/auth/signin`, data: { full_name: fullName, phone: normalizedPhone } },
     });
 
     if (authError) {
-      setError(authError.message);
+      const m = authError.message.toLowerCase();
+      if (m.includes("already registered") || m.includes("already been registered")) {
+        setError("This email is already in use. Please sign in, or use another email.");
+      } else if (m.includes("phone") && (m.includes("duplicate") || m.includes("unique"))) {
+        setError("This phone number is already in use. Please use another phone number.");
+      } else {
+        setError(authError.message);
+      }
+      setLoading(false);
+      return;
+    }
+
+    // Privacy-preserving duplicate-email case: when email confirmation is ON,
+    // Supabase returns a user with an empty identities array instead of an error.
+    if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      setError("This email is already in use. Please sign in, or use another email.");
       setLoading(false);
       return;
     }
@@ -46,7 +82,7 @@ export default function SignUp() {
     if (data.user) {
       // Confirmation OFF → we have a session; fill in name/phone (the DB trigger
       // already created the profile row, so update avoids a duplicate).
-      await supabase.from("profiles").update({ full_name: fullName, phone }).eq("user_id", data.user.id);
+      await supabase.from("profiles").update({ full_name: fullName, phone: normalizedPhone }).eq("user_id", data.user.id);
     }
 
     router.push("/onboarding");
