@@ -7,7 +7,7 @@ import AdminListingRow from "@/app/components/AdminListingRow";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import { formatINRShort } from "@/app/lib/format";
-import { STATES } from "@/app/lib/legal/options";
+import { STATES, legalReasonLabel, legalUrgencyLabel } from "@/app/lib/legal/options";
 import { PROJECT_LAND_TYPES } from "@/app/lib/farm-plots/types";
 
 // Buyer requirements that match a listing (affordable + right place + right type).
@@ -363,7 +363,7 @@ export default function AdminDashboard() {
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">Legal enquiries ({legalLeads.length})</h2>
               <button
-                onClick={() => downloadCSV("legal-enquiries.csv", legalLeads.map((g) => ({ date: g.created_at, name: g.name, phone: g.phone, whatsapp: g.whatsapp, email: g.email, state: g.state, district: g.district, land_type: g.land_type, buyer_type: g.buyer_type, concern: g.legal_concern, source: g.source_page, service: g.related_service_slug, status: g.status })))}
+                onClick={() => downloadCSV("legal-enquiries.csv", legalLeads.map((g) => ({ date: g.created_at, name: g.name, phone: g.phone, whatsapp: g.whatsapp, email: g.email, state: g.state, district: g.district, land_type: g.land_type, buyer_type: g.buyer_type, reason: g.reason ? legalReasonLabel(g.reason) : "", urgency: g.urgency ? legalUrgencyLabel(g.urgency) : "", concern: g.legal_concern, source: g.source_page, service: g.related_service_slug, status: g.status })))}
                 className="text-sm text-green-700 hover:underline"
               >
                 Export CSV
@@ -382,11 +382,13 @@ export default function AdminDashboard() {
                           {g.name || "Enquiry"}
                           <span className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${tone}`}>{g.status ?? "new"}</span>
                           {g.state && <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs capitalize text-green-800">{g.state.replace(/_/g, " ")}</span>}
+                          {g.urgency && <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${g.urgency === "immediate" ? "bg-red-100 text-red-700" : g.urgency === "this_week" ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-600"}`}>{legalUrgencyLabel(g.urgency)}</span>}
                         </p>
                         <p className="mt-1 text-xs text-gray-600">
                           {g.phone && <>📞 <a href={`tel:${g.phone}`} className="text-green-700 hover:underline">{g.phone}</a></>}
                           {g.email && <> · ✉ <a href={`mailto:${g.email}`} className="text-green-700 hover:underline">{g.email}</a></>}
                         </p>
+                        {g.reason && <p className="mt-1 text-xs font-medium text-gray-700">{legalReasonLabel(g.reason)}</p>}
                         {g.legal_concern && <p className="mt-1 text-xs text-gray-500">{g.legal_concern}</p>}
                         <p className="mt-1 text-[11px] text-gray-400">
                           {g.related_service_slug ? `service: ${g.related_service_slug} · ` : ""}{g.source_page ? `from ${g.source_page} · ` : ""}{new Date(g.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}

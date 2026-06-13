@@ -11,7 +11,6 @@ import WhatsAppContactButton from "@/app/components/WhatsAppContactButton";
 import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
 import CoBuyListingCTA from "@/app/components/co-buy/CoBuyListingCTA";
 import OwnerEditLink from "@/app/components/OwnerEditLink";
-import InquiryButton from "./InquiryButton";
 import SaveButton from "@/app/components/SaveButton";
 import TrustScore from "@/app/components/TrustScore";
 import SuitabilityPanel from "@/app/components/SuitabilityPanel";
@@ -301,17 +300,19 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div id="contact" className="scroll-mt-20 rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
-          <div className="flex flex-wrap gap-3"><InquiryButton listingId={listing.id} /><WhatsAppContactButton whatsapp={listing.contact_whatsapp} phone={listing.contact_phone} title={listing.title} price={listing.price} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
-          {(listing.contact_phone || listing.contact_email) && (
-            <p className="mt-4 text-sm text-gray-500">
+          <div className="flex flex-wrap gap-3"><WhatsAppContactButton whatsapp={listing.contact_whatsapp} phone={listing.contact_phone} title={listing.title} price={listing.price} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
+          {(listing.contact_phone || listing.contact_email) ? (
+            <p className="mt-4 text-base text-gray-700">
               {listing.contact_phone && (
-                <>Call: <a href={`tel:${listing.contact_phone}`} className="font-medium text-green-800 hover:underline">{listing.contact_phone}</a>
-                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your land "${listing.title}" (${formatINRShort(listing.price)}) on AcreHub.`)}`} target="_blank" className="font-medium text-green-800 hover:underline">WhatsApp</a></>}</>
+                <>📞 Call <a href={`tel:${listing.contact_phone}`} className="font-semibold text-green-800 hover:underline">{listing.contact_phone}</a>
+                {listing.contact_whatsapp && <> · <a href={`https://wa.me/91${listing.contact_whatsapp}?text=${encodeURIComponent(`Hi, I'm interested in your land "${listing.title}" (${formatINRShort(listing.price)}) on AcreHub.`)}`} target="_blank" className="font-semibold text-green-800 hover:underline">WhatsApp</a></>}</>
               )}
               {listing.contact_email && (
-                <>{listing.contact_phone ? " · " : ""}<a href={`mailto:${listing.contact_email}`} className="font-medium text-green-800 hover:underline">Email</a></>
+                <>{listing.contact_phone ? " · " : ""}✉ <a href={`mailto:${listing.contact_email}`} className="font-semibold text-green-800 hover:underline">{listing.contact_email}</a></>
               )}
             </p>
+          ) : (
+            <p className="mt-4 text-sm text-gray-500">The seller hasn&apos;t shared contact details for this listing yet.</p>
           )}
         </div>
 

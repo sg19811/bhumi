@@ -88,5 +88,29 @@ export const TIMELINE_OPTIONS: Option[] = [
   { value: "just_exploring", label: "Just exploring" },
 ];
 
+// Why the person wants to talk to a lawyer — shown on the "talk to a lawyer" form.
+export const LEGAL_REASON_OPTIONS: Option[] = [
+  { value: "buying", label: "Buying land — check before I commit" },
+  { value: "selling", label: "Selling my land" },
+  { value: "title_verification", label: "Title / ownership verification" },
+  { value: "document_review", label: "Review a sale deed / agreement" },
+  { value: "land_conversion", label: "Land conversion (NA / use change)" },
+  { value: "nri_oci", label: "NRI / OCI purchase rules" },
+  { value: "inheritance", label: "Inheritance / succession / partition" },
+  { value: "dispute", label: "Dispute / encroachment / litigation" },
+  { value: "registration", label: "Registration / stamp duty / mutation" },
+  { value: "other", label: "Something else" },
+];
+
+// How soon they need help — drives triage priority in the admin dashboard.
+export const LEGAL_URGENCY_OPTIONS: Option[] = [
+  { value: "immediate", label: "Immediate — within a few days" },
+  { value: "this_week", label: "This week" },
+  { value: "this_month", label: "This month" },
+  { value: "exploring", label: "Just exploring — no rush" },
+];
+
 export const landTypeLabel = (v: string) => LAND_TYPE_OPTIONS.find((o) => o.value === v)?.label ?? v.replace(/_/g, " ");
 export const buyerTypeLabel = (v: string) => BUYER_TYPE_OPTIONS.find((o) => o.value === v)?.label ?? v.replace(/_/g, " ");
+export const legalReasonLabel = (v: string) => LEGAL_REASON_OPTIONS.find((o) => o.value === v)?.label ?? v.replace(/_/g, " ");
+export const legalUrgencyLabel = (v: string) => LEGAL_URGENCY_OPTIONS.find((o) => o.value === v)?.label ?? v.replace(/_/g, " ");

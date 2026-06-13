@@ -115,7 +115,7 @@ export default function NriHub() {
       <div className="mt-8">
         <LeadCaptureForm
           source="/legal/nri"
-          defaults={{ buyer_type: "nri", related_service_slug: "nri-land-advisory", legal_concern: "NRI / OCI land advisory" }}
+          defaults={{ buyer_type: "nri", related_service_slug: "nri-land-advisory", legal_concern: "NRI / OCI land advisory", reason: "nri_oci" }}
           heading="Talk to an NRI land lawyer"
           subheading="FEMA-compliant guidance on what you can buy or inherit, and the approval route — before you commit."
         />

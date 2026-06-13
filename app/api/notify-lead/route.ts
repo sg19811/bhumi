@@ -9,7 +9,7 @@ const BASE = "https://acrehubindia.com";
 const LEAD_META: Record<string, { subject: string; fields: [string, string][] }> = {
   inquiries: { subject: "New buyer inquiry", fields: [["Message", "message"], ["Phone", "contact_phone"], ["Listing", "listing_id"]] },
   buyer_interests: { subject: "New buyer requirement", fields: [["Intent", "intent"], ["Budget min", "budget_min"], ["Budget max", "budget_max"], ["District", "preferred_district"], ["Land types", "land_types"], ["Notes", "notes"], ["Phone", "contact_phone"]] },
-  legal_inquiries: { subject: "New 'talk to a lawyer' request", fields: [["Name", "name"], ["Phone", "phone"], ["Email", "email"], ["State", "state"], ["Concern", "legal_concern"], ["From page", "source_page"]] },
+  legal_inquiries: { subject: "New 'talk to a lawyer' request", fields: [["Name", "name"], ["Phone", "phone"], ["Email", "email"], ["State", "state"], ["Reason", "reason"], ["Urgency", "urgency"], ["Concern", "legal_concern"], ["From page", "source_page"]] },
   site_visit_requests: { subject: "New site-visit request", fields: [["Name", "name"], ["Phone", "phone"], ["Listing", "listing_id"], ["Preferred date", "preferred_date"], ["Notes", "notes"]] },
   verification_requests: { subject: "New listing verification request", fields: [["Listing", "listing_id"], ["Notes", "notes"]] },
 };

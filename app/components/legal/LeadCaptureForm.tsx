@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { track, readUtm } from "@/app/lib/legal/analytics";
-import { STATES } from "@/app/lib/legal/options";
+import { STATES, LEGAL_REASON_OPTIONS, LEGAL_URGENCY_OPTIONS } from "@/app/lib/legal/options";
 
 export type LeadDefaults = {
   state?: string;
@@ -11,6 +11,8 @@ export type LeadDefaults = {
   land_type?: string;
   buyer_type?: string;
   legal_concern?: string;
+  reason?: string;
+  urgency?: string;
   related_result_id?: string;
   related_service_slug?: string;
   related_lawyer_id?: string;
@@ -47,6 +49,8 @@ export default function LeadCaptureForm({
     setError("");
     const utm = readUtm();
     const concern = (f.get("legal_concern") as string) || defaults.legal_concern || null;
+    const reason = (f.get("reason") as string) || defaults.reason || null;
+    const urgency = (f.get("urgency") as string) || defaults.urgency || null;
     const { error: dbError } = await supabase.from("legal_inquiries").insert({
       name: f.get("name"),
       phone: f.get("phone"),
@@ -57,6 +61,8 @@ export default function LeadCaptureForm({
       land_type: defaults.land_type || null,
       buyer_type: defaults.buyer_type || null,
       legal_concern: concern,
+      reason,
+      urgency,
       related_result_id: defaults.related_result_id || null,
       related_service_slug: defaults.related_service_slug || null,
       related_lawyer_id: defaults.related_lawyer_id || null,
@@ -76,6 +82,8 @@ export default function LeadCaptureForm({
       source_page: source,
       state: (f.get("state") as string) || defaults.state || null,
       concern_category: concern,
+      reason,
+      urgency,
       has_email: !!f.get("email"),
     });
     setDone(true);
@@ -112,7 +120,19 @@ export default function LeadCaptureForm({
             {STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
         )}
-        <textarea name="legal_concern" rows={compact ? 2 : 3} aria-label="What do you need help with? (optional)" placeholder="What do you need help with? (optional)" className={`${inp} ${compact ? "" : "sm:col-span-2"}`} />
+        {!defaults.reason && (
+          <select name="reason" defaultValue="" required className={inp} aria-label="Why do you want to talk to a lawyer?">
+            <option value="" disabled>Why do you need a lawyer?</option>
+            {LEGAL_REASON_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        )}
+        {!defaults.urgency && (
+          <select name="urgency" defaultValue="" required className={inp} aria-label="How urgent is it?">
+            <option value="" disabled>How urgent is it?</option>
+            {LEGAL_URGENCY_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        )}
+        <textarea name="legal_concern" rows={compact ? 2 : 3} aria-label="Anything else we should know? (optional)" placeholder="Anything else we should know? (optional)" className={`${inp} ${compact ? "" : "sm:col-span-2"}`} />
       </div>
 
       <label className="mt-3 flex items-start gap-2 text-xs text-gray-500">
