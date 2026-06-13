@@ -16,6 +16,14 @@ const storageUrl = z
   .string()
   .refine((u) => !SUPABASE_URL || u.startsWith(STORAGE_PREFIX), "Media must be an uploaded AcreHub file");
 
+// Coordinates are optional (a pin helps buyers but isn't required to publish).
+// Empty string / null / undefined → "not provided"; range-checked only when present.
+const optionalCoord = (min: number, max: number, msg: string) =>
+  z.preprocess(
+    (v) => (v === "" || v === null || v === undefined ? undefined : v),
+    z.coerce.number().min(min, msg).max(max, msg).optional(),
+  );
+
 export const listingSchema = z.object({
   title: z.string().trim().min(3, "Title is required (min 3 chars)").max(120, "Title is too long (max 120)"),
   description: z.string().trim().max(4000, "Description is too long (max 4000)").optional().or(z.literal("")),
@@ -24,8 +32,8 @@ export const listingSchema = z.object({
   price_basis: z.enum(["total", "per_acre", "per_guntha", "per_sqft"]).optional().or(z.literal("")),
   area_value: z.coerce.number({ message: "Enter the area" }).positive("Area must be greater than 0"),
   area_unit: z.string().trim().min(1, "Pick an area unit"),
-  latitude: z.coerce.number({ message: "Drop a pin / enter latitude" }).min(-90, "Latitude must be between −90 and 90").max(90, "Latitude must be between −90 and 90"),
-  longitude: z.coerce.number({ message: "Drop a pin / enter longitude" }).min(-180, "Longitude must be between −180 and 180").max(180, "Longitude must be between −180 and 180"),
+  latitude: optionalCoord(-90, 90, "Latitude must be between −90 and 90"),
+  longitude: optionalCoord(-180, 180, "Longitude must be between −180 and 180"),
   district: z.string().trim().max(80, "District is too long").optional().or(z.literal("")),
   taluka: z.string().trim().max(80, "Taluka is too long").optional().or(z.literal("")),
   village: z.string().trim().max(80, "Village is too long").optional().or(z.literal("")),

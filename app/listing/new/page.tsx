@@ -40,13 +40,6 @@ export default function NewListing() {
   }
   function next() {
     if (!validateStep(step)) return;
-    if (step === 2) {
-      const latEl = stepRefs.current[2]?.querySelector('input[name="latitude"]') as HTMLInputElement | null;
-      if (!latEl?.value) {
-        setError("Please drop a pin on the map to set the location.");
-        return;
-      }
-    }
     setError("");
     setStep((s) => Math.min(s + 1, stepLabels.length - 1));
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -61,18 +54,15 @@ export default function NewListing() {
     const f = new FormData(e.currentTarget);
     // Honeypot: real users never see/fill this; bots do. Pretend success, skip DB.
     if (f.get("company")) { setSuccess(true); return; }
-    if (!f.get("latitude") || !f.get("longitude")) {
-      setError("Please drop a pin on the map to set the location.");
-      setStep(2);
-      return;
-    }
+    const latRaw = f.get("latitude");
+    const lngRaw = f.get("longitude");
     const projectType = isProjectType(landType);
     const payload: Record<string, unknown> = {
       owner_user_id: user?.id ?? null,
       title: f.get("title"), description: f.get("description"), land_type: f.get("land_type"),
       price: Number(f.get("price")), price_basis: f.get("price_basis"),
       area_value: Number(f.get("area_value")), area_unit: f.get("area_unit"),
-      latitude: Number(f.get("latitude")), longitude: Number(f.get("longitude")),
+      latitude: latRaw ? Number(latRaw) : null, longitude: lngRaw ? Number(lngRaw) : null,
       district: f.get("district"), taluka: f.get("taluka"), village: f.get("village"),
       water_source: f.get("water_source"), road_access: f.get("road_access"),
       electricity: f.get("electricity") === "on",

@@ -4,7 +4,13 @@ import { useCallback } from "react";
 import { useLang } from "@/app/lib/i18n-client";
 import { STATES } from "@/app/lib/legal/options";
 
-export default function SearchFilters() {
+export default function SearchFilters({
+  districtOptions = [],
+  talukasByDistrict = {},
+}: {
+  districtOptions?: string[];
+  talukasByDistrict?: Record<string, string[]>;
+}) {
   const router = useRouter();
   const params = useSearchParams();
   const { t } = useLang();
@@ -13,31 +19,47 @@ export default function SearchFilters() {
     v ? sp.set(k, v) : sp.delete(k);
     router.push(`/explore?${sp.toString()}`);
   }, [params, router]);
+  // Changing the district resets the taluka (a taluka belongs to one district).
+  const setDistrict = useCallback((v: string) => {
+    const sp = new URLSearchParams(params.toString());
+    v ? sp.set("district", v) : sp.delete("district");
+    sp.delete("taluka");
+    router.push(`/explore?${sp.toString()}`);
+  }, [params, router]);
 
   const sel = "shrink-0 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-green-600 focus:border-green-600";
-  const inp = "w-32 shrink-0 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 outline-none transition-colors focus:border-green-600";
+
+  // District/taluka come from districts/talukas present in active listings.
+  const currentDistrict = params.get("district") ?? "";
+  const currentTaluka = params.get("taluka") ?? "";
+  // Ensure the active value is always selectable even if it isn't in the option list.
+  const districts = districtOptions.includes(currentDistrict) || !currentDistrict
+    ? districtOptions
+    : [currentDistrict, ...districtOptions];
+  const talukaList = talukasByDistrict[currentDistrict.toLowerCase()] ?? [];
+  const talukas = talukaList.includes(currentTaluka) || !currentTaluka
+    ? talukaList
+    : [currentTaluka, ...talukaList];
   return (
     <div className="flex items-center gap-2.5 overflow-x-auto border-b border-gray-200 bg-gray-50 px-5 py-3 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <select defaultValue={params.get("state") ?? ""} onChange={(e) => set("state", e.target.value)} className={sel} aria-label="State">
         <option value="">All states</option>
         {STATES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
       </select>
-      <input
-        defaultValue={params.get("district") ?? ""}
-        placeholder="District"
-        aria-label="District"
-        onKeyDown={(e) => { if (e.key === "Enter") set("district", e.currentTarget.value.trim()); }}
-        onBlur={(e) => set("district", e.target.value.trim())}
-        className={inp}
-      />
-      <input
-        defaultValue={params.get("taluka") ?? ""}
-        placeholder="Taluka"
+      <select value={currentDistrict} onChange={(e) => setDistrict(e.target.value)} className={sel} aria-label="District">
+        <option value="">All districts</option>
+        {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+      </select>
+      <select
+        value={currentTaluka}
+        onChange={(e) => set("taluka", e.target.value)}
+        className={`${sel} disabled:opacity-50`}
         aria-label="Taluka"
-        onKeyDown={(e) => { if (e.key === "Enter") set("taluka", e.currentTarget.value.trim()); }}
-        onBlur={(e) => set("taluka", e.target.value.trim())}
-        className={inp}
-      />
+        disabled={!currentDistrict || talukas.length === 0}
+      >
+        <option value="">{currentDistrict ? "All talukas" : "Taluka — pick a district first"}</option>
+        {talukas.map((tk) => <option key={tk} value={tk}>{tk}</option>)}
+      </select>
       <select defaultValue={params.get("land_type") ?? ""} onChange={(e) => set("land_type", e.target.value)} className={sel}>
         <option value="">{t("f.allTypes")}</option>
         <option value="agri_land">{t("f.t.agri")}</option><option value="irrigated_farmland">{t("f.t.irrigated")}</option>

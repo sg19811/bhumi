@@ -95,7 +95,7 @@ export default function LocationField({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-gray-500">Tap the map, use your location, or type coordinates.</p>
+        <p className="text-sm text-gray-500">Optional — tap the map, use your location, or type coordinates. A precise pin helps buyers find your land.</p>
         <button
           type="button"
           onClick={useMyLocation}
@@ -114,12 +114,12 @@ export default function LocationField({
       {/* Manual coordinate entry (also what the form submits). */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium">Latitude *</label>
-          <input name="latitude" required inputMode="decimal" value={latText} onChange={(e) => setLatText(e.target.value)} onBlur={applyTypedCoords} placeholder="12.31" className={fieldCls} />
+          <label className="mb-1 block text-sm font-medium">Latitude</label>
+          <input name="latitude" inputMode="decimal" value={latText} onChange={(e) => setLatText(e.target.value)} onBlur={applyTypedCoords} placeholder="12.31" className={fieldCls} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium">Longitude *</label>
-          <input name="longitude" required inputMode="decimal" value={lngText} onChange={(e) => setLngText(e.target.value)} onBlur={applyTypedCoords} placeholder="76.21" className={fieldCls} />
+          <label className="mb-1 block text-sm font-medium">Longitude</label>
+          <input name="longitude" inputMode="decimal" value={lngText} onChange={(e) => setLngText(e.target.value)} onBlur={applyTypedCoords} placeholder="76.21" className={fieldCls} />
         </div>
       </div>
 

@@ -54,11 +54,33 @@ export default async function Explore({ searchParams }: { searchParams: Promise<
 
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
 
+  // Build district/taluka dropdown options from districts/talukas that actually
+  // exist in active listings (so the filters never offer a zero-result location).
+  const { data: locRows } = await supabase.from("listings").select("district, taluka").eq("status", "active");
+  const districtDisplay = new Map<string, string>(); // lowercase key → display name
+  const talukaSets = new Map<string, Map<string, string>>(); // district key → (taluka key → display)
+  for (const r of locRows ?? []) {
+    const d = (r.district ?? "").trim();
+    const tk = (r.taluka ?? "").trim();
+    if (!d) continue;
+    const dk = d.toLowerCase();
+    if (!districtDisplay.has(dk)) districtDisplay.set(dk, d);
+    if (tk) {
+      const m = talukaSets.get(dk) ?? new Map<string, string>();
+      if (!m.has(tk.toLowerCase())) m.set(tk.toLowerCase(), tk);
+      talukaSets.set(dk, m);
+    }
+  }
+  const byName = (a: string, b: string) => a.localeCompare(b);
+  const districtOptions = [...districtDisplay.values()].sort(byName);
+  const talukasByDistrict: Record<string, string[]> = {};
+  for (const [dk, m] of talukaSets) talukasByDistrict[dk] = [...m.values()].sort(byName);
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <SearchLogger />
       <Header />
-      <SearchFilters />
+      <SearchFilters districtOptions={districtOptions} talukasByDistrict={talukasByDistrict} />
       {sp.q && <p className="border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm text-gray-500">{t("explore.resultsFor")}: &quot;{sp.q}&quot;</p>}
       <main className="mx-auto max-w-7xl px-5 py-6 sm:px-6 sm:py-8">
         <h2 className="text-xl font-semibold">{markers.length} {t("explore.found")}</h2>

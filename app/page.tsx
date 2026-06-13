@@ -7,6 +7,7 @@ import NotifyMe from "@/app/components/NotifyMe";
 import ListingCard from "@/app/components/ListingCard";
 import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
+import { supabaseAdmin } from "@/app/lib/supabase-server";
 import { getLocale } from "@/app/lib/i18n-server";
 import { t as translate } from "@/app/lib/i18n";
 
@@ -42,7 +43,9 @@ export default async function Home() {
   const locale = await getLocale();
   const t = (k: string) => translate(locale, k);
   const { count } = await supabase.from("listings").select("*", { count: "exact", head: true }).eq("status", "active");
-  const { count: buyerCount } = await supabase.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
+  // buyer_interests has no public-read RLS policy (admins/owners only), so the anon
+  // browser client always counts 0. Use the server admin client for this aggregate.
+  const { count: buyerCount } = await supabaseAdmin.from("buyer_interests").select("*", { count: "exact", head: true }).eq("status", "active");
   const { data: latest } = await supabase.from("listings").select("*").eq("status", "active").order("created_at", { ascending: false }).limit(4);
   const { data: distRows } = await supabase.from("listings").select("district").eq("status", "active");
   const regions = (() => {
