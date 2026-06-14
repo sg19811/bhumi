@@ -11,7 +11,10 @@ export const AI_MODELS = {
   assist: "claude-haiku-4-5-20251001",
 } as const;
 
-export type ClaudeResult = { ok: true; text: string } | { ok: false; error: string; status?: number };
+export type ClaudeUsage = { input_tokens: number; output_tokens: number };
+export type ClaudeResult =
+  | { ok: true; text: string; usage?: ClaudeUsage }
+  | { ok: false; error: string; status?: number };
 
 export function aiConfigured(): boolean {
   return !!process.env.ANTHROPIC_API_KEY;
@@ -51,7 +54,10 @@ export async function callClaude(opts: {
       ? data.content.filter((c: { type?: string }) => c.type === "text").map((c: { text?: string }) => c.text ?? "").join("\n").trim()
       : "";
     if (!text) return { ok: false, error: "The AI returned an empty response. Please try again.", status: 502 };
-    return { ok: true, text };
+    const usage = data?.usage && typeof data.usage.input_tokens === "number"
+      ? { input_tokens: data.usage.input_tokens, output_tokens: data.usage.output_tokens ?? 0 }
+      : undefined;
+    return { ok: true, text, usage };
   } catch {
     return { ok: false, error: "Couldn't reach the AI service. Please try again.", status: 502 };
   }
