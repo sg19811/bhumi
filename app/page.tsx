@@ -245,6 +245,20 @@ export default async function Home() {
 
       <RecentlyViewed />
 
+      {/* Agent recruitment */}
+      <section className="mx-auto max-w-3xl px-6 pb-4 pt-4">
+        <div className="flex flex-col items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm sm:flex-row sm:p-8 sm:text-left">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Are you a land agent?</h2>
+            <p className="mt-1 text-sm text-gray-600">Join the Acrehub Agent Network and send properties over WhatsApp — we turn them into listings, and every enquiry routes back to you.</p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Link href="/agents/how-it-works" className="rounded-full border border-green-700 px-5 py-2.5 text-sm font-medium text-green-800 hover:bg-green-50">How it works</Link>
+            <Link href="/agents/join" className="rounded-full bg-green-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-800">Apply to join</Link>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

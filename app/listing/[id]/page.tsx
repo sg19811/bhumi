@@ -18,6 +18,7 @@ import BuyerDecisionPanel from "@/app/components/BuyerDecisionPanel";
 import LandHealthPanel from "@/app/components/LandHealthPanel";
 import VerificationPanel from "@/app/components/VerificationPanel";
 import ListingCard from "@/app/components/ListingCard";
+import AgentManagedCard from "@/app/components/agents/AgentManagedCard";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
 import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
@@ -101,6 +102,11 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   const { count: sellerCount } = listing.owner_user_id
     ? await supabase.from("listings").select("id", { count: "exact", head: true }).eq("owner_user_id", listing.owner_user_id).eq("status", "active")
     : { count: 0 };
+
+  // Agent Network: if this listing came via an agent, fetch the public profile.
+  const { data: managedByAgent } = listing.agent_id
+    ? await supabase.from("public_agents").select("slug, name, display_name, agent_type, verification_status").eq("id", listing.agent_id).maybeSingle()
+    : { data: null };
 
   // Comparable active listings (same district or same land type) for price insight.
   const cmpCols = "price, price_basis, area_value, area_unit, district, land_type";
@@ -297,6 +303,14 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         <div className="mb-8">
           <VerifyChecklist />
         </div>
+
+        {managedByAgent && <AgentManagedCard agent={managedByAgent} listingTitle={listing.title} />}
+
+        {listing.location_visibility === "approximate" && (
+          <div className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            📍 Approximate location shown. Exact details available after you contact the agent.
+          </div>
+        )}
 
         <div id="contact" className="scroll-mt-20 rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
