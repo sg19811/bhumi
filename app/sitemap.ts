@@ -48,6 +48,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
   }));
 
+  // Public agent directory + verified agent profiles (PII-free public_agents view).
+  const { data: agents } = await supabase.from("public_agents").select("slug");
+  const agentPages = [
+    { url: `${BASE}/agents`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.6 },
+    { url: `${BASE}/agents/how-it-works`, lastModified: new Date() },
+    ...(agents ?? []).map((a) => ({ url: `${BASE}/agents/${a.slug}`, lastModified: new Date(), priority: 0.5 })),
+  ];
+
   const districts = [...new Set((listings ?? []).map((l) => l.district).filter(Boolean))];
   const regionPages = districts.map((d) => ({
     url: `${BASE}/region/${encodeURIComponent(d)}`,
@@ -82,5 +90,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...farmPlotPages, ...coBuyPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages];
+  return [...staticPages, ...farmPlotPages, ...coBuyPages, ...legalStatePages, ...legalArticlePages, ...regionPages, ...landPages, ...comboPages, ...listingPages, ...agentPages];
 }
