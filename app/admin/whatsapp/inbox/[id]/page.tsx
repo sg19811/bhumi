@@ -7,6 +7,7 @@ import Header from "@/app/components/Header";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import type { WhatsAppInboxRow, ParsedSubmission, ParsedListing, DuplicateCheckResult, BuyerMatchResult } from "@/app/lib/agent-types";
+import type { PriceSanityResult } from "@/app/lib/price-benchmarks";
 import PublishDraft from "@/app/components/admin/whatsapp/PublishDraft";
 
 type AgentCtx = {
@@ -70,7 +71,7 @@ export default function InboxDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState("");
-  const [intel, setIntel] = useState<{ dup: DuplicateCheckResult; matches: BuyerMatchResult[] } | null>(null);
+  const [intel, setIntel] = useState<{ dup: DuplicateCheckResult; matches: BuyerMatchResult[]; price: PriceSanityResult | null } | null>(null);
   const [intelLoading, setIntelLoading] = useState(false);
   const [clarifyQs, setClarifyQs] = useState("");
   const [clarifyMsg, setClarifyMsg] = useState("");
@@ -208,13 +209,16 @@ export default function InboxDetailPage() {
 
     const dup: DuplicateCheckResult = dupRes ?? { is_duplicate_suspected: false, matched_listing_id: null, match_type: null, similarity_score: 0, evidence: "Check failed" };
     const matches: BuyerMatchResult[] = matchRes?.matches ?? [];
-    setIntel({ dup, matches });
+    const price: PriceSanityResult | null = matchRes?.price_sanity ?? null;
+    setIntel({ dup, matches, price });
 
     const updates = {
       duplicate_check_status: dup.is_duplicate_suspected ? "duplicate_suspected" : "clean",
       duplicate_of_listing_id: dup.matched_listing_id,
       similarity_score: dup.similarity_score,
       matched_buyer_requirements: matches,
+      price_unusual: !!price?.is_unusual,
+      district_median_price_per_acre: price?.median_price_per_acre ?? null,
     };
     await supabase.from("whatsapp_inbox").update(updates).eq("id", id);
     setRow((cur) => (cur ? ({ ...cur, ...updates } as Row) : cur));
@@ -328,6 +332,15 @@ export default function InboxDetailPage() {
                 ) : (
                   <div className="rounded-lg bg-green-50 p-3 text-sm text-green-800">✓ No duplicates found.</div>
                 )}
+
+                {intel.price && intel.price.median_price_per_acre != null && (
+                  <div className={`mt-3 rounded-lg p-3 text-sm ${intel.price.is_unusual ? "bg-amber-50 text-amber-800" : "bg-gray-50 text-gray-600"}`}>
+                    {intel.price.is_unusual ? `⚠ Price ${intel.price.z_score_label}.` : "✓ Price in normal range."}
+                    {" "}District median ≈ ₹{intel.price.median_price_per_acre.toLocaleString("en-IN")}/acre
+                    <span className="text-xs text-gray-400"> (n={intel.price.sample_size})</span>
+                  </div>
+                )}
+
                 <div className="mt-3">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Buyer matches ({intel.matches.length})</p>
                   {intel.matches.length === 0 ? (
