@@ -58,7 +58,10 @@ export default function InboxPage() {
       <main className="mx-auto max-w-4xl px-6 py-8">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h1 className="text-xl font-bold">WhatsApp inbox</h1>
-          <Link href="/admin/whatsapp/inbox/new" className="rounded-full bg-green-700 px-4 py-1.5 text-sm font-medium text-white hover:bg-green-800">+ Add message</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/admin/whatsapp/clarifications" className="text-sm text-green-700 hover:underline">Clarifications →</Link>
+            <Link href="/admin/whatsapp/inbox/new" className="rounded-full bg-green-700 px-4 py-1.5 text-sm font-medium text-white hover:bg-green-800">+ Add message</Link>
+          </div>
         </div>
 
         <div className="mb-4 flex flex-wrap gap-2">

@@ -72,6 +72,9 @@ export default function InboxDetailPage() {
   const [parseErr, setParseErr] = useState("");
   const [intel, setIntel] = useState<{ dup: DuplicateCheckResult; matches: BuyerMatchResult[] } | null>(null);
   const [intelLoading, setIntelLoading] = useState(false);
+  const [clarifyQs, setClarifyQs] = useState("");
+  const [clarifyMsg, setClarifyMsg] = useState("");
+  const [clarifying, setClarifying] = useState(false);
 
   useEffect(() => {
     if (!isAdmin || !id) return;
@@ -80,7 +83,13 @@ export default function InboxDetailPage() {
       .select("*, agent:agent_profiles(id, name, district, taluka, land_types_handled, observed_primary_district, observed_primary_taluka, observed_price_min_per_acre, observed_price_max_per_acre, trust_tier)")
       .eq("id", id)
       .maybeSingle()
-      .then(({ data }) => (data ? setRow(data as Row) : setNotFound(true)));
+      .then(({ data }) => {
+        if (!data) { setNotFound(true); return; }
+        setRow(data as Row);
+        if (Array.isArray(data.clarification_questions) && data.clarification_questions.length) {
+          setClarifyQs(data.clarification_questions.join("\n"));
+        }
+      });
   }, [isAdmin, id]);
 
   async function setStatus(processed_status: string) {
@@ -139,7 +148,28 @@ export default function InboxDetailPage() {
     };
     await supabase.from("whatsapp_inbox").update(updates).eq("id", id);
     setRow((cur) => (cur ? ({ ...cur, ...updates } as Row) : cur));
+    if (first?.clarification_questions?.length) setClarifyQs(first.clarification_questions.join("\n"));
     setParsing(false);
+  }
+
+  async function sendClarify() {
+    const questions = clarifyQs.split("\n").map((s) => s.trim()).filter(Boolean);
+    if (!questions.length) return;
+    setClarifying(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+    const res = await fetch("/api/whatsapp/clarify", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ inbox_id: id, questions, agent_name: row?.agent?.name }),
+    });
+    if (res.ok) {
+      const { message_text } = await res.json();
+      setClarifyMsg(message_text);
+      setRow((cur) => (cur ? { ...cur, processed_status: "awaiting_clarification", clarification_questions: questions } : cur));
+    }
+    setClarifying(false);
   }
 
   async function runIntel() {
@@ -314,6 +344,28 @@ export default function InboxDetailPage() {
                   )}
                 </div>
               </>
+            )}
+          </section>
+        )}
+
+        {row.parsed_payload && ((row.missing_critical_fields?.length ?? 0) > 0 || (row.clarification_questions?.length ?? 0) > 0) && (
+          <section className="mt-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Clarification</h2>
+            {(row.missing_critical_fields?.length ?? 0) > 0 && (
+              <p className="mt-1 text-sm text-red-600">Missing: {row.missing_critical_fields?.join(", ")}</p>
+            )}
+            <label className="mt-3 block text-xs font-medium text-gray-600">Questions to ask the agent (one per line)</label>
+            <textarea value={clarifyQs} onChange={(e) => setClarifyQs(e.target.value)} rows={3} className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-green-600" />
+            <button onClick={sendClarify} disabled={clarifying} className="mt-3 rounded-full bg-green-700 px-4 py-1.5 text-sm font-medium text-white hover:bg-green-800 disabled:opacity-50">
+              {clarifying ? "Generating…" : "Generate clarification message"}
+            </button>
+
+            {clarifyMsg && (
+              <div className="mt-3">
+                <textarea readOnly value={clarifyMsg} rows={6} className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700" />
+                <button onClick={() => navigator.clipboard?.writeText(clarifyMsg)} className="mt-2 rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-700 hover:bg-gray-50">Copy message</button>
+                <p className="mt-1 text-xs text-gray-400">Paste this into WhatsApp to the agent. (Auto-send via BSP comes in a later phase.)</p>
+              </div>
             )}
           </section>
         )}
