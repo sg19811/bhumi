@@ -1,5 +1,6 @@
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
-import { AGENT_TYPES, type AgentType } from "@/app/lib/agent-types";
+import { AGENT_TYPES, agentTypeLabel, type AgentType } from "@/app/lib/agent-types";
+import { sendEmail, founderRecipient, escapeHtml } from "@/app/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,20 @@ export async function POST(request: Request) {
     }
     return fail("INSERT_FAILED", "Couldn't submit your application. Please try again.", 500);
   }
+
+  // Notify the team (defaults to isha@acrehubindia.com). Best-effort: a failed/
+  // unconfigured email never blocks the application — it still shows in admin.
+  const html = `<div style="font-family:Arial,sans-serif;color:#1d1b14;max-width:560px">
+    <h2 style="color:#38461f">New agent application</h2>
+    <table style="border-collapse:collapse;font-size:14px">
+      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Name</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(name)}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Phone</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(phone)}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Location</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml([district, state].filter(Boolean).join(", "))}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Agent type</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(agentTypeLabel(agentType))}</td></tr>
+    </table>
+    <p style="margin-top:16px;color:#1d1b14">Please go to <a href="https://acrehubindia.com/admin/agents/applications" style="color:#445626;font-weight:600">acrehubindia.com/admin/agents/applications</a> to verify.</p>
+  </div>`;
+  await sendEmail({ to: founderRecipient(), subject: "New agent application — AcreHub", html });
 
   return Response.json({ application_id: inserted?.id, status: "pending_review" });
 }
