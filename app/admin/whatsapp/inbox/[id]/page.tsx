@@ -7,6 +7,7 @@ import Header from "@/app/components/Header";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import type { WhatsAppInboxRow, ParsedSubmission, ParsedListing } from "@/app/lib/agent-types";
+import PublishDraft from "@/app/components/admin/whatsapp/PublishDraft";
 
 type AgentCtx = {
   id: string;
@@ -214,7 +215,18 @@ export default function InboxDetailPage() {
 
           {row.parsed_payload && <ParsedView payload={row.parsed_payload} />}
 
-          <p className="mt-3 text-xs text-gray-400">One-click publish to a live listing arrives in the next slice.</p>
+          {row.resulting_listing_id ? (
+            <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+              ✓ Published. <Link href={`/listing/${row.resulting_listing_id}`} className="font-semibold underline">View the live listing →</Link>
+            </div>
+          ) : row.parsed_payload?.listings?.[0] ? (
+            <PublishDraft
+              inboxId={String(id)}
+              listing={row.parsed_payload.listings[0]}
+              coords={{ latitude: row.location_lat, longitude: row.location_lng }}
+              onPublished={() => setRow((cur) => (cur ? { ...cur, processed_status: "published" } : cur))}
+            />
+          ) : null}
         </section>
 
         <div className="mt-5 flex flex-wrap gap-2">
