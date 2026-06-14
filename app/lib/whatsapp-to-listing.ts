@@ -66,6 +66,12 @@ const ROAD_MAP: Record<string, string> = {
   unknown: "",
 };
 
+// Map a parser land_type (e.g. "agricultural") to this project's land_type
+// (e.g. "agri_land"). Shared with buyer matching so enums line up.
+export function mapParsedLandType(parsedLandType: string): string {
+  return LAND_TYPE_MAP[parsedLandType] ?? "other";
+}
+
 export function parsedToDraft(
   l: ParsedListing,
   coords?: { latitude: number | null; longitude: number | null }

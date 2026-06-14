@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
-import type { WhatsAppInboxRow, ParsedSubmission, ParsedListing } from "@/app/lib/agent-types";
+import type { WhatsAppInboxRow, ParsedSubmission, ParsedListing, DuplicateCheckResult, BuyerMatchResult } from "@/app/lib/agent-types";
 import PublishDraft from "@/app/components/admin/whatsapp/PublishDraft";
 
 type AgentCtx = {
@@ -70,6 +70,8 @@ export default function InboxDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState("");
+  const [intel, setIntel] = useState<{ dup: DuplicateCheckResult; matches: BuyerMatchResult[] } | null>(null);
+  const [intelLoading, setIntelLoading] = useState(false);
 
   useEffect(() => {
     if (!isAdmin || !id) return;
@@ -138,6 +140,55 @@ export default function InboxDetailPage() {
     await supabase.from("whatsapp_inbox").update(updates).eq("id", id);
     setRow((cur) => (cur ? ({ ...cur, ...updates } as Row) : cur));
     setParsing(false);
+  }
+
+  async function runIntel() {
+    const first = row?.parsed_payload?.listings?.[0];
+    if (!first) return;
+    setIntelLoading(true);
+
+    const loc = first.location ?? ({} as ParsedListing["location"]);
+    const perAcre =
+      first.price?.per_acre_inr ??
+      (first.price?.total_inr && first.acreage ? Math.round(first.price.total_inr / first.acreage) : null);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (session?.access_token) headers.Authorization = `Bearer ${session.access_token}`;
+
+    const [dupRes, matchRes] = await Promise.all([
+      fetch("/api/duplicates/check", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          district: loc.district, taluka: loc.taluka, village: loc.village_or_landmark,
+          survey_number: loc.survey_number, latitude: row?.location_lat ?? null, longitude: row?.location_lng ?? null,
+          description: first.raw_description,
+        }),
+      }).then((r) => (r.ok ? r.json() : null)),
+      fetch("/api/matching/buyers", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          listing_draft: { district: loc.district, taluka: loc.taluka, land_type: first.land_type, acreage: first.acreage ?? 0, price_per_acre: perAcre },
+          limit: 5,
+        }),
+      }).then((r) => (r.ok ? r.json() : null)),
+    ]);
+
+    const dup: DuplicateCheckResult = dupRes ?? { is_duplicate_suspected: false, matched_listing_id: null, match_type: null, similarity_score: 0, evidence: "Check failed" };
+    const matches: BuyerMatchResult[] = matchRes?.matches ?? [];
+    setIntel({ dup, matches });
+
+    const updates = {
+      duplicate_check_status: dup.is_duplicate_suspected ? "duplicate_suspected" : "clean",
+      duplicate_of_listing_id: dup.matched_listing_id,
+      similarity_score: dup.similarity_score,
+      matched_buyer_requirements: matches,
+    };
+    await supabase.from("whatsapp_inbox").update(updates).eq("id", id);
+    setRow((cur) => (cur ? ({ ...cur, ...updates } as Row) : cur));
+    setIntelLoading(false);
   }
 
   if (loading) return <div className="flex min-h-screen items-center justify-center text-gray-400">Loading…</div>;
@@ -228,6 +279,44 @@ export default function InboxDetailPage() {
             />
           ) : null}
         </section>
+
+        {row.parsed_payload?.listings?.[0] && (
+          <section className="mt-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Intelligence</h2>
+              <button onClick={runIntel} disabled={intelLoading} className="rounded-full border border-green-700 px-4 py-1.5 text-sm font-medium text-green-800 hover:bg-green-50 disabled:opacity-50">
+                {intelLoading ? "Checking…" : "Check duplicates & buyer matches"}
+              </button>
+            </div>
+            {intel && (
+              <>
+                {intel.dup.is_duplicate_suspected ? (
+                  <div className="rounded-lg bg-red-50 p-3 text-sm text-red-800">
+                    ⚠ Possible duplicate ({intel.dup.match_type?.replace(/_/g, " ")}). {intel.dup.evidence}
+                    {intel.dup.matched_listing_id && <> · <Link href={`/listing/${intel.dup.matched_listing_id}`} className="font-medium underline">view</Link></>}
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-green-50 p-3 text-sm text-green-800">✓ No duplicates found.</div>
+                )}
+                <div className="mt-3">
+                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Buyer matches ({intel.matches.length})</p>
+                  {intel.matches.length === 0 ? (
+                    <p className="mt-1 text-sm text-gray-400">No matching buyer requirements yet.</p>
+                  ) : (
+                    <ul className="mt-1 space-y-1">
+                      {intel.matches.map((m) => (
+                        <li key={m.buyer_interest_id} className="rounded-lg border border-gray-200 p-2 text-sm">
+                          <span className="font-medium capitalize">{m.match_label.replace(/_/g, " ")}</span> · {m.buyer_phone_masked} · score {m.match_score}
+                          {m.match_reasons.length > 0 && <span className="text-xs text-gray-500"> — {m.match_reasons.join(", ")}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </>
+            )}
+          </section>
+        )}
 
         <div className="mt-5 flex flex-wrap gap-2">
           {row.processed_status !== "rejected" && <button onClick={() => setStatus("rejected")} className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-600 hover:bg-gray-50">Reject</button>}

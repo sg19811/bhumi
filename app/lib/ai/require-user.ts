@@ -11,3 +11,12 @@ export async function getUserId(req: Request): Promise<string | null> {
   if (error || !data?.user) return null;
   return data.user.id;
 }
+
+// Returns the user id only if they are an admin, else null. Used to gate
+// internal/paid admin endpoints (parsing, matching, publishing).
+export async function getAdminUserId(req: Request): Promise<string | null> {
+  const userId = await getUserId(req);
+  if (!userId) return null;
+  const { data } = await supabaseAdmin.from("profiles").select("role").eq("user_id", userId).maybeSingle();
+  return data?.role === "admin" ? userId : null;
+}
