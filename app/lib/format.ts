@@ -30,6 +30,14 @@ const ACRE_PER_UNIT: Record<string, number> = {
   cent: 1 / 100,
 };
 
+/** Area expressed in acres, or null when the unit is unknown (e.g. bigha). */
+export function acresOf(listing: { area_value?: number | null; area_unit?: string | null }): number | null {
+  const factor = listing.area_unit ? ACRE_PER_UNIT[listing.area_unit] : undefined;
+  const area = Number(listing.area_value);
+  if (!factor || !isFinite(area) || area <= 0) return null;
+  return area * factor;
+}
+
 /**
  * Normalized ₹ per acre, for apples-to-apples comparison. Returns null when it
  * can't be derived reliably (e.g. total price with a bigha/unknown area unit).

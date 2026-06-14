@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/alerts", "schedule": "0 7 * * *" },
-    { "path": "/api/intelligence-digest", "schedule": "0 6 * * 1" }
+    { "path": "/api/intelligence-digest", "schedule": "0 6 * * 1" },
+    { "path": "/api/cron/recompute-agents", "schedule": "0 2 * * *" }
   ]
 }
