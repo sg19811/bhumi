@@ -270,3 +270,42 @@ export interface AgentApplicationInput {
   bio?: string;
   ethics_acknowledged: true;
 }
+
+// =====================================================
+// SHARED OPTION LISTS / LABELS (form + admin reuse these)
+// =====================================================
+
+export const AGENT_TYPES: AgentType[] = [
+  'village_agent', 'broker', 'land_aggregator',
+  'farm_plot_channel_partner', 'developer_sales_partner',
+  'legal_document_consultant', 'land_consultant', 'other',
+];
+
+export const AGENT_TYPE_LABELS: Record<AgentType, string> = {
+  village_agent: 'Village agent',
+  broker: 'Broker',
+  land_aggregator: 'Land aggregator',
+  farm_plot_channel_partner: 'Farm-plot channel partner',
+  developer_sales_partner: 'Developer sales partner',
+  legal_document_consultant: 'Legal / document consultant',
+  land_consultant: 'Land consultant',
+  other: 'Other',
+};
+
+export const agentTypeLabel = (v: string) =>
+  AGENT_TYPE_LABELS[v as AgentType] ?? v.replace(/_/g, ' ');
+
+// Join-form state list (section 8.3).
+export const AGENT_STATE_OPTIONS: string[] = [
+  'Karnataka', 'Tamil Nadu', 'Andhra Pradesh', 'Telangana', 'Maharashtra',
+  'Kerala', 'Gujarat', 'Madhya Pradesh', 'Uttar Pradesh', 'Rajasthan', 'Others',
+];
+
+export const VERIFICATION_STATUSES: VerificationStatus[] = [
+  'pending_review', 'phone_verified', 'id_submitted',
+  'verified', 'territory_verified', 'suspended', 'rejected',
+];
+
+export const PROFILE_STATUSES: ProfileStatus[] = [
+  'draft', 'active', 'hidden', 'suspended', 'archived',
+];
