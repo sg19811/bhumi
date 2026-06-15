@@ -61,3 +61,17 @@ export function citiesByRegion(): { region: string; cities: City[] }[] {
     cities: CITIES.filter((c) => c.region === region),
   })).filter((g) => g.cities.length > 0);
 }
+
+/**
+ * Cities grouped by state (state label as the heading), for the menu and hub
+ * grid. State order follows first appearance in CITIES, so the live market
+ * (Karnataka / Bangalore) leads.
+ */
+export function citiesByState(): { state: string; cities: City[] }[] {
+  const order: string[] = [];
+  for (const c of CITIES) if (!order.includes(c.stateLabel)) order.push(c.stateLabel);
+  return order.map((state) => ({
+    state,
+    cities: CITIES.filter((c) => c.stateLabel === state),
+  }));
+}

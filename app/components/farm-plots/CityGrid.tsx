@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { citiesByRegion } from "@/app/lib/farm-plots/cities";
+import { citiesByState } from "@/app/lib/farm-plots/cities";
 
-// City cards for the hub, grouped by region. Live cities show their project count;
+// City cards for the hub, grouped by state. Live cities show their project count;
 // coming-soon cities are clearly labelled but still link through (to a coming-soon
 // page) so the PAN-India structure is visible and crawlable.
 export default function CityGrid({ counts }: { counts: Record<string, number> }) {
-  const groups = citiesByRegion();
+  const groups = citiesByState();
   return (
     <div className="space-y-8">
       {groups.map((g) => (
-        <div key={g.region}>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">{g.region}</h3>
+        <div key={g.state}>
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">{g.state}</h3>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {g.cities.map((c) => {
               const n = counts[c.slug] ?? 0;

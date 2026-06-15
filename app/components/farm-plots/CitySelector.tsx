@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { citiesByRegion } from "@/app/lib/farm-plots/cities";
+import { citiesByState } from "@/app/lib/farm-plots/cities";
 
 // The location menu: pick any city and jump to its farm-plots page. Grouped by
-// region. Coming-soon cities are selectable (they show a coming-soon page).
+// state. Coming-soon cities are selectable (they show a coming-soon page).
 // This is what makes the section PAN-India rather than Bangalore-only.
 export default function CitySelector({ current }: { current?: string }) {
   const router = useRouter();
-  const groups = citiesByRegion();
+  const groups = citiesByState();
 
   return (
     <label className="inline-flex items-center gap-2 text-sm">
@@ -23,7 +23,7 @@ export default function CitySelector({ current }: { current?: string }) {
       >
         {!current && <option value="">Choose a city…</option>}
         {groups.map((g) => (
-          <optgroup key={g.region} label={g.region}>
+          <optgroup key={g.state} label={g.state}>
             {g.cities.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.label}
