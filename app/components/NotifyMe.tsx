@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/app/lib/supabase";
 import { LAND_TYPE_LABELS } from "@/app/lib/land";
 
 export default function NotifyMe({ district, landType, prompt }: { district?: string; landType?: string; prompt?: string }) {
@@ -19,10 +18,14 @@ export default function NotifyMe({ district, landType, prompt }: { district?: st
     e.preventDefault();
     if (!contact.trim()) return;
     setBusy(true);
-    await supabase.from("demand_signals").insert({
-      district: (askDetails ? wantWhere.trim() : district) || null,
-      land_type: (askDetails ? wantType : landType) || null,
-      contact: contact.trim(),
+    await fetch("/api/notify-me", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        district: askDetails ? wantWhere.trim() : district,
+        land_type: askDetails ? wantType : landType,
+        contact: contact.trim(),
+      }),
     });
     setBusy(false);
     setDone(true);
