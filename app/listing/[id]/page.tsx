@@ -19,6 +19,7 @@ import LandHealthPanel from "@/app/components/LandHealthPanel";
 import VerificationPanel from "@/app/components/VerificationPanel";
 import ListingCard from "@/app/components/ListingCard";
 import AgentManagedCard from "@/app/components/agents/AgentManagedCard";
+import LandRecordViewer from "@/app/components/agents/LandRecordViewer";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
 import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
@@ -106,6 +107,11 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
   // Agent Network: if this listing came via an agent, fetch the public profile.
   const { data: managedByAgent } = listing.agent_id
     ? await supabase.from("public_agents").select("slug, name, display_name, agent_type, verification_status").eq("id", listing.agent_id).maybeSingle()
+    : { data: null };
+
+  // Government land record (public-readable when linked to an active listing).
+  const { data: landRecord } = listing.land_record_id
+    ? await supabase.from("land_records").select("source, retrieved_at, owners, extent_value, extent_unit, classification, fmb_sketch_url, encumbrance_status").eq("id", listing.land_record_id).maybeSingle()
     : { data: null };
 
   // Comparable active listings (same district or same land type) for price insight.
@@ -303,6 +309,8 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
         <div className="mb-8">
           <VerifyChecklist />
         </div>
+
+        {landRecord && <LandRecordViewer record={landRecord} />}
 
         {managedByAgent && <AgentManagedCard agent={managedByAgent} listingTitle={listing.title} />}
 
