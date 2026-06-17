@@ -16,7 +16,9 @@ export async function POST(req: Request) {
   }
 
   const contact = String(body.contact ?? "").trim();
-  if (!contact) return Response.json({ ok: false, error: "Contact is required." }, { status: 400 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+    return Response.json({ ok: false, error: "A valid email is required." }, { status: 400 });
+  }
 
   const district = body.district ? String(body.district).trim() : null;
   const land_type = body.land_type ? String(body.land_type).trim() : null;
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
     <table style="border-collapse:collapse;font-size:14px">
       <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Looking for</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(land_type ? landLabel(land_type) : "Any land")}</td></tr>
       <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Where</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(district || "Anywhere")}</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Contact</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(contact)}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0;color:#8a8473">Email</td><td style="padding:4px 0;color:#1d1b14">${escapeHtml(contact)}</td></tr>
     </table>
     <p style="margin-top:16px;color:#1d1b14">They asked to be notified when matching land is listed. See all signals at <a href="https://acrehubindia.com/admin" style="color:#445626;font-weight:600">acrehubindia.com/admin</a>.</p>
   </div>`;
