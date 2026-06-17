@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/app/lib/supabase";
 import { LAND_TYPE_LABELS } from "@/app/lib/land";
 import { parsedToDraft, type ListingDraft } from "@/app/lib/whatsapp-to-listing";
+import { districtToState } from "@/app/lib/legal/districts";
 import type { ParsedListing } from "@/app/lib/agent-types";
 
 const inp = "w-full rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-green-600";
@@ -24,8 +25,34 @@ export default function PublishDraft({
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState("");
   const [doneUrl, setDoneUrl] = useState("");
+  const [lrBusy, setLrBusy] = useState(false);
+  const [lrMsg, setLrMsg] = useState("");
 
   const set = <K extends keyof ListingDraft>(k: K, v: ListingDraft[K]) => setD((cur) => ({ ...cur, [k]: v }));
+
+  async function fetchLandRecord() {
+    const state = districtToState(d.district);
+    if (!state) { setLrMsg("Pick a known district to look up its land record."); return; }
+    if (!d.survey_number.trim() || !d.village.trim() || !d.taluka.trim()) { setLrMsg("Need taluka, village and survey number to look up the record."); return; }
+    setLrBusy(true); setLrMsg("");
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/land-records/fetch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) },
+      body: JSON.stringify({ state, district: d.district, taluka: d.taluka, village: d.village, surveyNumber: d.survey_number }),
+    });
+    setLrBusy(false);
+    if (res.ok) {
+      const rec = await res.json();
+      set("land_record_id", rec.id);
+      const owners = Array.isArray(rec.owners) ? rec.owners.map((o: { name: string }) => o.name).join(", ") : "";
+      setLrMsg(`✓ Government record attached${owners ? ` — owner: ${owners}` : ""}${rec.extent?.value ? `, ${rec.extent.value} ${rec.extent.unit}` : ""}.`);
+    } else if (res.status === 404) {
+      setLrMsg("No record on file. Add it in Admin → Land records, then re-fetch.");
+    } else {
+      setLrMsg("Couldn't fetch the record. Try again.");
+    }
+  }
 
   async function publish() {
     if (!d.title.trim() || !d.district.trim()) { setError("Title and district are required."); return; }
@@ -141,6 +168,16 @@ export default function PublishDraft({
           <input type="checkbox" checked={d.electricity} onChange={(e) => set("electricity", e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-green-700" />
           Electricity available
         </label>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-gray-200 bg-white p-3">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-xs font-medium text-gray-600">Government land record</span>
+          <button type="button" onClick={fetchLandRecord} disabled={lrBusy} className="rounded-full border border-green-700 px-3 py-1 text-xs font-medium text-green-800 hover:bg-green-50 disabled:opacity-50">
+            {lrBusy ? "Fetching…" : d.land_record_id ? "Re-fetch" : "Fetch & attach"}
+          </button>
+        </div>
+        {lrMsg && <p className={`mt-1.5 text-xs ${d.land_record_id ? "text-green-700" : "text-gray-500"}`}>{lrMsg}</p>}
       </div>
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}

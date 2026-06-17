@@ -25,6 +25,7 @@ export type ListingDraft = {
   survey_number: string;
   location_visibility: string;
   survey_number_visibility: string;
+  land_record_id?: string | null;
 };
 
 // Parsed land_type enum → this project's land_type values (app/lib/land.ts).

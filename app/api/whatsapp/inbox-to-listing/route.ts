@@ -69,6 +69,7 @@ export async function POST(req: Request) {
       survey_number_clean: cleanSurveyNumber(d.survey_number),
       location_visibility: d.location_visibility || "public",
       survey_number_visibility: d.survey_number_visibility || "qualified_buyer_only",
+      land_record_id: d.land_record_id ?? null,
     })
     .select("id")
     .maybeSingle();
