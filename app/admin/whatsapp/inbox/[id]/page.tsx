@@ -8,6 +8,7 @@ import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import type { WhatsAppInboxRow, ParsedSubmission, ParsedListing, DuplicateCheckResult, BuyerMatchResult } from "@/app/lib/agent-types";
 import type { PriceSanityResult } from "@/app/lib/price-benchmarks";
+import { shouldAutoPublish } from "@/app/lib/agent-auto-publish";
 import PublishDraft from "@/app/components/admin/whatsapp/PublishDraft";
 
 type AgentCtx = {
@@ -21,6 +22,8 @@ type AgentCtx = {
   observed_price_min_per_acre: number | null;
   observed_price_max_per_acre: number | null;
   trust_tier: number | null;
+  accuracy_score: number | null;
+  auto_publish_listings: boolean | null;
 };
 type Row = WhatsAppInboxRow & { agent: AgentCtx | null };
 
@@ -81,7 +84,7 @@ export default function InboxDetailPage() {
     if (!isAdmin || !id) return;
     supabase
       .from("whatsapp_inbox")
-      .select("*, agent:agent_profiles(id, name, district, taluka, land_types_handled, observed_primary_district, observed_primary_taluka, observed_price_min_per_acre, observed_price_max_per_acre, trust_tier)")
+      .select("*, agent:agent_profiles(id, name, district, taluka, land_types_handled, observed_primary_district, observed_primary_taluka, observed_price_min_per_acre, observed_price_max_per_acre, trust_tier, accuracy_score, auto_publish_listings)")
       .eq("id", id)
       .maybeSingle()
       .then(({ data }) => {
@@ -356,6 +359,15 @@ export default function InboxDetailPage() {
                     </ul>
                   )}
                 </div>
+
+                {(() => {
+                  const auto = shouldAutoPublish(row, row.agent);
+                  return auto.eligible ? (
+                    <div className="mt-3 rounded-lg bg-green-50 p-3 text-sm text-green-800">✓ Meets all auto-publish criteria for this agent.</div>
+                  ) : (
+                    <div className="mt-3 rounded-lg bg-gray-50 p-3 text-xs text-gray-500">Not auto-publishable: {auto.reasons.join(", ")}.</div>
+                  );
+                })()}
               </>
             )}
           </section>
