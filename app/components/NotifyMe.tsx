@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { LAND_TYPE_LABELS } from "@/app/lib/land";
+import { STATES, stateLabel } from "@/app/lib/legal/options";
+import { districtsForState } from "@/app/lib/legal/districts";
+
+const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function NotifyMe({ district, landType, prompt }: { district?: string; landType?: string; prompt?: string }) {
   // When the page already knows the context (region / land-type pages), keep the
@@ -10,19 +14,26 @@ export default function NotifyMe({ district, landType, prompt }: { district?: st
 
   const [contact, setContact] = useState("");
   const [wantType, setWantType] = useState("");
-  const [wantWhere, setWantWhere] = useState("");
+  const [wantState, setWantState] = useState("");
+  const [wantDistrict, setWantDistrict] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+
+  const districtOptions = [...districtsForState(wantState)].sort();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!contact.trim()) return;
     setBusy(true);
+    // Store the most specific location chosen (district preferred; else state).
+    const where = askDetails
+      ? (wantDistrict ? titleCase(wantDistrict) : wantState ? stateLabel(wantState) : "")
+      : district;
     await fetch("/api/notify-me", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        district: askDetails ? wantWhere.trim() : district,
+        district: where || null,
         land_type: askDetails ? wantType : landType,
         contact: contact.trim(),
       }),
@@ -52,13 +63,29 @@ export default function NotifyMe({ district, landType, prompt }: { district?: st
                 <option key={value} value={value}>{label}</option>
               ))}
             </select>
-            <input
-              value={wantWhere}
-              onChange={(e) => setWantWhere(e.target.value)}
-              aria-label="Where? (district or area)"
-              placeholder="Where? (district or area)"
+            <select
+              value={wantState}
+              onChange={(e) => { setWantState(e.target.value); setWantDistrict(""); }}
+              aria-label="Which state?"
               className={inputBase}
-            />
+            >
+              <option value="">Which state?</option>
+              {STATES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+            <select
+              value={wantDistrict}
+              onChange={(e) => setWantDistrict(e.target.value)}
+              disabled={!wantState}
+              aria-label="District or city"
+              className={`${inputBase} disabled:bg-gray-50 disabled:text-gray-400`}
+            >
+              <option value="">{wantState ? "District / city (optional)" : "District — pick a state first"}</option>
+              {districtOptions.map((d) => (
+                <option key={d} value={d}>{titleCase(d)}</option>
+              ))}
+            </select>
           </>
         )}
         <div className="flex gap-2">
