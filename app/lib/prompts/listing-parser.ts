@@ -1,6 +1,8 @@
 // System prompt for the WhatsApp listing parser (spec section 7.1).
 // Used by app/lib/whatsapp-parsing.ts → /api/whatsapp/parse.
 
+import { REGIONAL_TERMS_REFERENCE } from "@/app/lib/prompts/regional-terms";
+
 export function buildListingParserPrompt(agentContext?: {
   name?: string;
   primary_district?: string;
@@ -93,6 +95,9 @@ REGIONAL TERMINOLOGY (recognize and map appropriately):
 - "B/W": borewell
 - "OW": open well
 - "FMB": Field Measurement Book
+
+REGIONAL TERMINOLOGY REFERENCE (per state — use to interpret terms, classifications and units accurately):
+${REGIONAL_TERMS_REFERENCE}
 
 STRICT RULES:
 1. If a value is not stated in the message, return null. Never guess.
