@@ -6,6 +6,7 @@ import { SavedSearchesProvider } from "@/app/lib/saved-searches";
 import { LanguageProvider } from "@/app/lib/i18n-client";
 import { getLocale } from "@/app/lib/i18n-server";
 import CompareTray from "@/app/components/CompareTray";
+import InstallPrompt from "@/app/components/InstallPrompt";
 import Analytics from "@/app/components/Analytics";
 import { ConfirmProvider } from "@/app/components/ConfirmModal";
 import "@/app/lib/env"; // boot-time env validation (throws in prod if misconfigured)
@@ -84,6 +85,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </a>
                 <div id="main-content">{children}</div>
                 <CompareTray />
+                <InstallPrompt />
               </ConfirmProvider>
             </CompareProvider>
           </SavedSearchesProvider>
