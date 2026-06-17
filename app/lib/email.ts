@@ -20,7 +20,7 @@ export function escapeHtml(s: unknown): string {
  * Send one email via Resend. Returns true if accepted, false if skipped
  * (no API key / no recipient) or on error — callers can treat false as "not sent".
  */
-export async function sendEmail({ to, subject, html, from }: { to: string; subject: string; html: string; from?: string }): Promise<boolean> {
+export async function sendEmail({ to, subject, html, from, replyTo }: { to: string; subject: string; html: string; from?: string; replyTo?: string }): Promise<boolean> {
   const resendKey = process.env.RESEND_API_KEY;
   const fromAddr = from || process.env.ALERT_FROM_EMAIL || "AcreHub <onboarding@resend.dev>";
   if (!resendKey || !to) return false;
@@ -28,7 +28,7 @@ export async function sendEmail({ to, subject, html, from }: { to: string; subje
     const res = await fetch(RESEND_ENDPOINT, {
       method: "POST",
       headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: fromAddr, to, subject, html }),
+      body: JSON.stringify({ from: fromAddr, to, subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
     });
     return res.ok;
   } catch {

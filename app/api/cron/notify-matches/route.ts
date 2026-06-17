@@ -5,7 +5,10 @@ import { formatINRShort } from "@/app/lib/format";
 export const dynamic = "force-dynamic";
 
 const BASE = "https://acrehubindia.com";
-const FROM = "AcreHub <isha@acrehubindia.com>";
+// Replies always go to isha. The "from" address uses ALERT_FROM_EMAIL when set
+// (e.g. isha@acrehubindia.com once the domain is verified in Resend); until then
+// it falls back to the default verified sender so emails still go out.
+const REPLY_TO = "isha@acrehubindia.com";
 const DAY = 86400000;
 
 // Only notify reasonably recent sign-ups, so we don't email stale signals forever.
@@ -84,8 +87,8 @@ export async function GET(request: Request) {
   let sent = 0;
   for (const [email, matchedListings] of perEmail) {
     const ok = await sendEmail({
-      from: FROM,
       to: email,
+      replyTo: REPLY_TO,
       subject: "New land matching what you wanted — AcreHub",
       html: buildEmail(matchedListings),
     });
