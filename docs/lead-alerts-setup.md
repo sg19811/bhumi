@@ -1,6 +1,6 @@
 # Founder lead alerts — setup
 
-Every new lead row can email **isha@acrehubindia.com** the moment it's created. The code is built
+Every new lead row can email **contact@acrehubindia.com** the moment it's created. The code is built
 (`app/api/notify-lead/route.ts` + `app/lib/email.ts`); these are the one-time activation steps.
 
 ## 1. Environment variables (Vercel → Settings → Environment Variables, and `.env.local`)
@@ -8,7 +8,7 @@ Every new lead row can email **isha@acrehubindia.com** the moment it's created. 
 | Var | Value | Notes |
 |---|---|---|
 | `RESEND_API_KEY` | your Resend key | **Required** — without it, no email is sent (the app stays silent). |
-| `FOUNDER_EMAIL` | `isha@acrehubindia.com` | Recipient. Defaults to this even if unset, but set it to be explicit. |
+| `FOUNDER_EMAIL` | `contact@acrehubindia.com` | Recipient. Defaults to this even if unset, but set it to be explicit. |
 | `ALERT_FROM_EMAIL` | e.g. `AcreHub <alerts@acrehubindia.com>` | Verified sender in Resend. Falls back to Resend's test sender. |
 | `LEAD_WEBHOOK_SECRET` | a random string | Protects the webhook (falls back to `CRON_SECRET` if unset). |
 

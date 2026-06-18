@@ -1,5 +1,5 @@
 // Server-only email helper (Resend). NEVER import into a "use client" file.
-// All founder-facing alerts default to isha@acrehubindia.com (override with the
+// All founder-facing alerts default to contact@acrehubindia.com (override with the
 // FOUNDER_EMAIL env var). Sending is a no-op unless RESEND_API_KEY is set, so the
 // app stays quiet in local/dev without keys.
 
@@ -7,7 +7,7 @@ const RESEND_ENDPOINT = "https://api.resend.com/emails";
 
 /** The address every app alert/notification is sent to. */
 export function founderRecipient(): string {
-  return process.env.FOUNDER_EMAIL || "isha@acrehubindia.com";
+  return process.env.FOUNDER_EMAIL || "contact@acrehubindia.com";
 }
 
 export function escapeHtml(s: unknown): string {
