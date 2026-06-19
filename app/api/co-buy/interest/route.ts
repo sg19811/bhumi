@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
 import { CO_BUY_ACK_KEYS } from "@/app/lib/co-buy/disclaimers";
 import { computeLeadScore } from "@/app/lib/co-buy/lead-scoring";
+import { recordReferralEvent } from "@/app/lib/referrals";
 
 export const dynamic = "force-dynamic";
 
@@ -110,6 +112,17 @@ export async function POST(request: Request) {
     .from("co_buy_opportunities")
     .update({ current_interest_count: (opp.current_interest_count ?? 0) + 1 })
     .eq("id", opportunityId);
+
+  // Referral attribution (best-effort; never blocks the submission).
+  const ref = (await cookies()).get("ref")?.value;
+  if (ref) {
+    await recordReferralEvent({
+      referralCode: ref,
+      eventType: "co_buy_interest",
+      entityType: "co_buy_opportunity",
+      entityId: opportunityId,
+    });
+  }
 
   return Response.json({ ok: true, id: inserted?.id, status });
 }

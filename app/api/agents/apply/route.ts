@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import { supabaseAdmin as db } from "@/app/lib/supabase-server";
 import { AGENT_TYPES, agentTypeLabel, type AgentType } from "@/app/lib/agent-types";
 import { sendEmail, founderRecipient, escapeHtml } from "@/app/lib/email";
+import { recordReferralEvent } from "@/app/lib/referrals";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +88,18 @@ export async function POST(request: Request) {
     return fail("INSERT_FAILED", "Couldn't submit your application. Please try again.", 500);
   }
 
-  // Notify the team (defaults to isha@acrehubindia.com). Best-effort: a failed/
+  // Referral attribution (best-effort; never blocks the application).
+  const ref = (await cookies()).get("ref")?.value;
+  if (ref) {
+    await recordReferralEvent({
+      referralCode: ref,
+      eventType: "agent_joined",
+      entityType: "agent_profile",
+      entityId: inserted?.id ?? null,
+    });
+  }
+
+  // Notify the team (defaults to contact@acrehubindia.com). Best-effort: a failed/
   // unconfigured email never blocks the application — it still shows in admin.
   const html = `<div style="font-family:Arial,sans-serif;color:#1d1b14;max-width:560px">
     <h2 style="color:#38461f">New agent application</h2>
