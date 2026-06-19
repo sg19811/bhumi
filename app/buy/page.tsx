@@ -47,6 +47,12 @@ export default function BuyLand() {
       setError(dbError.message);
     } else {
       trackEvent("requirement_posted", { intent: f.get("intent"), signed_in: !!user });
+      // Best-effort referral attribution (fire-and-forget; never blocks the form).
+      fetch("/api/growth/referrals/attribute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event_type: "requirement_submitted", entity_type: "buyer_interest" }),
+      }).catch(() => {});
       setSuccess(true);
     }
   }
