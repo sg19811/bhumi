@@ -7,6 +7,7 @@ import Footer from "@/app/components/Footer";
 import { supabase } from "@/app/lib/supabase";
 import { useAuth } from "@/app/lib/auth";
 import DealRow from "@/app/components/DealRow";
+import AgentForwardingWizard from "@/app/components/growth/AgentForwardingWizard";
 import { formatINR, formatINRShort, pricePerAcre } from "@/app/lib/format";
 import { landLabel } from "@/app/lib/land";
 
@@ -189,6 +190,11 @@ export default function AgentDashboard() {
             </div>
           </section>
         )}
+
+        <section className="mb-8">
+          <h2 className="mb-3 text-lg font-semibold">Share tools</h2>
+          <AgentForwardingWizard />
+        </section>
 
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">Leads ({leads.length})</h2>
