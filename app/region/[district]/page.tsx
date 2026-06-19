@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import MapLoader from "@/app/components/MapLoader";
 import ListingCard from "@/app/components/ListingCard";
+import ChannelRecruitmentCard from "@/app/components/growth/ChannelRecruitmentCard";
 import NotifyMe from "@/app/components/NotifyMe";
 import MarketStats from "@/app/components/MarketStats";
 import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
@@ -29,10 +30,22 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
   const { district } = await params;
   const name = decodeURIComponent(district);
 
-  const [{ data: listings }, { count: buyersLooking }] = await Promise.all([
+  const [{ data: listings }, { count: buyersLooking }, { data: channelsData }] = await Promise.all([
     supabase.from("listings").select("*").eq("status", "active").ilike("district", name).order("created_at", { ascending: false }),
     supabase.from("buyer_interests").select("id", { count: "exact", head: true }).ilike("preferred_district", name),
+    supabase.from("acrehub_owned_channels").select("id, name, channel_kind, description, public_join_url, member_count, target_district, target_state").eq("status", "active"),
   ]);
+
+  // Channels relevant to this district: district-specific, state-level, or generic.
+  const stateCode = districtToState(name);
+  const stateName = stateCode ? stateLabel(stateCode) : null;
+  const matchedChannels = (channelsData ?? []).filter((c) => {
+    const td = c.target_district as string | null;
+    const ts = c.target_state as string | null;
+    const districtOk = !td || td.toLowerCase() === name.toLowerCase();
+    const stateOk = !ts || ts === stateCode || (stateName != null && ts.toLowerCase() === stateName.toLowerCase());
+    return districtOk && stateOk;
+  });
 
   const markers = (listings ?? []).map((l) => ({ id: l.id, latitude: l.latitude, longitude: l.longitude, title: l.title, price: l.price, area_value: l.area_value, area_unit: l.area_unit }));
   const types = [...new Set((listings ?? []).map((l) => l.land_type).filter(Boolean))];
@@ -110,6 +123,22 @@ export default async function RegionPage({ params }: { params: Promise<{ distric
               ))}
             </div>
           )}
+
+          <section className="mt-10">
+            <h2 className="mb-3 text-lg font-semibold">Get new {name} listings instantly</h2>
+            {matchedChannels.length > 0 ? (
+              <div className="space-y-3">
+                {matchedChannels.map((c) => (
+                  <ChannelRecruitmentCard key={c.id} channel={c} />
+                ))}
+              </div>
+            ) : (
+              <Link href="/channels" className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-colors hover:border-green-600">
+                <span className="text-sm text-gray-700">Join AcreHub&apos;s free WhatsApp &amp; Telegram channels to get new {name} listings the moment they&apos;re posted.</span>
+                <span className="shrink-0 rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white">See channels</span>
+              </Link>
+            )}
+          </section>
         </div>
       </main>
       <Footer />
