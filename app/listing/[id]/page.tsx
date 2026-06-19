@@ -6,7 +6,7 @@ import PhotoGallery from "@/app/components/PhotoGallery";
 import VerifyChecklist from "@/app/components/VerifyChecklist";
 import MapActions from "@/app/components/MapActions";
 import MapLoader from "@/app/components/MapLoader";
-import WhatsAppShare from "@/app/components/WhatsAppShare";
+import ShareButtonGroup from "@/app/components/growth/ShareButtonGroup";
 import WhatsAppContactButton from "@/app/components/WhatsAppContactButton";
 import BuyersLookingBanner from "@/app/components/BuyersLookingBanner";
 import CoBuyListingCTA from "@/app/components/co-buy/CoBuyListingCTA";
@@ -23,7 +23,6 @@ import LandRecordViewer from "@/app/components/agents/LandRecordViewer";
 import TrackRecentlyViewed from "@/app/components/TrackRecentlyViewed";
 import TrackView from "@/app/components/TrackView";
 import AddToCollection from "@/app/components/AddToCollection";
-import ShareButton from "@/app/components/ShareButton";
 import ReportButton from "@/app/components/ReportButton";
 import StickyContactBar from "@/app/components/StickyContactBar";
 import PriceInsightPanel from "@/app/components/PriceInsight";
@@ -322,7 +321,7 @@ export default async function ListingDetail({ params }: { params: Promise<{ id: 
 
         <div id="contact" className="scroll-mt-20 rounded-2xl border border-gray-200 bg-gray-50 p-5 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold">Interested in this land?</h2>
-          <div className="flex flex-wrap gap-3"><WhatsAppContactButton whatsapp={listing.contact_whatsapp} phone={listing.contact_phone} title={listing.title} price={listing.price} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><WhatsAppShare title={listing.title} price={listing.price} url={url} /><ShareButton title={listing.title} url={url} /></div>
+          <div className="flex flex-wrap gap-3"><WhatsAppContactButton whatsapp={listing.contact_whatsapp} phone={listing.contact_phone} title={listing.title} price={listing.price} /><SaveButton listingId={listing.id} /><AddToCollection listingId={listing.id} /><ShareButtonGroup title={listing.title} price={listing.price} url={url} entityType="listing" entityId={listing.id} /></div>
           {(listing.contact_phone || listing.contact_email) ? (
             <p className="mt-4 text-base text-gray-700">
               {listing.contact_phone && (
