@@ -67,7 +67,11 @@ export default function Header() {
                 <Link href="/agent" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (
-                <Link href="/admin" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.dashboard")}</Link>
+                <>
+                  <Link href="/admin" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">{t("nav.dashboard")}</Link>
+                  <Link href="/admin/whatsapp/inbox" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">WhatsApp Inbox</Link>
+                  <Link href="/admin/agents/applications" className="rounded-lg px-3 py-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-green-800">Agent Applications</Link>
+                </>
               )}
               <button onClick={signOut} className="rounded-lg px-3 py-2 text-xs text-gray-400 transition-colors hover:text-red-600">{t("nav.signout")}</button>
             </>
@@ -111,7 +115,11 @@ export default function Header() {
                 <Link href="/agent" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.agent")}</Link>
               )}
               {role === "admin" && (
-                <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.dashboard")}</Link>
+                <>
+                  <Link href="/admin" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">{t("nav.dashboard")}</Link>
+                  <Link href="/admin/whatsapp/inbox" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">WhatsApp Inbox</Link>
+                  <Link href="/admin/agents/applications" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2.5 text-gray-700 hover:bg-gray-100">Agent Applications</Link>
+                </>
               )}
               <button onClick={() => { signOut(); setOpen(false); }} className="rounded-lg px-3 py-2.5 text-left text-red-600 hover:bg-red-50">{t("nav.signout")}</button>
             </>

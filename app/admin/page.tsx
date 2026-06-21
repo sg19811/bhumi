@@ -93,6 +93,8 @@ export default function AdminDashboard() {
   const [siteVisits, setSiteVisits] = useState<any[]>([]);
   const [liveStates, setLiveStates] = useState<string[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
+  const [inboxCount, setInboxCount] = useState(0);
+  const [agentAppCount, setAgentAppCount] = useState(0);
   const [listingQuery, setListingQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -100,6 +102,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     supabase.from("profiles").select("user_id, full_name, phone, role, user_type, created_at").order("created_at", { ascending: false }).then(({ data }) => setProfiles(data ?? []));
+  }, [isAdmin]);
+
+  // Pending counts for the quick-link cards (unprocessed inbox + agent applications awaiting review).
+  useEffect(() => {
+    if (!isAdmin) return;
+    supabase.from("whatsapp_inbox").select("id", { count: "exact", head: true }).eq("processed_status", "inbox").then(({ count }) => setInboxCount(count ?? 0));
+    supabase.from("agent_profiles").select("id", { count: "exact", head: true }).eq("verification_status", "pending_review").then(({ count }) => setAgentAppCount(count ?? 0));
   }, [isAdmin]);
 
   // Read with the admin's own session — Supabase RLS (is_admin()) enforces access.
@@ -213,6 +222,8 @@ export default function AdminDashboard() {
         <div className="mb-6 flex items-center justify-between gap-3">
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <div className="flex shrink-0 flex-wrap gap-2">
+            <Link href="/admin/whatsapp/inbox" className="rounded-full border border-green-700 px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">💬 WhatsApp Inbox{inboxCount > 0 ? ` (${inboxCount})` : ""}</Link>
+            <Link href="/admin/agents/applications" className="rounded-full border border-green-700 px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">🧑‍🌾 Agent Applications{agentAppCount > 0 ? ` (${agentAppCount})` : ""}</Link>
             <Link href="/admin/co-buy" className="rounded-full border border-green-700 px-4 py-2 text-sm font-medium text-green-800 transition-colors hover:bg-green-50">👥 Buying Circles</Link>
             <Link href="/admin/intelligence" className="rounded-full bg-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-green-800">📊 Founder Intelligence</Link>
           </div>
